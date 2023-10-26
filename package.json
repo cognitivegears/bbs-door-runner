@@ -1,0 +1,23 @@
+{
+  "name": "bbs-door-runner",
+  "version": "0.0.1",
+  "description": "Run BBS door games from Node.js using v86",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [
+    "bbs",
+    "emulator",
+    "door",
+    "dropfile",
+    "ansi",
+    "modem",
+    "retro"
+  ],
+  "author": "Nathan Byrd",
+  "license": "BSD-2-Clause",
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}
