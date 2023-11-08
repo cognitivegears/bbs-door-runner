@@ -17,13 +17,15 @@ npm install bbs-door-runner
 Here's a simple example to get you started:
 
 ```javascript
-const bbsDoorRunner = require('bbs-door-runner');
+const BbsDoorRunner = require('bbs-door-runner');
 
 const options = {
   // Additional options here
 };
 
-bbsDoorRunner.run(options);
+const bbsDoorRunner = new BbsDoorRunner(options);
+
+bbsDoorRunner.run();
 ```
 
 ## Contributing

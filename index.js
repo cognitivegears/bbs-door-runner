@@ -3,9 +3,15 @@ const fs = require('fs');
 const path = require('path');
 
 // Define module
-const bbsDoorRunner = {
-  // Define properties and methods here
-};
+class BbsDoorRunner {
+  constructor(options) {
+    // Define constructor logic here
+  }
+
+  run() {
+    // Define run logic here
+  }
+}
 
 // Export module
-module.exports = bbsDoorRunner;
+module.exports = BbsDoorRunner;
