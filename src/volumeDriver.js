@@ -73,7 +73,6 @@ class VolumeDriver {
 	}
 
 	writeSectors(i, data, cb) {
-		const fs = require('fs');
 		if (data.length % this.sectorSize) {
 			throw Error('Unexpected buffer length!');
 		}
@@ -84,7 +83,6 @@ class VolumeDriver {
 	}
 
 	readPartitions() {
-		const fs = require('fs');
 		if (this._s.size < 512) {
 			return [];
 		}
@@ -94,7 +92,7 @@ class VolumeDriver {
 
 		const partitionOffsets = [];
 		for (let i = 446; i < 510; i += 16) {
-			partitionOffsets.push(mbrBuffer.readBigInt32LE(i + 8));
+			partitionOffsets.push(mbrBuffer.readInt32LE(i + 8));
 		}
 
 		return partitionOffsets;
