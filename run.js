@@ -1,9 +1,15 @@
+const fs = require('fs');
 const fatfs = require('fatfs');
-const {createDriverSync} = require('./src/volumeDriver');
+const {createDriverSync} = require('./src/volumeDriver/volumeDriverBuffer');
 
-const driver = createDriverSync('v86/image/freedos20mb.img', {partitionNumber: 1, readOnly: true});
-const fs = fatfs.createFileSystem(driver);
-fs.stat('startup.bat', (e, stats) => {
+// Read the file v86/image/freedos20mb.img into a Buffer
+const buffer = fs.readFileSync('v86/image/freedos20mb.img');
+
+// Const driver = createDriverSync('v86/image/freedos20mb.img', {partitionNumber: 1, readOnly: true});
+
+const driver = createDriverSync('', {buffer, partitionNumber: 1, readOnly: true});
+const fsf = fatfs.createFileSystem(driver);
+fsf.stat('startup.bat', (e, stats) => {
 	if (e) {
 		console.error(e);
 	} else {
@@ -11,7 +17,7 @@ fs.stat('startup.bat', (e, stats) => {
 	}
 });
 
-fs.readFile('startup.bat', (err, contents) => {
+fsf.readFile('startup.bat', (err, contents) => {
 	if (err) {
 		contents.error(err);
 	}

@@ -1,5 +1,5 @@
 const fs = require('fs');
-const {createDriverSync} = require('../src/volumeDriver');
+const {createDriverSync} = require('../src/volumeDriver/volumeDriverFile');
 
 describe('createDriverSync', () => {
 	let mockPath;

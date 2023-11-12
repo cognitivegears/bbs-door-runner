@@ -2,11 +2,9 @@ const _ = require('lodash');
 const fs = require('fs');
 
 class VolumeDriver {
-	constructor(path, opts = {}) {
-		const _ = require('lodash');
-
-		if (!fs.existsSync(path)) {
-			throw new Error('File does not exist!');
+	constructor(_path, opts = {}) {
+		if (new.target === VolumeDriver) {
+			throw new TypeError('Cannot construct VolumeDriver instances directly');
 		}
 
 		let fileMode = fs.constants.R_OK;
@@ -18,17 +16,6 @@ class VolumeDriver {
 		this._readOnly = opts.readOnly;
 
 		this._fileMode = fileMode;
-
-		this._fd = fs.openSync(path, opts.readOnly ? 'r' : 'r+');
-		this._s = fs.fstatSync(this._fd);
-
-		const partitionNumber = _.isNumber(opts.partitionNumber) ? opts.partitionNumber : 0;
-
-		if (partitionNumber !== 0) {
-			this._partitionLBAList = this.readPartitions();
-		}
-
-		this.partitionNumber = partitionNumber;
 	}
 
 	get partitionOffsetBytes() {
@@ -62,40 +49,31 @@ class VolumeDriver {
 		return this._readOnly;
 	}
 
-	readSectors(i, dest, cb) {
+	checkSectorLength(dest) {
 		if (dest.length % this.sectorSize) {
 			throw Error('Unexpected buffer length!');
 		}
-
-		fs.read(this._fd, dest, 0, dest.length, this._partitionOffsetBytes + (i * this.sectorSize), (e, n, d) => {
-			cb(e, d);
-		});
 	}
 
-	writeSectors(i, data, cb) {
-		if (data.length % this.sectorSize) {
-			throw Error('Unexpected buffer length!');
-		}
-
-		fs.write(this._fd, data, 0, data.length, this._partitionOffsetBytes + (i * this.sectorSize), e => {
-			cb(e);
-		});
+	readSectors(_i, _dest, _cb) {
+		throw new Error('Abstract method \'readSectors\' must be implemented');
 	}
 
-	readPartitions() {
-		if (this._s.size < 512) {
-			return [];
-		}
+	writeSectors(_i, _data, _cb) {
+		throw new Error('Abstract method \'writeSectors\' must be implemented');
+	}
 
-		const mbrBuffer = Buffer.alloc(512);
-		fs.readSync(this._fd, mbrBuffer, 0, 512, 0);
-
+	parsePartitionsFromBuffer(buffer) {
 		const partitionOffsets = [];
 		for (let i = 446; i < 510; i += 16) {
-			partitionOffsets.push(mbrBuffer.readInt32LE(i + 8));
+			partitionOffsets.push(buffer.readInt32LE(i + 8));
 		}
 
 		return partitionOffsets;
+	}
+
+	readPartitions() {
+		throw new Error('Abstract method \'readPartitions\' must be implemented');
 	}
 
 	get sectorSize() {
@@ -103,10 +81,8 @@ class VolumeDriver {
 	}
 
 	get numSectors() {
-		return this._s.size / this.sectorSize;
+		throw new Error('Abstract method \'numSectors\' must be implemented');
 	}
 }
 
-exports.createDriverSync = function (path, opts = {}) {
-	return new VolumeDriver(path, opts);
-};
+module.exports = VolumeDriver;
