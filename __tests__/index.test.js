@@ -1,4 +1,4 @@
-const BbsDoorRunner = require('../index');
+const BbsDoorRunner = require('../src/BbsDoorRunner');
 
 describe('BbsDoorRunner', () => {
 	test('should be a class', () => {

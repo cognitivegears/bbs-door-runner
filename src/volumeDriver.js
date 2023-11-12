@@ -19,10 +19,6 @@ class VolumeDriver {
 
 		this._fileMode = fileMode;
 
-		if (!fs.accessSync(path, fileMode)) {
-			throw new Error('File does not have needed permissions!');
-		}
-
 		this._fd = fs.openSync(path, opts.readOnly ? 'r' : 'r+');
 		this._s = fs.fstatSync(this._fd);
 
