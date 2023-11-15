@@ -53,4 +53,25 @@ describe('createDriverSync', () => {
 			expect(dest).toEqual(buffer);
 		});
 	});
+
+	it('should throw an error if the buffer is not defined', () => {
+		const mockUndefinedOpts = {buffer: undefined, readOnly: false};
+		expect(() => {
+			createDriverSync(mockPath, mockUndefinedOpts);
+		}).toThrow('Buffer does not exist!');
+	});
+
+	it('should throw an error if the buffer is not a Buffer', () => {
+		const mockBufferOpts = {buffer: 'hello', readOnly: false};
+		expect(() => {
+			createDriverSync(mockPath, mockBufferOpts);
+		}).toThrow('buffer option is not a Buffer!');
+	});
+
+	it('should throw an error if the buffer is too small and partition is defined', () => {
+		const mockBufferOpts = {buffer: Buffer.alloc(511), readOnly: false, partitionNumber: 1};
+		expect(() => {
+			createDriverSync(mockPath, mockBufferOpts);
+		}).toThrow('Partition 1 does not exist!');
+	});
 });

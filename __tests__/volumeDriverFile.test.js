@@ -11,6 +11,7 @@ describe('createDriverSync', () => {
 	let mockExistsSync;
 	let mockAccessSync;
 	let mockOpenSync;
+	let mockReadSync;
 
 	beforeEach(() => {
 		mockPath = '/path/to/volume';
@@ -27,6 +28,9 @@ describe('createDriverSync', () => {
 
 		mockExistsSync = jest.spyOn(fs, 'existsSync');
 		mockExistsSync.mockReturnValue(true);
+
+		mockReadSync = jest.spyOn(fs, 'readSync');
+		mockReadSync.mockReturnValue(512);
 
 		mockAccessSync = jest.spyOn(fs, 'accessSync');
 		mockAccessSync.mockReturnValue(true);
@@ -167,5 +171,28 @@ describe('createDriverSync', () => {
 		const driver = createDriverSync(mockPath, mockReadWriteOpts);
 		driver.partitionNumber = 0;
 		expect(driver.partitionNumber).toBe(0);
+	});
+
+	it('should throw an error if the file does not exist', () => {
+		// Test with an invalid file
+		mockExistsSync.mockReturnValueOnce(false);
+		expect(() => {
+			createDriverSync(mockPath, mockReadWriteOpts);
+		}).toThrow('File does not exist!');
+	});
+
+	it('should be able to use a partitionNumber other than 0 in constructor', () => {
+		// Test with a valid partition number
+		const driver = createDriverSync(mockPath, {readOnly: true, partitionNumber: 1});
+		expect(driver.partitionNumber).toBe(1);
+	});
+
+	it('should return an empty partition list if the size is less than 512 and partition is defined', () => {
+		// Test with a valid partition number
+		const mockfstatSync = jest.spyOn(fs, 'fstatSync');
+		mockfstatSync.mockReturnValue({size: 511});
+		expect(() => {
+			createDriverSync(mockPath, {readOnly: true, partitionNumber: 1});
+		}).toThrow('Partition 1 does not exist!');
 	});
 });

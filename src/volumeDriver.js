@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const fs = require('fs');
 
 class VolumeDriver {
@@ -27,10 +26,6 @@ class VolumeDriver {
 	}
 
 	set partitionNumber(partitionNumber) {
-		if (!_.isNumber(partitionNumber)) {
-			throw new Error('Partition number must be a number!');
-		}
-
 		if (partitionNumber === 0) {
 			this._partitionNumber = 0;
 			this._partitionOffsetBytes = 0;
