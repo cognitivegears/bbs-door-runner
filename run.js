@@ -1,12 +1,12 @@
 const fs = require('fs');
 const fatfs = require('fatfs');
 const unzipper = require('unzipper');
-const {createDriverSync} = require('./src/volumeDriver/volumeDriverBuffer');
+const {createBufferDriverSync} = require('fatfs-volume-driver');
 
 // Use the fs module to read v86/image/freedos20mb.img
 const buffer = fs.readFileSync('v86/image/freedos20mb.img');
 
-const driver = createDriverSync('', {buffer, partitionNumber: 1, readOnly: false});
+const driver = createBufferDriverSync('', {buffer, partitionNumber: 1, readOnly: false});
 const fsf = fatfs.createFileSystem(driver);
 fsf.stat('startup.bat', (e, stats) => {
 	if (e) {

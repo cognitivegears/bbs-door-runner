@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "fatfs": "^0.10.8",
+    "fatfs-volume-driver": "^0.0.4",
     "lodash": "^4.17.21",
     "unzipper": "^0.10.14"
   },

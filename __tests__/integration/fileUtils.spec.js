@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const fatfs = require('fatfs');
 const {extractZipToFatfs} = require('../../src/fileUtils');
-const {createDriverSync} = require('../../src/volumeDriver/volumeDriverBuffer');
+const {createBufferDriverSync} = require('fatfs-volume-driver');
 
 describe('fileUtils integration test', () => {
 	beforeEach(() => {
@@ -19,7 +19,7 @@ describe('fileUtils integration test', () => {
 
 		// Read the fatfsPath into a Buffer
 		const buffer = fs.readFileSync(imgpath);
-		const driver = createDriverSync('', {buffer, partitionNumber: 1, readOnly: false});
+		const driver = createBufferDriverSync('', {buffer, partitionNumber: 1, readOnly: false});
 		const fsf = fatfs.createFileSystem(driver);
 
 		const zipfile = path.join(__dirname, '../resources', 'simpletest.zip');
