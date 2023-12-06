@@ -1,0 +1,14 @@
+.vscode/
+.husky/
+.github/
+.devcontainer/
+__tests__/
+coverage/
+docs/
+.eslintignore
+.eslintrc.js
+CONTRIBUTING.md
+jest.config.js
+jsdoc.json
+*.tgz
+*.tar.gz

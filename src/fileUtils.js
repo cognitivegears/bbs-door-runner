@@ -1,6 +1,13 @@
 const fs = require('fs');
 const unzipper = require('unzipper');
 
+/**
+ * Extracts the contents of a zip file to a FAT file system.
+ *
+ * @param {string} zipFilePath - The path to the zip file.
+ * @param {object} fsf - The FAT file system object.
+ * @returns {Promise<void>} - A promise that resolves when the extraction is complete.
+ */
 async function extractZipToFatfs(zipFilePath, fsf) {
 	const readStream = fs.createReadStream(zipFilePath);
 
