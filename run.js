@@ -2,6 +2,7 @@ const fs = require('fs');
 const fatfs = require('fatfs');
 const unzipper = require('unzipper');
 const {createBufferDriverSync} = require('fatfs-volume-driver');
+const BbsDoorRunner = require('./src/BbsDoorRunner');
 
 // Use the fs module to read v86/image/freedos20mb.img
 const buffer = fs.readFileSync('v86/image/freedos20mb.img');
@@ -64,3 +65,7 @@ streamReadPromise.then(() => {
 	});
 });
 
+console.log('Starting console up');
+
+const bbsDoorRunner = new BbsDoorRunner();
+bbsDoorRunner.runConsole();
