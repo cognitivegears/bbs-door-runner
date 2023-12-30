@@ -49,6 +49,9 @@ class BbsDoorRunner {
 		//		this._consoleEmulator.v86.cpu.devices.uart0.modem_status |= (0 << 6);
 		//		this._consoleEmulator.v86.cpu.devices.uart0.modem_status |= (1 << 5);
 		//		this._consoleEmulator.v86.cpu.devices.uart0.modem_status |= (1 << 4);
+		// eslint-disable-next-line no-bitwise
+		const modemStatus = (1 << 7) | (0 << 6) | (1 << 5) | (1 << 4);
+		this._consoleEmulator.serial_set_modem_status(0, modemStatus);
 		this._consoleEmulator.run();
 
 		this._consoleEmulator.add_listener('serial0-output-byte', byte => 		{
