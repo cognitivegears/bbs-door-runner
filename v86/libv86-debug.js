@@ -1114,15 +1114,15 @@ $FloatQueue$$.prototype.peek = function() {
 $FloatQueue$$.prototype.clear = function() {
   this.length = this.end = this.start = 0;
 };
-function $dump_file$$($a$jscomp$inline_7_ab$$, $ev$jscomp$inline_8_name$jscomp$75$$) {
-  $a$jscomp$inline_7_ab$$ instanceof Array || ($a$jscomp$inline_7_ab$$ = [$a$jscomp$inline_7_ab$$]);
-  var $file_or_blob$jscomp$inline_5$$ = new Blob($a$jscomp$inline_7_ab$$);
-  $a$jscomp$inline_7_ab$$ = document.createElement("a");
-  $a$jscomp$inline_7_ab$$.download = $ev$jscomp$inline_8_name$jscomp$75$$;
-  $a$jscomp$inline_7_ab$$.href = window.URL.createObjectURL($file_or_blob$jscomp$inline_5$$);
-  $a$jscomp$inline_7_ab$$.dataset.downloadurl = ["application/octet-stream", $a$jscomp$inline_7_ab$$.download, $a$jscomp$inline_7_ab$$.href].join(":");
-  document.createEvent ? ($ev$jscomp$inline_8_name$jscomp$75$$ = document.createEvent("MouseEvent"), $ev$jscomp$inline_8_name$jscomp$75$$.initMouseEvent("click", !0, !0, window, 0, 0, 0, 0, 0, !1, !1, !1, !1, 0, null), $a$jscomp$inline_7_ab$$.dispatchEvent($ev$jscomp$inline_8_name$jscomp$75$$)) : $a$jscomp$inline_7_ab$$.click();
-  window.URL.revokeObjectURL($a$jscomp$inline_7_ab$$.href);
+function $dump_file$$($a$jscomp$inline_8_ab$$, $ev$jscomp$inline_9_name$jscomp$75$$) {
+  $a$jscomp$inline_8_ab$$ instanceof Array || ($a$jscomp$inline_8_ab$$ = [$a$jscomp$inline_8_ab$$]);
+  var $file_or_blob$jscomp$inline_6$$ = new Blob($a$jscomp$inline_8_ab$$);
+  $a$jscomp$inline_8_ab$$ = document.createElement("a");
+  $a$jscomp$inline_8_ab$$.download = $ev$jscomp$inline_9_name$jscomp$75$$;
+  $a$jscomp$inline_8_ab$$.href = window.URL.createObjectURL($file_or_blob$jscomp$inline_6$$);
+  $a$jscomp$inline_8_ab$$.dataset.downloadurl = ["application/octet-stream", $a$jscomp$inline_8_ab$$.download, $a$jscomp$inline_8_ab$$.href].join(":");
+  document.createEvent ? ($ev$jscomp$inline_9_name$jscomp$75$$ = document.createEvent("MouseEvent"), $ev$jscomp$inline_9_name$jscomp$75$$.initMouseEvent("click", !0, !0, window, 0, 0, 0, 0, 0, !1, !1, !1, !1, 0, null), $a$jscomp$inline_8_ab$$.dispatchEvent($ev$jscomp$inline_9_name$jscomp$75$$)) : $a$jscomp$inline_8_ab$$.click();
+  window.URL.revokeObjectURL($a$jscomp$inline_8_ab$$.href);
 }
 $v86util$$.Bitmap = function($length_or_buffer$$) {
   "number" === typeof $length_or_buffer$$ ? this.view = new Uint8Array($length_or_buffer$$ + 7 >> 3) : $length_or_buffer$$ instanceof ArrayBuffer ? this.view = new Uint8Array($length_or_buffer$$) : $dbg_assert$$(!1, "v86util.Bitmap: Invalid argument");
@@ -4875,6 +4875,21 @@ function $UART$$($cpu$jscomp$12_io$jscomp$2$$, $port$jscomp$1$$, $bus$jscomp$8$$
   this.bus.register("serial" + this.com + "-input", function($data$jscomp$131$$) {
     this.data_received($data$jscomp$131$$);
   }, this);
+  this.bus.register("serial" + this.com + "-modem-status-input", function($data$jscomp$132$$) {
+    this.set_modem_status($data$jscomp$132$$);
+  }, this);
+  this.bus.register("serial" + this.com + "-carrier-detect-input", function($data$jscomp$133$$) {
+    this.set_modem_status($data$jscomp$133$$ ? this.modem_status | 136 : this.modem_status & -137);
+  }, this);
+  this.bus.register("serial" + this.com + "-ring-indicator-input", function($data$jscomp$134$$) {
+    this.set_modem_status($data$jscomp$134$$ ? this.modem_status | 68 : this.modem_status & -69);
+  }, this);
+  this.bus.register("serial" + this.com + "-data-set-ready-input", function($data$jscomp$135$$) {
+    this.set_modem_status($data$jscomp$135$$ ? this.modem_status | 34 : this.modem_status & -35);
+  }, this);
+  this.bus.register("serial" + this.com + "-clear-to-send-input", function($data$jscomp$136$$) {
+    this.set_modem_status($data$jscomp$136$$ ? this.modem_status | 17 : this.modem_status & -18);
+  }, this);
   $cpu$jscomp$12_io$jscomp$2$$ = $cpu$jscomp$12_io$jscomp$2$$.io;
   $cpu$jscomp$12_io$jscomp$2$$.register_write($port$jscomp$1$$, this, function($out_byte$jscomp$5$$) {
     this.write_data($out_byte$jscomp$5$$);
@@ -4889,10 +4904,10 @@ function $UART$$($cpu$jscomp$12_io$jscomp$2$$, $port$jscomp$1$$, $bus$jscomp$8$$
     if (this.line_control & 128) {
       return this.baud_rate & 255;
     }
-    let $data$jscomp$132$$ = 0;
-    0 === this.input.length ? $dbg_log$$("Read input empty", 16384) : ($data$jscomp$132$$ = this.input.shift(), $dbg_log$$("Read input: " + $h$$($data$jscomp$132$$), 16384));
+    let $data$jscomp$137$$ = 0;
+    0 === this.input.length ? $dbg_log$$("Read input empty", 16384) : ($data$jscomp$137$$ = this.input.shift(), $dbg_log$$("Read input: " + $h$$($data$jscomp$137$$), 16384));
     0 === this.input.length && (this.lsr &= -2, this.ClearInterrupt(12), this.ClearInterrupt(4));
-    return $data$jscomp$132$$;
+    return $data$jscomp$137$$;
   });
   $cpu$jscomp$12_io$jscomp$2$$.register_read($port$jscomp$1$$ | 1, this, function() {
     return this.line_control & 128 ? this.baud_rate >> 8 : this.ier & 15;
@@ -4932,10 +4947,11 @@ function $UART$$($cpu$jscomp$12_io$jscomp$2$$, $port$jscomp$1$$, $bus$jscomp$8$$
   });
   $cpu$jscomp$12_io$jscomp$2$$.register_read($port$jscomp$1$$ | 6, this, function() {
     $dbg_log$$("read modem status: " + $h$$(this.modem_status), 16384);
-    return this.modem_status;
+    return this.modem_status &= 240;
   });
-  $cpu$jscomp$12_io$jscomp$2$$.register_write($port$jscomp$1$$ | 6, this, function() {
-    $dbg_log$$("Unkown register write (base+6)", 16384);
+  $cpu$jscomp$12_io$jscomp$2$$.register_write($port$jscomp$1$$ | 6, this, function($out_byte$jscomp$11$$) {
+    $dbg_log$$("write modem status: " + $h$$($out_byte$jscomp$11$$), 16384);
+    this.set_modem_status($out_byte$jscomp$11$$);
   });
   $cpu$jscomp$12_io$jscomp$2$$.register_read($port$jscomp$1$$ | 7, this, function() {
     return this.scratch_register;
@@ -4983,15 +4999,22 @@ $UART$$.prototype.ClearInterrupt = function($line$jscomp$3$$) {
   this.ints &= ~(1 << $line$jscomp$3$$);
   this.CheckInterrupt();
 };
-$UART$$.prototype.data_received = function($data$jscomp$133$$) {
-  $dbg_log$$("input: " + $h$$($data$jscomp$133$$), 16384);
-  this.input.push($data$jscomp$133$$);
+$UART$$.prototype.data_received = function($data$jscomp$138$$) {
+  $dbg_log$$("input: " + $h$$($data$jscomp$138$$), 16384);
+  this.input.push($data$jscomp$138$$);
   this.lsr |= 1;
   this.fifo_control & 1 ? this.ThrowInterrupt(12) : this.ThrowInterrupt(4);
 };
 $UART$$.prototype.write_data = function($char_line$jscomp$4_out_byte$jscomp$13$$) {
   this.line_control & 128 ? this.baud_rate = this.baud_rate & -256 | $char_line$jscomp$4_out_byte$jscomp$13$$ : ($dbg_log$$("data: " + $h$$($char_line$jscomp$4_out_byte$jscomp$13$$), 16384), this.ThrowInterrupt(2), this.bus.send("serial" + this.com + "-output-byte", $char_line$jscomp$4_out_byte$jscomp$13$$), $char_line$jscomp$4_out_byte$jscomp$13$$ = String.fromCharCode($char_line$jscomp$4_out_byte$jscomp$13$$), this.current_line += $char_line$jscomp$4_out_byte$jscomp$13$$, "\n" === $char_line$jscomp$4_out_byte$jscomp$13$$ && 
   ($char_line$jscomp$4_out_byte$jscomp$13$$ = this.current_line.trimRight().replace(/[\x00-\x08\x0b-\x1f\x7f\x80-\xff]/g, ""), $dbg_log$$("SERIAL: " + $char_line$jscomp$4_out_byte$jscomp$13$$), this.current_line = ""));
+};
+$UART$$.prototype.set_modem_status = function($status$jscomp$4$$) {
+  $dbg_log$$("modem status: " + $h$$($status$jscomp$4$$), 16384);
+  const $prev_delta_bits$$ = this.modem_status & 15;
+  let $delta$jscomp$3$$ = (this.modem_status ^ $status$jscomp$4$$) >> 4;
+  this.modem_status = $status$jscomp$4$$;
+  this.modem_status = this.modem_status | $delta$jscomp$3$$ | $prev_delta_bits$$;
 };
 function $ACPI$$($cpu$jscomp$13$$) {
   this.cpu = $cpu$jscomp$13$$;
@@ -5717,8 +5740,8 @@ function $Ne2k$$($cpu$jscomp$16$$, $bus$jscomp$9_i$jscomp$42_io$jscomp$4$$, $pre
   this.preserve_mac_from_state_image = $preserve_mac_from_state_image$$;
   this.mac_address_translation = $mac_address_translation$$;
   this.bus = $bus$jscomp$9_i$jscomp$42_io$jscomp$4$$;
-  this.bus.register("net0-receive", function($data$jscomp$134$$) {
-    this.receive($data$jscomp$134$$);
+  this.bus.register("net0-receive", function($data$jscomp$139$$) {
+    this.receive($data$jscomp$139$$);
   }, this);
   this.port = 768;
   this.name = "ne2k";
@@ -5749,11 +5772,11 @@ function $Ne2k$$($cpu$jscomp$16$$, $bus$jscomp$9_i$jscomp$42_io$jscomp$4$$, $pre
     $dbg_log$$("Read cmd", 1048576);
     return this.cr;
   });
-  $bus$jscomp$9_i$jscomp$42_io$jscomp$4$$.register_write(this.port | 0, this, function($data$jscomp$135_data_byte$jscomp$12_start$jscomp$34$$) {
-    this.cr = $data$jscomp$135_data_byte$jscomp$12_start$jscomp$34$$;
-    $dbg_log$$("Write command: " + $h$$($data$jscomp$135_data_byte$jscomp$12_start$jscomp$34$$, 2) + " newpg=" + (this.cr >> 6) + " txcr=" + $h$$(this.txcr, 2), 1048576);
-    this.cr & 1 || ($data$jscomp$135_data_byte$jscomp$12_start$jscomp$34$$ & 24 && 0 === this.rcnt && this.do_interrupt(64), $data$jscomp$135_data_byte$jscomp$12_start$jscomp$34$$ & 4 && ($data$jscomp$135_data_byte$jscomp$12_start$jscomp$34$$ = this.tpsr << 8, $data$jscomp$135_data_byte$jscomp$12_start$jscomp$34$$ = this.memory.subarray($data$jscomp$135_data_byte$jscomp$12_start$jscomp$34$$, $data$jscomp$135_data_byte$jscomp$12_start$jscomp$34$$ + this.tcnt), this.mac_address_in_state && ($data$jscomp$135_data_byte$jscomp$12_start$jscomp$34$$ = 
-    new Uint8Array($data$jscomp$135_data_byte$jscomp$12_start$jscomp$34$$), $translate_mac_address$$($data$jscomp$135_data_byte$jscomp$12_start$jscomp$34$$, this.mac_address_in_state, this.mac)), this.bus.send("net0-send", $data$jscomp$135_data_byte$jscomp$12_start$jscomp$34$$), this.bus.send("eth-transmit-end", [$data$jscomp$135_data_byte$jscomp$12_start$jscomp$34$$.length]), this.cr &= -5, this.do_interrupt(2), $dbg_log$$("Command: Transfer. length=" + $h$$($data$jscomp$135_data_byte$jscomp$12_start$jscomp$34$$.byteLength), 
+  $bus$jscomp$9_i$jscomp$42_io$jscomp$4$$.register_write(this.port | 0, this, function($data$jscomp$140_data_byte$jscomp$12_start$jscomp$34$$) {
+    this.cr = $data$jscomp$140_data_byte$jscomp$12_start$jscomp$34$$;
+    $dbg_log$$("Write command: " + $h$$($data$jscomp$140_data_byte$jscomp$12_start$jscomp$34$$, 2) + " newpg=" + (this.cr >> 6) + " txcr=" + $h$$(this.txcr, 2), 1048576);
+    this.cr & 1 || ($data$jscomp$140_data_byte$jscomp$12_start$jscomp$34$$ & 24 && 0 === this.rcnt && this.do_interrupt(64), $data$jscomp$140_data_byte$jscomp$12_start$jscomp$34$$ & 4 && ($data$jscomp$140_data_byte$jscomp$12_start$jscomp$34$$ = this.tpsr << 8, $data$jscomp$140_data_byte$jscomp$12_start$jscomp$34$$ = this.memory.subarray($data$jscomp$140_data_byte$jscomp$12_start$jscomp$34$$, $data$jscomp$140_data_byte$jscomp$12_start$jscomp$34$$ + this.tcnt), this.mac_address_in_state && ($data$jscomp$140_data_byte$jscomp$12_start$jscomp$34$$ = 
+    new Uint8Array($data$jscomp$140_data_byte$jscomp$12_start$jscomp$34$$), $translate_mac_address$$($data$jscomp$140_data_byte$jscomp$12_start$jscomp$34$$, this.mac_address_in_state, this.mac)), this.bus.send("net0-send", $data$jscomp$140_data_byte$jscomp$12_start$jscomp$34$$), this.bus.send("eth-transmit-end", [$data$jscomp$140_data_byte$jscomp$12_start$jscomp$34$$.length]), this.cr &= -5, this.do_interrupt(2), $dbg_log$$("Command: Transfer. length=" + $h$$($data$jscomp$140_data_byte$jscomp$12_start$jscomp$34$$.byteLength), 
     1048576)));
   });
   $bus$jscomp$9_i$jscomp$42_io$jscomp$4$$.register_read(this.port | 13, this, function() {
@@ -6060,24 +6083,24 @@ $Ne2k$$.prototype.data_port_write = function($data_byte$jscomp$29$$) {
   this.rsar >= this.pstop << 8 && (this.rsar += this.pstart - this.pstop << 8);
   0 === this.rcnt && this.do_interrupt(64);
 };
-$Ne2k$$.prototype.data_port_write16 = function($data$jscomp$136$$) {
-  this.data_port_write($data$jscomp$136$$);
-  this.dcfg & 1 && this.data_port_write($data$jscomp$136$$ >> 8);
+$Ne2k$$.prototype.data_port_write16 = function($data$jscomp$141$$) {
+  this.data_port_write($data$jscomp$141$$);
+  this.dcfg & 1 && this.data_port_write($data$jscomp$141$$ >> 8);
 };
-$Ne2k$$.prototype.data_port_write32 = function($data$jscomp$137$$) {
-  this.data_port_write($data$jscomp$137$$);
-  this.data_port_write($data$jscomp$137$$ >> 8);
-  this.data_port_write($data$jscomp$137$$ >> 16);
-  this.data_port_write($data$jscomp$137$$ >> 24);
+$Ne2k$$.prototype.data_port_write32 = function($data$jscomp$142$$) {
+  this.data_port_write($data$jscomp$142$$);
+  this.data_port_write($data$jscomp$142$$ >> 8);
+  this.data_port_write($data$jscomp$142$$ >> 16);
+  this.data_port_write($data$jscomp$142$$ >> 24);
 };
 $Ne2k$$.prototype.data_port_read = function() {
-  let $data$jscomp$138$$ = 0;
-  32768 > this.rsar && ($data$jscomp$138$$ = this.memory[this.rsar]);
+  let $data$jscomp$143$$ = 0;
+  32768 > this.rsar && ($data$jscomp$143$$ = this.memory[this.rsar]);
   this.rsar++;
   this.rcnt--;
   this.rsar >= this.pstop << 8 && (this.rsar += this.pstart - this.pstop << 8);
   0 === this.rcnt && this.do_interrupt(64);
-  return $data$jscomp$138$$;
+  return $data$jscomp$143$$;
 };
 $Ne2k$$.prototype.data_port_read8 = function() {
   return this.data_port_read16() & 255;
@@ -6088,13 +6111,13 @@ $Ne2k$$.prototype.data_port_read16 = function() {
 $Ne2k$$.prototype.data_port_read32 = function() {
   return this.data_port_read() | this.data_port_read() << 8 | this.data_port_read() << 16 | this.data_port_read() << 24;
 };
-$Ne2k$$.prototype.receive = function($data$jscomp$139$$) {
-  if (!(this.cr & 1) && (this.bus.send("eth-receive-end", [$data$jscomp$139$$.length]), this.rxcr & 16 || this.rxcr & 4 && 255 === $data$jscomp$139$$[0] && 255 === $data$jscomp$139$$[1] && 255 === $data$jscomp$139$$[2] && 255 === $data$jscomp$139$$[3] && 255 === $data$jscomp$139$$[4] && 255 === $data$jscomp$139$$[5] || !(this.rxcr & 8 && 1 === ($data$jscomp$139$$[0] & 1) || $data$jscomp$139$$[0] !== this.mac[0] || $data$jscomp$139$$[1] !== this.mac[1] || $data$jscomp$139$$[2] !== this.mac[2] || $data$jscomp$139$$[3] !== 
-  this.mac[3] || $data$jscomp$139$$[4] !== this.mac[4] || $data$jscomp$139$$[5] !== this.mac[5]))) {
-    this.mac_address_in_state && ($data$jscomp$139$$ = new Uint8Array($data$jscomp$139$$), $translate_mac_address$$($data$jscomp$139$$, this.mac, this.mac_address_in_state));
-    var $offset$jscomp$49$$ = this.curpg << 8, $total_length$$ = Math.max(60, $data$jscomp$139$$.length) + 4, $data_start$$ = $offset$jscomp$49$$ + 4, $next$$ = this.curpg + 1 + ($total_length$$ >> 8), $cut_end$jscomp$18$$ = $offset$jscomp$49$$ + $total_length$$, $needed$$ = 1 + ($total_length$$ >> 8), $available$$ = this.boundary > this.curpg ? this.boundary - this.curpg : this.pstop - this.curpg + this.boundary - this.pstart;
-    $available$$ < $needed$$ && 0 !== this.boundary ? $dbg_log$$("Buffer full, dropping packet pstart=" + $h$$(this.pstart) + " pstop=" + $h$$(this.pstop) + " curpg=" + $h$$(this.curpg) + " needed=" + $h$$($needed$$) + " boundary=" + $h$$(this.boundary) + " available=" + $h$$($available$$), 1048576) : ($cut_end$jscomp$18$$ > this.pstop << 8 ? ($dbg_assert$$(60 <= $data$jscomp$139$$.length), $cut_end$jscomp$18$$ = (this.pstop << 8) - $data_start$$, $dbg_assert$$(0 <= $cut_end$jscomp$18$$), this.memory.set($data$jscomp$139$$.subarray(0, 
-    $cut_end$jscomp$18$$), $data_start$$), this.memory.set($data$jscomp$139$$.subarray($cut_end$jscomp$18$$), this.pstart << 8), $dbg_log$$("rcv cut=" + $h$$($cut_end$jscomp$18$$), 1048576)) : (this.memory.set($data$jscomp$139$$, $data_start$$), 60 > $data$jscomp$139$$.length && this.memory.fill(0, $data_start$$ + $data$jscomp$139$$.length, $data_start$$ + 60)), $next$$ >= this.pstop && ($next$$ += this.pstart - this.pstop), this.memory[$offset$jscomp$49$$] = 1, this.memory[$offset$jscomp$49$$ + 
+$Ne2k$$.prototype.receive = function($data$jscomp$144$$) {
+  if (!(this.cr & 1) && (this.bus.send("eth-receive-end", [$data$jscomp$144$$.length]), this.rxcr & 16 || this.rxcr & 4 && 255 === $data$jscomp$144$$[0] && 255 === $data$jscomp$144$$[1] && 255 === $data$jscomp$144$$[2] && 255 === $data$jscomp$144$$[3] && 255 === $data$jscomp$144$$[4] && 255 === $data$jscomp$144$$[5] || !(this.rxcr & 8 && 1 === ($data$jscomp$144$$[0] & 1) || $data$jscomp$144$$[0] !== this.mac[0] || $data$jscomp$144$$[1] !== this.mac[1] || $data$jscomp$144$$[2] !== this.mac[2] || $data$jscomp$144$$[3] !== 
+  this.mac[3] || $data$jscomp$144$$[4] !== this.mac[4] || $data$jscomp$144$$[5] !== this.mac[5]))) {
+    this.mac_address_in_state && ($data$jscomp$144$$ = new Uint8Array($data$jscomp$144$$), $translate_mac_address$$($data$jscomp$144$$, this.mac, this.mac_address_in_state));
+    var $offset$jscomp$49$$ = this.curpg << 8, $total_length$$ = Math.max(60, $data$jscomp$144$$.length) + 4, $data_start$$ = $offset$jscomp$49$$ + 4, $next$$ = this.curpg + 1 + ($total_length$$ >> 8), $cut_end$jscomp$18$$ = $offset$jscomp$49$$ + $total_length$$, $needed$$ = 1 + ($total_length$$ >> 8), $available$$ = this.boundary > this.curpg ? this.boundary - this.curpg : this.pstop - this.curpg + this.boundary - this.pstart;
+    $available$$ < $needed$$ && 0 !== this.boundary ? $dbg_log$$("Buffer full, dropping packet pstart=" + $h$$(this.pstart) + " pstop=" + $h$$(this.pstop) + " curpg=" + $h$$(this.curpg) + " needed=" + $h$$($needed$$) + " boundary=" + $h$$(this.boundary) + " available=" + $h$$($available$$), 1048576) : ($cut_end$jscomp$18$$ > this.pstop << 8 ? ($dbg_assert$$(60 <= $data$jscomp$144$$.length), $cut_end$jscomp$18$$ = (this.pstop << 8) - $data_start$$, $dbg_assert$$(0 <= $cut_end$jscomp$18$$), this.memory.set($data$jscomp$144$$.subarray(0, 
+    $cut_end$jscomp$18$$), $data_start$$), this.memory.set($data$jscomp$144$$.subarray($cut_end$jscomp$18$$), this.pstart << 8), $dbg_log$$("rcv cut=" + $h$$($cut_end$jscomp$18$$), 1048576)) : (this.memory.set($data$jscomp$144$$, $data_start$$), 60 > $data$jscomp$144$$.length && this.memory.fill(0, $data_start$$ + $data$jscomp$144$$.length, $data_start$$ + 60)), $next$$ >= this.pstop && ($next$$ += this.pstart - this.pstop), this.memory[$offset$jscomp$49$$] = 1, this.memory[$offset$jscomp$49$$ + 
     1] = $next$$, this.memory[$offset$jscomp$49$$ + 2] = $total_length$$, this.memory[$offset$jscomp$49$$ + 3] = $total_length$$ >> 8, this.curpg = $next$$, $dbg_log$$("rcv offset=" + $h$$($offset$jscomp$49$$) + " len=" + $h$$($total_length$$) + " next=" + $h$$($next$$), 1048576), this.do_interrupt(1));
   }
 };
@@ -6449,10 +6472,10 @@ $register_dsp_command$$([15], 1, function() {
   this.read_buffer.push(this.asp_registers[this.write_buffer.shift()]);
 });
 $register_dsp_command$$([16], 1, function() {
-  var $value$jscomp$171_value$jscomp$inline_10$$ = this.write_buffer.shift();
-  $value$jscomp$171_value$jscomp$inline_10$$ = $audio_clip$$($value$jscomp$171_value$jscomp$inline_10$$ / 127.5 + -1, -1, 1);
-  this.dac_buffers[0].push($value$jscomp$171_value$jscomp$inline_10$$);
-  this.dac_buffers[1].push($value$jscomp$171_value$jscomp$inline_10$$);
+  var $value$jscomp$171_value$jscomp$inline_11$$ = this.write_buffer.shift();
+  $value$jscomp$171_value$jscomp$inline_11$$ = $audio_clip$$($value$jscomp$171_value$jscomp$inline_11$$ / 127.5 + -1, -1, 1);
+  this.dac_buffers[0].push($value$jscomp$171_value$jscomp$inline_11$$);
+  this.dac_buffers[1].push($value$jscomp$171_value$jscomp$inline_11$$);
   this.bus.send("dac-enable");
 });
 $register_dsp_command$$([20, 21], 2, function() {
@@ -6612,21 +6635,21 @@ $register_dsp_command$$([249], 1, function() {
   this.read_buffer.push($SB_F9$$[$input$jscomp$9$$]);
 });
 $SB16$$.prototype.mixer_read = function($address$jscomp$3$$) {
-  var $data$jscomp$140_handler$jscomp$7$$ = $MIXER_READ_HANDLERS$$[$address$jscomp$3$$];
-  $data$jscomp$140_handler$jscomp$7$$ ? $data$jscomp$140_handler$jscomp$7$$ = $data$jscomp$140_handler$jscomp$7$$.call(this) : ($data$jscomp$140_handler$jscomp$7$$ = this.mixer_registers[$address$jscomp$3$$], $dbg_log$$("unhandled mixer register read. addr:" + $h$$($address$jscomp$3$$) + " data:" + $h$$($data$jscomp$140_handler$jscomp$7$$), 8388608));
-  return $data$jscomp$140_handler$jscomp$7$$;
+  var $data$jscomp$145_handler$jscomp$7$$ = $MIXER_READ_HANDLERS$$[$address$jscomp$3$$];
+  $data$jscomp$145_handler$jscomp$7$$ ? $data$jscomp$145_handler$jscomp$7$$ = $data$jscomp$145_handler$jscomp$7$$.call(this) : ($data$jscomp$145_handler$jscomp$7$$ = this.mixer_registers[$address$jscomp$3$$], $dbg_log$$("unhandled mixer register read. addr:" + $h$$($address$jscomp$3$$) + " data:" + $h$$($data$jscomp$145_handler$jscomp$7$$), 8388608));
+  return $data$jscomp$145_handler$jscomp$7$$;
 };
-$SB16$$.prototype.mixer_write = function($address$jscomp$4$$, $data$jscomp$141$$) {
+$SB16$$.prototype.mixer_write = function($address$jscomp$4$$, $data$jscomp$146$$) {
   var $handler$jscomp$8$$ = $MIXER_WRITE_HANDLERS$$[$address$jscomp$4$$];
-  $handler$jscomp$8$$ ? $handler$jscomp$8$$.call(this, $data$jscomp$141$$) : $dbg_log$$("unhandled mixer register write. addr:" + $h$$($address$jscomp$4$$) + " data:" + $h$$($data$jscomp$141$$), 8388608);
+  $handler$jscomp$8$$ ? $handler$jscomp$8$$.call(this, $data$jscomp$146$$) : $dbg_log$$("unhandled mixer register write. addr:" + $h$$($address$jscomp$4$$) + " data:" + $h$$($data$jscomp$146$$), 8388608);
 };
 $SB16$$.prototype.mixer_default_read = function() {
   $dbg_log$$("mixer register read. addr:" + $h$$(this.mixer_current_address), 8388608);
   return this.mixer_registers[this.mixer_current_address];
 };
-$SB16$$.prototype.mixer_default_write = function($data$jscomp$142$$) {
-  $dbg_log$$("mixer register write. addr:" + $h$$(this.mixer_current_address) + " data:" + $h$$($data$jscomp$142$$), 8388608);
-  this.mixer_registers[this.mixer_current_address] = $data$jscomp$142$$;
+$SB16$$.prototype.mixer_default_write = function($data$jscomp$147$$) {
+  $dbg_log$$("mixer register write. addr:" + $h$$(this.mixer_current_address) + " data:" + $h$$($data$jscomp$147$$), 8388608);
+  this.mixer_registers[this.mixer_current_address] = $data$jscomp$147$$;
 };
 $SB16$$.prototype.mixer_reset = function() {
   this.mixer_registers[4] = 204;
@@ -6678,18 +6701,18 @@ function $register_mixer_legacy$$($address_old$$, $address_new_left$$, $address_
   $MIXER_READ_HANDLERS$$[$address_old$$] = function() {
     return this.mixer_registers[$address_new_left$$] & 240 | this.mixer_registers[$address_new_right$$] >>> 4;
   };
-  $MIXER_WRITE_HANDLERS$$[$address_old$$] = function($data$jscomp$143$$) {
-    this.mixer_registers[$address_old$$] = $data$jscomp$143$$;
-    var $right$jscomp$4$$ = $data$jscomp$143$$ << 4 & 240 | this.mixer_registers[$address_new_right$$] & 15;
-    this.mixer_write($address_new_left$$, $data$jscomp$143$$ & 240 | this.mixer_registers[$address_new_left$$] & 15);
+  $MIXER_WRITE_HANDLERS$$[$address_old$$] = function($data$jscomp$148$$) {
+    this.mixer_registers[$address_old$$] = $data$jscomp$148$$;
+    var $right$jscomp$4$$ = $data$jscomp$148$$ << 4 & 240 | this.mixer_registers[$address_new_right$$] & 15;
+    this.mixer_write($address_new_left$$, $data$jscomp$148$$ & 240 | this.mixer_registers[$address_new_left$$] & 15);
     this.mixer_write($address_new_right$$, $right$jscomp$4$$);
   };
 }
 function $register_mixer_volume$$($address$jscomp$7$$, $mixer_source$$, $channel$jscomp$16$$) {
   $MIXER_READ_HANDLERS$$[$address$jscomp$7$$] = $SB16$$.prototype.mixer_default_read;
-  $MIXER_WRITE_HANDLERS$$[$address$jscomp$7$$] = function($data$jscomp$144$$) {
-    this.mixer_registers[$address$jscomp$7$$] = $data$jscomp$144$$;
-    this.bus.send("mixer-volume", [$mixer_source$$, $channel$jscomp$16$$, ($data$jscomp$144$$ >>> 2) - 62]);
+  $MIXER_WRITE_HANDLERS$$[$address$jscomp$7$$] = function($data$jscomp$149$$) {
+    this.mixer_registers[$address$jscomp$7$$] = $data$jscomp$149$$;
+    this.bus.send("mixer-volume", [$mixer_source$$, $channel$jscomp$16$$, ($data$jscomp$149$$ >>> 2) - 62]);
   };
 }
 $register_mixer_read$$(0, function() {
@@ -6707,43 +6730,43 @@ $register_mixer_volume$$(49, 0, 1);
 $register_mixer_volume$$(50, 2, 0);
 $register_mixer_volume$$(51, 2, 1);
 $register_mixer_read$$(59);
-$register_mixer_write$$(59, function($data$jscomp$145$$) {
-  this.mixer_registers[59] = $data$jscomp$145$$;
-  this.bus.send("mixer-volume", [1, 2, 6 * ($data$jscomp$145$$ >>> 6) - 18]);
+$register_mixer_write$$(59, function($data$jscomp$150$$) {
+  this.mixer_registers[59] = $data$jscomp$150$$;
+  this.bus.send("mixer-volume", [1, 2, 6 * ($data$jscomp$150$$ >>> 6) - 18]);
 });
 $register_mixer_read$$(65);
-$register_mixer_write$$(65, function($data$jscomp$146$$) {
-  this.mixer_registers[65] = $data$jscomp$146$$;
-  this.bus.send("mixer-gain-left", 6 * ($data$jscomp$146$$ >>> 6));
+$register_mixer_write$$(65, function($data$jscomp$151$$) {
+  this.mixer_registers[65] = $data$jscomp$151$$;
+  this.bus.send("mixer-gain-left", 6 * ($data$jscomp$151$$ >>> 6));
 });
 $register_mixer_read$$(66);
-$register_mixer_write$$(66, function($data$jscomp$147$$) {
-  this.mixer_registers[66] = $data$jscomp$147$$;
-  this.bus.send("mixer-gain-right", 6 * ($data$jscomp$147$$ >>> 6));
+$register_mixer_write$$(66, function($data$jscomp$152$$) {
+  this.mixer_registers[66] = $data$jscomp$152$$;
+  this.bus.send("mixer-gain-right", 6 * ($data$jscomp$152$$ >>> 6));
 });
 $register_mixer_read$$(68);
-$register_mixer_write$$(68, function($data$jscomp$148$$) {
-  this.mixer_registers[68] = $data$jscomp$148$$;
-  $data$jscomp$148$$ >>>= 3;
-  this.bus.send("mixer-treble-left", $data$jscomp$148$$ - (16 > $data$jscomp$148$$ ? 14 : 16));
+$register_mixer_write$$(68, function($data$jscomp$153$$) {
+  this.mixer_registers[68] = $data$jscomp$153$$;
+  $data$jscomp$153$$ >>>= 3;
+  this.bus.send("mixer-treble-left", $data$jscomp$153$$ - (16 > $data$jscomp$153$$ ? 14 : 16));
 });
 $register_mixer_read$$(69);
-$register_mixer_write$$(69, function($data$jscomp$149$$) {
-  this.mixer_registers[69] = $data$jscomp$149$$;
-  $data$jscomp$149$$ >>>= 3;
-  this.bus.send("mixer-treble-right", $data$jscomp$149$$ - (16 > $data$jscomp$149$$ ? 14 : 16));
+$register_mixer_write$$(69, function($data$jscomp$154$$) {
+  this.mixer_registers[69] = $data$jscomp$154$$;
+  $data$jscomp$154$$ >>>= 3;
+  this.bus.send("mixer-treble-right", $data$jscomp$154$$ - (16 > $data$jscomp$154$$ ? 14 : 16));
 });
 $register_mixer_read$$(70);
-$register_mixer_write$$(70, function($data$jscomp$150$$) {
-  this.mixer_registers[70] = $data$jscomp$150$$;
-  $data$jscomp$150$$ >>>= 3;
-  this.bus.send("mixer-bass-right", $data$jscomp$150$$ - (16 > $data$jscomp$150$$ ? 14 : 16));
+$register_mixer_write$$(70, function($data$jscomp$155$$) {
+  this.mixer_registers[70] = $data$jscomp$155$$;
+  $data$jscomp$155$$ >>>= 3;
+  this.bus.send("mixer-bass-right", $data$jscomp$155$$ - (16 > $data$jscomp$155$$ ? 14 : 16));
 });
 $register_mixer_read$$(71);
-$register_mixer_write$$(71, function($data$jscomp$151$$) {
-  this.mixer_registers[71] = $data$jscomp$151$$;
-  $data$jscomp$151$$ >>>= 3;
-  this.bus.send("mixer-bass-right", $data$jscomp$151$$ - (16 > $data$jscomp$151$$ ? 14 : 16));
+$register_mixer_write$$(71, function($data$jscomp$156$$) {
+  this.mixer_registers[71] = $data$jscomp$156$$;
+  $data$jscomp$156$$ >>>= 3;
+  this.bus.send("mixer-bass-right", $data$jscomp$156$$ - (16 > $data$jscomp$156$$ ? 14 : 16));
 });
 $register_mixer_read$$(128, function() {
   switch(this.irq) {
@@ -6803,8 +6826,8 @@ $register_mixer_read$$(130, function() {
   }
   return $ret$jscomp$4$$;
 });
-$SB16$$.prototype.fm_default_write = function($data$jscomp$152$$, $register$jscomp$1$$, $address$jscomp$8$$) {
-  $dbg_log$$("unhandled fm register write. addr:" + $register$jscomp$1$$ + "|" + $h$$($address$jscomp$8$$) + " data:" + $h$$($data$jscomp$152$$), 8388608);
+$SB16$$.prototype.fm_default_write = function($data$jscomp$157$$, $register$jscomp$1$$, $address$jscomp$8$$) {
+  $dbg_log$$("unhandled fm register write. addr:" + $register$jscomp$1$$ + "|" + $h$$($address$jscomp$8$$) + " data:" + $h$$($data$jscomp$157$$), 8388608);
 };
 function $register_fm_write$$($addresses$$, $handler$jscomp$11$$) {
   $handler$jscomp$11$$ || ($handler$jscomp$11$$ = $SB16$$.prototype.fm_default_write);
@@ -6977,54 +7000,54 @@ function $audio_clip$$($value$jscomp$173$$, $low$jscomp$1$$, $high$jscomp$1$$) {
   this.reset();
 }
 $VirtIO$$.prototype.create_common_capability = function($options$jscomp$37$$) {
-  return {type:1, bar:0, port:$options$jscomp$37$$.initial_port, use_mmio:!1, offset:0, extra:new Uint8Array(0), struct:[{bytes:4, name:"device_feature_select", read:() => this.device_feature_select, write:$data$jscomp$153$$ => {
-    this.device_feature_select = $data$jscomp$153$$;
+  return {type:1, bar:0, port:$options$jscomp$37$$.initial_port, use_mmio:!1, offset:0, extra:new Uint8Array(0), struct:[{bytes:4, name:"device_feature_select", read:() => this.device_feature_select, write:$data$jscomp$158$$ => {
+    this.device_feature_select = $data$jscomp$158$$;
   }, }, {bytes:4, name:"device_feature", read:() => this.device_feature[this.device_feature_select] || 0, write:() => {
-  }, }, {bytes:4, name:"driver_feature_select", read:() => this.driver_feature_select, write:$data$jscomp$155$$ => {
-    this.driver_feature_select = $data$jscomp$155$$;
-  }, }, {bytes:4, name:"driver_feature", read:() => this.driver_feature[this.driver_feature_select] || 0, write:$data$jscomp$156$$ => {
+  }, }, {bytes:4, name:"driver_feature_select", read:() => this.driver_feature_select, write:$data$jscomp$160$$ => {
+    this.driver_feature_select = $data$jscomp$160$$;
+  }, }, {bytes:4, name:"driver_feature", read:() => this.driver_feature[this.driver_feature_select] || 0, write:$data$jscomp$161$$ => {
     const $supported_feature$$ = this.device_feature[this.driver_feature_select];
-    this.driver_feature_select < this.driver_feature.length && (this.driver_feature[this.driver_feature_select] = $data$jscomp$156$$ & $supported_feature$$);
-    this.features_ok = this.features_ok && !($data$jscomp$156$$ & ~$supported_feature$$);
+    this.driver_feature_select < this.driver_feature.length && (this.driver_feature[this.driver_feature_select] = $data$jscomp$161$$ & $supported_feature$$);
+    this.features_ok = this.features_ok && !($data$jscomp$161$$ & ~$supported_feature$$);
   }, }, {bytes:2, name:"msix_config", read:() => {
     $dbg_log$$("No msi-x capability supported.", 2097152);
     return 65535;
   }, write:() => {
     $dbg_log$$("No msi-x capability supported.", 2097152);
   }, }, {bytes:2, name:"num_queues", read:() => this.queues.length, write:() => {
-  }, }, {bytes:1, name:"device_status", read:() => this.device_status, write:$data$jscomp$159$$ => {
-    0 === $data$jscomp$159$$ ? ($dbg_log$$("Reset device<" + this.name + ">", 2097152), this.reset()) : $data$jscomp$159$$ & 128 ? $dbg_log$$("Warning: Device<" + this.name + "> status failed", 2097152) : $dbg_log$$("Device<" + this.name + "> status: " + ($data$jscomp$159$$ & 1 ? "ACKNOWLEDGE " : "") + ($data$jscomp$159$$ & 2 ? "DRIVER " : "") + ($data$jscomp$159$$ & 4 ? "DRIVER_OK" : "") + ($data$jscomp$159$$ & 8 ? "FEATURES_OK " : "") + ($data$jscomp$159$$ & 64 ? "DEVICE_NEEDS_RESET" : ""), 2097152);
-    $data$jscomp$159$$ & ~this.device_status & 4 && this.device_status & 64 && this.notify_config_changes();
-    this.features_ok || ($data$jscomp$159$$ & 8 && $dbg_log$$("Removing FEATURES_OK", 2097152), $data$jscomp$159$$ &= -9);
-    this.device_status = $data$jscomp$159$$;
-    if ($data$jscomp$159$$ & ~this.device_status & 4) {
+  }, }, {bytes:1, name:"device_status", read:() => this.device_status, write:$data$jscomp$164$$ => {
+    0 === $data$jscomp$164$$ ? ($dbg_log$$("Reset device<" + this.name + ">", 2097152), this.reset()) : $data$jscomp$164$$ & 128 ? $dbg_log$$("Warning: Device<" + this.name + "> status failed", 2097152) : $dbg_log$$("Device<" + this.name + "> status: " + ($data$jscomp$164$$ & 1 ? "ACKNOWLEDGE " : "") + ($data$jscomp$164$$ & 2 ? "DRIVER " : "") + ($data$jscomp$164$$ & 4 ? "DRIVER_OK" : "") + ($data$jscomp$164$$ & 8 ? "FEATURES_OK " : "") + ($data$jscomp$164$$ & 64 ? "DEVICE_NEEDS_RESET" : ""), 2097152);
+    $data$jscomp$164$$ & ~this.device_status & 4 && this.device_status & 64 && this.notify_config_changes();
+    this.features_ok || ($data$jscomp$164$$ & 8 && $dbg_log$$("Removing FEATURES_OK", 2097152), $data$jscomp$164$$ &= -9);
+    this.device_status = $data$jscomp$164$$;
+    if ($data$jscomp$164$$ & ~this.device_status & 4) {
       $options$jscomp$37$$.on_driver_ok();
     }
   }, }, {bytes:1, name:"config_generation", read:() => this.config_generation, write:() => {
-  }, }, {bytes:2, name:"queue_select", read:() => this.queue_select, write:$data$jscomp$161$$ => {
-    this.queue_select = $data$jscomp$161$$;
+  }, }, {bytes:2, name:"queue_select", read:() => this.queue_select, write:$data$jscomp$166$$ => {
+    this.queue_select = $data$jscomp$166$$;
     this.queue_selected = this.queue_select < this.queues.length ? this.queues[this.queue_select] : null;
-  }, }, {bytes:2, name:"queue_size", read:() => this.queue_selected ? this.queue_selected.size : 0, write:$data$jscomp$162$$ => {
-    this.queue_selected && ($data$jscomp$162$$ & $data$jscomp$162$$ - 1 && ($dbg_log$$("Warning: dev<" + this.name + "> Given queue size was not a power of 2. Rounding up to next power of 2.", 2097152), $data$jscomp$162$$ = 1 << $v86util$$.int_log2($data$jscomp$162$$ - 1) + 1), $data$jscomp$162$$ > this.queue_selected.size_supported && ($dbg_log$$("Warning: dev<" + this.name + "> Trying to set queue size greater than supported. Clamping to supported size.", 2097152), $data$jscomp$162$$ = this.queue_selected.size_supported), 
-    this.queue_selected.set_size($data$jscomp$162$$));
+  }, }, {bytes:2, name:"queue_size", read:() => this.queue_selected ? this.queue_selected.size : 0, write:$data$jscomp$167$$ => {
+    this.queue_selected && ($data$jscomp$167$$ & $data$jscomp$167$$ - 1 && ($dbg_log$$("Warning: dev<" + this.name + "> Given queue size was not a power of 2. Rounding up to next power of 2.", 2097152), $data$jscomp$167$$ = 1 << $v86util$$.int_log2($data$jscomp$167$$ - 1) + 1), $data$jscomp$167$$ > this.queue_selected.size_supported && ($dbg_log$$("Warning: dev<" + this.name + "> Trying to set queue size greater than supported. Clamping to supported size.", 2097152), $data$jscomp$167$$ = this.queue_selected.size_supported), 
+    this.queue_selected.set_size($data$jscomp$167$$));
   }, }, {bytes:2, name:"queue_msix_vector", read:() => {
     $dbg_log$$("No msi-x capability supported.", 2097152);
     return 65535;
   }, write:() => {
     $dbg_log$$("No msi-x capability supported.", 2097152);
-  }, }, {bytes:2, name:"queue_enable", read:() => this.queue_selected ? this.queue_selected.enabled | 0 : 0, write:$data$jscomp$164$$ => {
-    this.queue_selected && (1 === $data$jscomp$164$$ ? this.queue_selected.is_configured() ? this.queue_selected.enable() : $dbg_log$$("Driver bug: tried enabling unconfigured queue", 2097152) : 0 === $data$jscomp$164$$ && $dbg_log$$("Driver bug: tried writing 0 to queue_enable", 2097152));
+  }, }, {bytes:2, name:"queue_enable", read:() => this.queue_selected ? this.queue_selected.enabled | 0 : 0, write:$data$jscomp$169$$ => {
+    this.queue_selected && (1 === $data$jscomp$169$$ ? this.queue_selected.is_configured() ? this.queue_selected.enable() : $dbg_log$$("Driver bug: tried enabling unconfigured queue", 2097152) : 0 === $data$jscomp$169$$ && $dbg_log$$("Driver bug: tried writing 0 to queue_enable", 2097152));
   }, }, {bytes:2, name:"queue_notify_off", read:() => this.queue_selected ? this.queue_selected.notify_offset : 0, write:() => {
-  }, }, {bytes:4, name:"queue_desc (low dword)", read:() => this.queue_selected ? this.queue_selected.desc_addr : 0, write:$data$jscomp$166$$ => {
-    this.queue_selected && (this.queue_selected.desc_addr = $data$jscomp$166$$);
+  }, }, {bytes:4, name:"queue_desc (low dword)", read:() => this.queue_selected ? this.queue_selected.desc_addr : 0, write:$data$jscomp$171$$ => {
+    this.queue_selected && (this.queue_selected.desc_addr = $data$jscomp$171$$);
   }, }, {bytes:4, name:"queue_desc (high dword)", read:() => 0, write:() => {
     $dbg_log$$("Warning: High dword of 64 bit queue_desc ignored", 2097152);
-  }, }, {bytes:4, name:"queue_avail (low dword)", read:() => this.queue_selected ? this.queue_selected.avail_addr : 0, write:$data$jscomp$168$$ => {
-    this.queue_selected && (this.queue_selected.avail_addr = $data$jscomp$168$$);
+  }, }, {bytes:4, name:"queue_avail (low dword)", read:() => this.queue_selected ? this.queue_selected.avail_addr : 0, write:$data$jscomp$173$$ => {
+    this.queue_selected && (this.queue_selected.avail_addr = $data$jscomp$173$$);
   }, }, {bytes:4, name:"queue_avail (high dword)", read:() => 0, write:() => {
     $dbg_log$$("Warning: High dword of 64 bit queue_avail ignored", 2097152);
-  }, }, {bytes:4, name:"queue_used (low dword)", read:() => this.queue_selected ? this.queue_selected.used_addr : 0, write:$data$jscomp$170$$ => {
-    this.queue_selected && (this.queue_selected.used_addr = $data$jscomp$170$$);
+  }, }, {bytes:4, name:"queue_used (low dword)", read:() => this.queue_selected ? this.queue_selected.used_addr : 0, write:$data$jscomp$175$$ => {
+    this.queue_selected && (this.queue_selected.used_addr = $data$jscomp$175$$);
   }, }, {bytes:4, name:"queue_used (high dword)", read:() => 0, write:() => {
     $dbg_log$$("Warning: High dword of 64 bit queue_used ignored", 2097152);
   }, }, ], };
@@ -7098,9 +7121,9 @@ $VirtIO$$.prototype.init_capabilities = function($cap_len$jscomp$1_capabilities$
         $dbg_log$$("Device<" + this.name + "> cap[" + $cap$jscomp$2$$.type + "] read[" + $field$jscomp$1$$.name + "] => " + $h$$($val$$, 8 * $field$jscomp$1$$.bytes), 2097152);
         return $val$$;
       };
-      $cap_len$jscomp$1_capabilities$jscomp$1_write$$ = $data$jscomp$174$$ => {
-        $dbg_log$$("Device<" + this.name + "> cap[" + $cap$jscomp$2$$.type + "] write[" + $field$jscomp$1$$.name + "] <= " + $h$$($data$jscomp$174$$, 8 * $field$jscomp$1$$.bytes), 2097152);
-        $field$jscomp$1$$.write($data$jscomp$174$$);
+      $cap_len$jscomp$1_capabilities$jscomp$1_write$$ = $data$jscomp$179$$ => {
+        $dbg_log$$("Device<" + this.name + "> cap[" + $cap$jscomp$2$$.type + "] write[" + $field$jscomp$1$$.name + "] <= " + $h$$($data$jscomp$179$$, 8 * $field$jscomp$1$$.bytes), 2097152);
+        $field$jscomp$1$$.write($data$jscomp$179$$);
       };
       if ($cap$jscomp$2$$.use_mmio) {
         $dbg_assert$$(!1, "VirtIO device <" + this.name + "> mmio capability not implemented.");
@@ -7429,33 +7452,162 @@ $VirtQueueBufferChain$$.prototype.set_next_blob = function($src_buffer$$) {
   this.length_written += $src_offset$$;
   return $src_offset$$;
 };
+function $VirtioConsole$$($cpu$jscomp$20$$, $bus$jscomp$11_queues$$) {
+  this.bus = $bus$jscomp$11_queues$$;
+  this.rows = 25;
+  this.cols = 80;
+  this.ports = 4;
+  $bus$jscomp$11_queues$$ = [{size_supported:16, notify_offset:0, }, {size_supported:16, notify_offset:1, }, {size_supported:16, notify_offset:2, }, {size_supported:16, notify_offset:3, }, ];
+  for (let $i$jscomp$57$$ = 1; $i$jscomp$57$$ < this.ports; ++$i$jscomp$57$$) {
+    $bus$jscomp$11_queues$$.push({size_supported:16, notify_offset:0}), $bus$jscomp$11_queues$$.push({size_supported:8, notify_offset:1});
+  }
+  this.virtio = new $VirtIO$$($cpu$jscomp$20$$, {name:"virtio-console", pci_id:56, device_id:4163, subsystem_device_id:3, common:{initial_port:47104, queues:$bus$jscomp$11_queues$$, features:[0, 1, 32, ], on_driver_ok:() => {
+  }, }, notification:{initial_port:47360, single_handler:!1, handlers:[$queue$jscomp$2_queue_id$jscomp$1$$ => {
+    for ($queue$jscomp$2_queue_id$jscomp$1$$ = this.virtio.queues[$queue$jscomp$2_queue_id$jscomp$1$$]; $queue$jscomp$2_queue_id$jscomp$1$$.count_requests() > $queue$jscomp$2_queue_id$jscomp$1$$.size - 2;) {
+      $queue$jscomp$2_queue_id$jscomp$1$$.pop_request();
+    }
+  }, $queue_id$jscomp$2$$ => {
+    let $queue$jscomp$3$$ = this.virtio.queues[$queue_id$jscomp$2$$], $port$jscomp$3$$ = 3 < $queue_id$jscomp$2$$ ? $queue_id$jscomp$2$$ - 3 >> 1 : 0;
+    for (; $queue$jscomp$3$$.has_request();) {
+      const $bufchain$jscomp$5$$ = $queue$jscomp$3$$.pop_request(), $buffer$jscomp$38$$ = new Uint8Array($bufchain$jscomp$5$$.length_readable);
+      $bufchain$jscomp$5$$.get_next_blob($buffer$jscomp$38$$);
+      this.bus.send("virtio-console" + $port$jscomp$3$$ + "-output-bytes", $buffer$jscomp$38$$);
+      this.Ack($queue_id$jscomp$2$$, $bufchain$jscomp$5$$);
+    }
+  }, $queue$jscomp$4_queue_id$jscomp$3$$ => {
+    if (2 != $queue$jscomp$4_queue_id$jscomp$3$$) {
+      $dbg_assert$$(!1, "VirtioConsole Notified for wrong queue: " + $queue$jscomp$4_queue_id$jscomp$3$$ + " (expected queue_id of 2)");
+    } else {
+      for ($queue$jscomp$4_queue_id$jscomp$3$$ = this.virtio.queues[$queue$jscomp$4_queue_id$jscomp$3$$]; $queue$jscomp$4_queue_id$jscomp$3$$.count_requests() > $queue$jscomp$4_queue_id$jscomp$3$$.size - 2;) {
+        $queue$jscomp$4_queue_id$jscomp$3$$.pop_request();
+      }
+    }
+  }, $queue_id$jscomp$4$$ => {
+    if (3 != $queue_id$jscomp$4$$) {
+      $dbg_assert$$(!1, "VirtioConsole Notified for wrong queue: " + $queue_id$jscomp$4$$ + " (expected queue_id of 3)");
+    } else {
+      for (var $queue$jscomp$5$$ = this.virtio.queues[$queue_id$jscomp$4$$]; $queue$jscomp$5$$.has_request();) {
+        var $bufchain$jscomp$6_i$jscomp$58$$ = $queue$jscomp$5$$.pop_request(), $buffer$jscomp$39_port$jscomp$4$$ = new Uint8Array($bufchain$jscomp$6_i$jscomp$58$$.length_readable);
+        $bufchain$jscomp$6_i$jscomp$58$$.get_next_blob($buffer$jscomp$39_port$jscomp$4$$);
+        var $event$jscomp$4_parts$jscomp$2$$ = $marshall$$.Unmarshall(["w", "h", "h"], $buffer$jscomp$39_port$jscomp$4$$, {offset:0});
+        $buffer$jscomp$39_port$jscomp$4$$ = $event$jscomp$4_parts$jscomp$2$$[0];
+        $event$jscomp$4_parts$jscomp$2$$ = $event$jscomp$4_parts$jscomp$2$$[1];
+        this.Ack($queue_id$jscomp$4$$, $bufchain$jscomp$6_i$jscomp$58$$);
+        switch($event$jscomp$4_parts$jscomp$2$$) {
+          case 0:
+            for ($bufchain$jscomp$6_i$jscomp$58$$ = 0; $bufchain$jscomp$6_i$jscomp$58$$ < this.ports; ++$bufchain$jscomp$6_i$jscomp$58$$) {
+              this.SendEvent($bufchain$jscomp$6_i$jscomp$58$$, 1, 0);
+            }
+            break;
+          case 3:
+            this.Ack($queue_id$jscomp$4$$, $bufchain$jscomp$6_i$jscomp$58$$);
+            this.SendEvent($buffer$jscomp$39_port$jscomp$4$$, 4, 1);
+            this.SendName($buffer$jscomp$39_port$jscomp$4$$, "virtio-" + $buffer$jscomp$39_port$jscomp$4$$);
+            this.SendEvent($buffer$jscomp$39_port$jscomp$4$$, 6, 1);
+            break;
+          case 6:
+            this.Ack($queue_id$jscomp$4$$, $bufchain$jscomp$6_i$jscomp$58$$);
+            0 == $buffer$jscomp$39_port$jscomp$4$$ && this.SendWindowSize($buffer$jscomp$39_port$jscomp$4$$);
+            break;
+          default:
+            $dbg_assert$$(!1, " VirtioConsole received unknown event: " + $event$jscomp$4_parts$jscomp$2$$[1]);
+            return;
+        }
+      }
+    }
+  }, ], }, isr_status:{initial_port:46848, }, device_specific:{initial_port:46592, struct:[{bytes:2, name:"cols", read:() => this.cols, write:() => {
+  }, }, {bytes:2, name:"rows", read:() => this.rows, write:() => {
+  }, }, {bytes:4, name:"max_nr_ports", read:() => this.ports, write:() => {
+  }, }, {bytes:4, name:"emerg_wr", read:() => 0, write:() => {
+    $dbg_assert$$(!1, "Emergency write!");
+  }, }, ]}, });
+  for (let $port$jscomp$5$$ = 0; $port$jscomp$5$$ < this.ports; ++$port$jscomp$5$$) {
+    this.bus.register("virtio-console" + $port$jscomp$5$$ + "-input-bytes", function($data$jscomp$184$$) {
+      var $bufchain$jscomp$7_queue$jscomp$7$$ = this.virtio.queues[0];
+      $bufchain$jscomp$7_queue$jscomp$7$$.has_request() && ($bufchain$jscomp$7_queue$jscomp$7$$ = $bufchain$jscomp$7_queue$jscomp$7$$.pop_request(), this.Send(0, $bufchain$jscomp$7_queue$jscomp$7$$, new Uint8Array($data$jscomp$184$$)));
+    }, this), this.bus.register("virtio-console" + $port$jscomp$5$$ + "-resize", function($size$jscomp$36$$) {
+      this.cols = $size$jscomp$36$$[0];
+      this.rows = $size$jscomp$36$$[1];
+      this.virtio.queues[2].is_configured() && this.virtio.queues[2].has_request() && this.SendWindowSize($port$jscomp$5$$);
+    }, this);
+  }
+}
+$VirtioConsole$$.prototype.SendWindowSize = function($port$jscomp$6$$) {
+  const $bufchain$jscomp$8$$ = this.virtio.queues[2].pop_request();
+  let $buf$jscomp$3$$ = new Uint8Array(12);
+  $marshall$$.Marshall(["w", "h", "h", "h", "h"], [$port$jscomp$6$$, 5, 0, this.rows, this.cols], $buf$jscomp$3$$, 0);
+  this.Send(2, $bufchain$jscomp$8$$, $buf$jscomp$3$$);
+};
+$VirtioConsole$$.prototype.SendName = function($i$jscomp$59_port$jscomp$7$$, $name$jscomp$79_namex$$) {
+  const $bufchain$jscomp$9$$ = this.virtio.queues[2].pop_request();
+  $name$jscomp$79_namex$$ = (new TextEncoder).encode($name$jscomp$79_namex$$);
+  let $buf$jscomp$4$$ = new Uint8Array(8 + $name$jscomp$79_namex$$.length + 1);
+  $marshall$$.Marshall(["w", "h", "h"], [$i$jscomp$59_port$jscomp$7$$, 7, 1], $buf$jscomp$4$$, 0);
+  for ($i$jscomp$59_port$jscomp$7$$ = 0; $i$jscomp$59_port$jscomp$7$$ < $name$jscomp$79_namex$$.length; ++$i$jscomp$59_port$jscomp$7$$) {
+    $buf$jscomp$4$$[$i$jscomp$59_port$jscomp$7$$ + 8] = $name$jscomp$79_namex$$[$i$jscomp$59_port$jscomp$7$$];
+  }
+  $buf$jscomp$4$$[8 + $name$jscomp$79_namex$$.length] = 0;
+  this.Send(2, $bufchain$jscomp$9$$, $buf$jscomp$4$$);
+};
+$VirtioConsole$$.prototype.get_state = function() {
+  let $state$jscomp$45$$ = [];
+  $state$jscomp$45$$[0] = this.virtio;
+  $state$jscomp$45$$[1] = this.rows;
+  $state$jscomp$45$$[2] = this.cols;
+  $state$jscomp$45$$[3] = this.ports;
+  return $state$jscomp$45$$;
+};
+$VirtioConsole$$.prototype.set_state = function($state$jscomp$46$$) {
+  this.virtio.set_state($state$jscomp$46$$[0]);
+  this.rows = $state$jscomp$46$$[1];
+  this.cols = $state$jscomp$46$$[2];
+  this.ports = $state$jscomp$46$$[3];
+};
+$VirtioConsole$$.prototype.Reset = function() {
+};
+$VirtioConsole$$.prototype.SendEvent = function($port$jscomp$8$$, $event$jscomp$5$$, $value$jscomp$178$$) {
+  const $bufchain$jscomp$10$$ = this.virtio.queues[2].pop_request();
+  let $buf$jscomp$5$$ = new Uint8Array(8);
+  $marshall$$.Marshall(["w", "h", "h"], [$port$jscomp$8$$, $event$jscomp$5$$, $value$jscomp$178$$], $buf$jscomp$5$$, 0);
+  this.Send(2, $bufchain$jscomp$10$$, $buf$jscomp$5$$);
+};
+$VirtioConsole$$.prototype.Send = function($queue_id$jscomp$5$$, $bufchain$jscomp$11$$, $blob$jscomp$14$$) {
+  $bufchain$jscomp$11$$.set_next_blob($blob$jscomp$14$$);
+  this.virtio.queues[$queue_id$jscomp$5$$].push_reply($bufchain$jscomp$11$$);
+  this.virtio.queues[$queue_id$jscomp$5$$].flush_replies();
+};
+$VirtioConsole$$.prototype.Ack = function($queue_id$jscomp$6$$, $bufchain$jscomp$12$$) {
+  $bufchain$jscomp$12$$.set_next_blob(new Uint8Array(0));
+  this.virtio.queues[$queue_id$jscomp$6$$].push_reply($bufchain$jscomp$12$$);
+  this.virtio.queues[$queue_id$jscomp$6$$].flush_replies();
+};
 var $Bus$$ = {};
 function $BusConnector$$() {
   this.listeners = {};
   this.pair = void 0;
 }
-$BusConnector$$.prototype.register = function($name$jscomp$79$$, $fn$jscomp$16$$, $this_value$jscomp$1$$) {
-  var $listeners$$ = this.listeners[$name$jscomp$79$$];
-  void 0 === $listeners$$ && ($listeners$$ = this.listeners[$name$jscomp$79$$] = []);
+$BusConnector$$.prototype.register = function($name$jscomp$80$$, $fn$jscomp$16$$, $this_value$jscomp$1$$) {
+  var $listeners$$ = this.listeners[$name$jscomp$80$$];
+  void 0 === $listeners$$ && ($listeners$$ = this.listeners[$name$jscomp$80$$] = []);
   $listeners$$.push({fn:$fn$jscomp$16$$, this_value:$this_value$jscomp$1$$, });
 };
-$BusConnector$$.prototype.unregister = function($name$jscomp$80$$, $fn$jscomp$17$$) {
-  var $listeners$jscomp$1$$ = this.listeners[$name$jscomp$80$$];
-  void 0 !== $listeners$jscomp$1$$ && (this.listeners[$name$jscomp$80$$] = $listeners$jscomp$1$$.filter(function($l$$) {
+$BusConnector$$.prototype.unregister = function($name$jscomp$81$$, $fn$jscomp$17$$) {
+  var $listeners$jscomp$1$$ = this.listeners[$name$jscomp$81$$];
+  void 0 !== $listeners$jscomp$1$$ && (this.listeners[$name$jscomp$81$$] = $listeners$jscomp$1$$.filter(function($l$$) {
     return $l$$.fn !== $fn$jscomp$17$$;
   }));
 };
-$BusConnector$$.prototype.send = function($listeners$jscomp$2_name$jscomp$81$$, $value$jscomp$177$$) {
-  if (this.pair && ($listeners$jscomp$2_name$jscomp$81$$ = this.pair.listeners[$listeners$jscomp$2_name$jscomp$81$$], void 0 !== $listeners$jscomp$2_name$jscomp$81$$)) {
-    for (var $i$jscomp$57$$ = 0; $i$jscomp$57$$ < $listeners$jscomp$2_name$jscomp$81$$.length; $i$jscomp$57$$++) {
-      var $listener$jscomp$64$$ = $listeners$jscomp$2_name$jscomp$81$$[$i$jscomp$57$$];
-      $listener$jscomp$64$$.fn.call($listener$jscomp$64$$.this_value, $value$jscomp$177$$);
+$BusConnector$$.prototype.send = function($listeners$jscomp$2_name$jscomp$82$$, $value$jscomp$179$$) {
+  if (this.pair && ($listeners$jscomp$2_name$jscomp$82$$ = this.pair.listeners[$listeners$jscomp$2_name$jscomp$82$$], void 0 !== $listeners$jscomp$2_name$jscomp$82$$)) {
+    for (var $i$jscomp$60$$ = 0; $i$jscomp$60$$ < $listeners$jscomp$2_name$jscomp$82$$.length; $i$jscomp$60$$++) {
+      var $listener$jscomp$64$$ = $listeners$jscomp$2_name$jscomp$82$$[$i$jscomp$60$$];
+      $listener$jscomp$64$$.fn.call($listener$jscomp$64$$.this_value, $value$jscomp$179$$);
     }
   }
 };
-$BusConnector$$.prototype.send_async = function($name$jscomp$82$$, $value$jscomp$178$$) {
+$BusConnector$$.prototype.send_async = function($name$jscomp$83$$, $value$jscomp$180$$) {
   $dbg_assert$$(1 === arguments.length || 2 === arguments.length);
-  setTimeout(this.send.bind(this, $name$jscomp$82$$, $value$jscomp$178$$), 0);
+  setTimeout(this.send.bind(this, $name$jscomp$83$$, $value$jscomp$180$$), 0);
 };
 $Bus$$.create = function() {
   var $c0$$ = new $BusConnector$$, $c1$$ = new $BusConnector$$;
@@ -7493,7 +7645,7 @@ function $dbg_assert$$($cond$$, $msg$jscomp$1$$) {
     throw "Assert failed";
   }
 }
-;function $CPU$$($bus$jscomp$11$$, $memory$jscomp$1_wm$$, $next_tick_immediately$$) {
+;function $CPU$$($bus$jscomp$12$$, $memory$jscomp$1_wm$$, $next_tick_immediately$$) {
   this.next_tick_immediately = $next_tick_immediately$$;
   this.wm = $memory$jscomp$1_wm$$;
   this.wasm_patch();
@@ -7571,7 +7723,7 @@ function $dbg_assert$$($cond$$, $msg$jscomp$1$$) {
   this.fw_pointer = 0;
   this.option_roms = [];
   this.io = void 0;
-  this.bus = $bus$jscomp$11$$;
+  this.bus = $bus$jscomp$12$$;
   this.set_tsc(0, 0);
   this.debug_init();
   this.seen_code = {};
@@ -7584,15 +7736,15 @@ $CPU$$.prototype.clear_opstats = function() {
 $CPU$$.prototype.create_jit_imports = function() {
   const $jit_imports$$ = Object.create(null);
   $jit_imports$$.m = this.wm.exports.memory;
-  for (let $name$jscomp$83$$ of Object.keys(this.wm.exports)) {
-    $name$jscomp$83$$.startsWith("_") || $name$jscomp$83$$.startsWith("zstd") || $name$jscomp$83$$.endsWith("_js") || ($jit_imports$$[$name$jscomp$83$$] = this.wm.exports[$name$jscomp$83$$]);
+  for (let $name$jscomp$84$$ of Object.keys(this.wm.exports)) {
+    $name$jscomp$84$$.startsWith("_") || $name$jscomp$84$$.startsWith("zstd") || $name$jscomp$84$$.endsWith("_js") || ($jit_imports$$[$name$jscomp$84$$] = this.wm.exports[$name$jscomp$84$$]);
   }
   this.jit_imports = $jit_imports$$;
 };
 $CPU$$.prototype.wasm_patch = function() {
-  const $get_optional_import$$ = $name$jscomp$84$$ => this.wm.exports[$name$jscomp$84$$], $get_import$$ = $name$jscomp$85$$ => {
-    const $f$jscomp$4$$ = $get_optional_import$$($name$jscomp$85$$);
-    console.assert($f$jscomp$4$$, "Missing import: " + $name$jscomp$85$$);
+  const $get_optional_import$$ = $name$jscomp$85$$ => this.wm.exports[$name$jscomp$85$$], $get_import$$ = $name$jscomp$86$$ => {
+    const $f$jscomp$4$$ = $get_optional_import$$($name$jscomp$86$$);
+    console.assert($f$jscomp$4$$, "Missing import: " + $name$jscomp$86$$);
     return $f$jscomp$4$$;
   };
   this.reset_cpu = $get_import$$("reset_cpu");
@@ -7661,97 +7813,98 @@ $CPU$$.prototype.jit_clear_func = function($index$jscomp$90$$) {
 };
 $CPU$$.prototype.jit_clear_all_funcs = function() {
   const $table$$ = this.wm.wasm_table;
-  for (let $i$jscomp$58$$ = 0; 900 > $i$jscomp$58$$; $i$jscomp$58$$++) {
-    $table$$.set(1024 + $i$jscomp$58$$, null);
+  for (let $i$jscomp$61$$ = 0; 900 > $i$jscomp$61$$; $i$jscomp$61$$++) {
+    $table$$.set(1024 + $i$jscomp$61$$, null);
   }
 };
 $CPU$$.prototype.get_state = function() {
-  var $state$jscomp$45$$ = [];
-  $state$jscomp$45$$[0] = this.memory_size[0];
-  $state$jscomp$45$$[1] = this.segment_is_null;
-  $state$jscomp$45$$[2] = this.segment_offsets;
-  $state$jscomp$45$$[3] = this.segment_limits;
-  $state$jscomp$45$$[4] = this.protected_mode[0];
-  $state$jscomp$45$$[5] = this.idtr_offset[0];
-  $state$jscomp$45$$[6] = this.idtr_size[0];
-  $state$jscomp$45$$[7] = this.gdtr_offset[0];
-  $state$jscomp$45$$[8] = this.gdtr_size[0];
-  $state$jscomp$45$$[9] = this.page_fault[0];
-  $state$jscomp$45$$[10] = this.cr;
-  $state$jscomp$45$$[11] = this.cpl[0];
-  $state$jscomp$45$$[13] = this.is_32[0];
-  $state$jscomp$45$$[16] = this.stack_size_32[0];
-  $state$jscomp$45$$[17] = this.in_hlt[0];
-  $state$jscomp$45$$[18] = this.last_virt_eip[0];
-  $state$jscomp$45$$[19] = this.eip_phys[0];
-  $state$jscomp$45$$[22] = this.sysenter_cs[0];
-  $state$jscomp$45$$[23] = this.sysenter_eip[0];
-  $state$jscomp$45$$[24] = this.sysenter_esp[0];
-  $state$jscomp$45$$[25] = this.prefixes[0];
-  $state$jscomp$45$$[26] = this.flags[0];
-  $state$jscomp$45$$[27] = this.flags_changed[0];
-  $state$jscomp$45$$[28] = this.last_op1[0];
-  $state$jscomp$45$$[30] = this.last_op_size[0];
-  $state$jscomp$45$$[37] = this.instruction_pointer[0];
-  $state$jscomp$45$$[38] = this.previous_ip[0];
-  $state$jscomp$45$$[39] = this.reg32;
-  $state$jscomp$45$$[40] = this.sreg;
-  $state$jscomp$45$$[41] = this.dreg;
-  $state$jscomp$45$$[42] = this.reg_pdpte;
+  var $state$jscomp$47$$ = [];
+  $state$jscomp$47$$[0] = this.memory_size[0];
+  $state$jscomp$47$$[1] = this.segment_is_null;
+  $state$jscomp$47$$[2] = this.segment_offsets;
+  $state$jscomp$47$$[3] = this.segment_limits;
+  $state$jscomp$47$$[4] = this.protected_mode[0];
+  $state$jscomp$47$$[5] = this.idtr_offset[0];
+  $state$jscomp$47$$[6] = this.idtr_size[0];
+  $state$jscomp$47$$[7] = this.gdtr_offset[0];
+  $state$jscomp$47$$[8] = this.gdtr_size[0];
+  $state$jscomp$47$$[9] = this.page_fault[0];
+  $state$jscomp$47$$[10] = this.cr;
+  $state$jscomp$47$$[11] = this.cpl[0];
+  $state$jscomp$47$$[13] = this.is_32[0];
+  $state$jscomp$47$$[16] = this.stack_size_32[0];
+  $state$jscomp$47$$[17] = this.in_hlt[0];
+  $state$jscomp$47$$[18] = this.last_virt_eip[0];
+  $state$jscomp$47$$[19] = this.eip_phys[0];
+  $state$jscomp$47$$[22] = this.sysenter_cs[0];
+  $state$jscomp$47$$[23] = this.sysenter_eip[0];
+  $state$jscomp$47$$[24] = this.sysenter_esp[0];
+  $state$jscomp$47$$[25] = this.prefixes[0];
+  $state$jscomp$47$$[26] = this.flags[0];
+  $state$jscomp$47$$[27] = this.flags_changed[0];
+  $state$jscomp$47$$[28] = this.last_op1[0];
+  $state$jscomp$47$$[30] = this.last_op_size[0];
+  $state$jscomp$47$$[37] = this.instruction_pointer[0];
+  $state$jscomp$47$$[38] = this.previous_ip[0];
+  $state$jscomp$47$$[39] = this.reg32;
+  $state$jscomp$47$$[40] = this.sreg;
+  $state$jscomp$47$$[41] = this.dreg;
+  $state$jscomp$47$$[42] = this.reg_pdpte;
   this.store_current_tsc();
-  $state$jscomp$45$$[43] = this.current_tsc;
-  $state$jscomp$45$$[45] = this.devices.virtio_9p;
-  $state$jscomp$45$$[46] = this.devices.apic;
-  $state$jscomp$45$$[47] = this.devices.rtc;
-  $state$jscomp$45$$[48] = this.devices.pci;
-  $state$jscomp$45$$[49] = this.devices.dma;
-  $state$jscomp$45$$[50] = this.devices.acpi;
-  $state$jscomp$45$$[52] = this.devices.vga;
-  $state$jscomp$45$$[53] = this.devices.ps2;
-  $state$jscomp$45$$[54] = this.devices.uart0;
-  $state$jscomp$45$$[55] = this.devices.fdc;
-  $state$jscomp$45$$[56] = this.devices.cdrom;
-  $state$jscomp$45$$[57] = this.devices.hda;
-  $state$jscomp$45$$[58] = this.devices.pit;
-  $state$jscomp$45$$[59] = this.devices.net;
-  $state$jscomp$45$$[60] = this.get_state_pic();
-  $state$jscomp$45$$[61] = this.devices.sb16;
-  $state$jscomp$45$$[62] = this.fw_value;
-  $state$jscomp$45$$[63] = this.devices.ioapic;
-  $state$jscomp$45$$[64] = this.tss_size_32[0];
-  $state$jscomp$45$$[66] = this.reg_xmm32s;
-  $state$jscomp$45$$[67] = this.fpu_st;
-  $state$jscomp$45$$[68] = this.fpu_stack_empty[0];
-  $state$jscomp$45$$[69] = this.fpu_stack_ptr[0];
-  $state$jscomp$45$$[70] = this.fpu_control_word[0];
-  $state$jscomp$45$$[71] = this.fpu_ip[0];
-  $state$jscomp$45$$[72] = this.fpu_ip_selector[0];
-  $state$jscomp$45$$[73] = this.fpu_dp[0];
-  $state$jscomp$45$$[74] = this.fpu_dp_selector[0];
-  $state$jscomp$45$$[75] = this.fpu_opcode[0];
+  $state$jscomp$47$$[43] = this.current_tsc;
+  $state$jscomp$47$$[45] = this.devices.virtio_9p;
+  $state$jscomp$47$$[46] = this.devices.apic;
+  $state$jscomp$47$$[47] = this.devices.rtc;
+  $state$jscomp$47$$[48] = this.devices.pci;
+  $state$jscomp$47$$[49] = this.devices.dma;
+  $state$jscomp$47$$[50] = this.devices.acpi;
+  $state$jscomp$47$$[52] = this.devices.vga;
+  $state$jscomp$47$$[53] = this.devices.ps2;
+  $state$jscomp$47$$[54] = this.devices.uart0;
+  $state$jscomp$47$$[55] = this.devices.fdc;
+  $state$jscomp$47$$[56] = this.devices.cdrom;
+  $state$jscomp$47$$[57] = this.devices.hda;
+  $state$jscomp$47$$[58] = this.devices.pit;
+  $state$jscomp$47$$[59] = this.devices.net;
+  $state$jscomp$47$$[60] = this.get_state_pic();
+  $state$jscomp$47$$[61] = this.devices.sb16;
+  $state$jscomp$47$$[62] = this.fw_value;
+  $state$jscomp$47$$[63] = this.devices.ioapic;
+  $state$jscomp$47$$[64] = this.tss_size_32[0];
+  $state$jscomp$47$$[66] = this.reg_xmm32s;
+  $state$jscomp$47$$[67] = this.fpu_st;
+  $state$jscomp$47$$[68] = this.fpu_stack_empty[0];
+  $state$jscomp$47$$[69] = this.fpu_stack_ptr[0];
+  $state$jscomp$47$$[70] = this.fpu_control_word[0];
+  $state$jscomp$47$$[71] = this.fpu_ip[0];
+  $state$jscomp$47$$[72] = this.fpu_ip_selector[0];
+  $state$jscomp$47$$[73] = this.fpu_dp[0];
+  $state$jscomp$47$$[74] = this.fpu_dp_selector[0];
+  $state$jscomp$47$$[75] = this.fpu_opcode[0];
   const {packed_memory:$packed_memory$$, bitmap:$bitmap$$} = this.pack_memory();
-  $state$jscomp$45$$[77] = $packed_memory$$;
-  $state$jscomp$45$$[78] = new Uint8Array($bitmap$$.get_buffer());
-  $state$jscomp$45$$[79] = this.devices.uart1;
-  $state$jscomp$45$$[80] = this.devices.uart2;
-  $state$jscomp$45$$[81] = this.devices.uart3;
-  return $state$jscomp$45$$;
+  $state$jscomp$47$$[77] = $packed_memory$$;
+  $state$jscomp$47$$[78] = new Uint8Array($bitmap$$.get_buffer());
+  $state$jscomp$47$$[79] = this.devices.uart1;
+  $state$jscomp$47$$[80] = this.devices.uart2;
+  $state$jscomp$47$$[81] = this.devices.uart3;
+  $state$jscomp$47$$[82] = this.devices.virtio_console;
+  return $state$jscomp$47$$;
 };
 $CPU$$.prototype.get_state_pic = function() {
-  const $pic$$ = new Uint8Array(this.wasm_memory.buffer, this.get_pic_addr_master(), 13), $pic_slave$$ = new Uint8Array(this.wasm_memory.buffer, this.get_pic_addr_slave(), 13), $state$jscomp$46$$ = [], $state_slave$$ = [];
-  $state$jscomp$46$$[0] = $pic$$[0];
-  $state$jscomp$46$$[1] = $pic$$[1];
-  $state$jscomp$46$$[2] = $pic$$[2];
-  $state$jscomp$46$$[3] = $pic$$[3];
-  $state$jscomp$46$$[4] = $pic$$[4];
-  $state$jscomp$46$$[5] = $state_slave$$;
-  $state$jscomp$46$$[6] = $pic$$[6];
-  $state$jscomp$46$$[7] = $pic$$[7];
-  $state$jscomp$46$$[8] = $pic$$[8];
-  $state$jscomp$46$$[9] = $pic$$[9];
-  $state$jscomp$46$$[10] = $pic$$[10];
-  $state$jscomp$46$$[11] = $pic$$[11];
-  $state$jscomp$46$$[12] = $pic$$[12];
+  const $pic$$ = new Uint8Array(this.wasm_memory.buffer, this.get_pic_addr_master(), 13), $pic_slave$$ = new Uint8Array(this.wasm_memory.buffer, this.get_pic_addr_slave(), 13), $state$jscomp$48$$ = [], $state_slave$$ = [];
+  $state$jscomp$48$$[0] = $pic$$[0];
+  $state$jscomp$48$$[1] = $pic$$[1];
+  $state$jscomp$48$$[2] = $pic$$[2];
+  $state$jscomp$48$$[3] = $pic$$[3];
+  $state$jscomp$48$$[4] = $pic$$[4];
+  $state$jscomp$48$$[5] = $state_slave$$;
+  $state$jscomp$48$$[6] = $pic$$[6];
+  $state$jscomp$48$$[7] = $pic$$[7];
+  $state$jscomp$48$$[8] = $pic$$[8];
+  $state$jscomp$48$$[9] = $pic$$[9];
+  $state$jscomp$48$$[10] = $pic$$[10];
+  $state$jscomp$48$$[11] = $pic$$[11];
+  $state$jscomp$48$$[12] = $pic$$[12];
   $state_slave$$[0] = $pic_slave$$[0];
   $state_slave$$[1] = $pic_slave$$[1];
   $state_slave$$[2] = $pic_slave$$[2];
@@ -7765,95 +7918,96 @@ $CPU$$.prototype.get_state_pic = function() {
   $state_slave$$[10] = $pic_slave$$[10];
   $state_slave$$[12] = $pic_slave$$[12];
   $state_slave$$[12] = $pic_slave$$[12];
-  return $state$jscomp$46$$;
+  return $state$jscomp$48$$;
 };
-$CPU$$.prototype.set_state = function($state$jscomp$47$$) {
-  this.memory_size[0] = $state$jscomp$47$$[0];
+$CPU$$.prototype.set_state = function($state$jscomp$49$$) {
+  this.memory_size[0] = $state$jscomp$49$$[0];
   this.mem8.length !== this.memory_size[0] && console.warn("Note: Memory size mismatch. we=" + this.mem8.length + " state=" + this.memory_size[0]);
-  this.segment_is_null.set($state$jscomp$47$$[1]);
-  this.segment_offsets.set($state$jscomp$47$$[2]);
-  this.segment_limits.set($state$jscomp$47$$[3]);
-  this.protected_mode[0] = $state$jscomp$47$$[4];
-  this.idtr_offset[0] = $state$jscomp$47$$[5];
-  this.idtr_size[0] = $state$jscomp$47$$[6];
-  this.gdtr_offset[0] = $state$jscomp$47$$[7];
-  this.gdtr_size[0] = $state$jscomp$47$$[8];
-  this.page_fault[0] = $state$jscomp$47$$[9];
-  this.cr.set($state$jscomp$47$$[10]);
-  this.cpl[0] = $state$jscomp$47$$[11];
-  this.is_32[0] = $state$jscomp$47$$[13];
-  this.stack_size_32[0] = $state$jscomp$47$$[16];
-  this.in_hlt[0] = $state$jscomp$47$$[17];
-  this.last_virt_eip[0] = $state$jscomp$47$$[18];
-  this.eip_phys[0] = $state$jscomp$47$$[19];
-  this.sysenter_cs[0] = $state$jscomp$47$$[22];
-  this.sysenter_eip[0] = $state$jscomp$47$$[23];
-  this.sysenter_esp[0] = $state$jscomp$47$$[24];
-  this.prefixes[0] = $state$jscomp$47$$[25];
-  this.flags[0] = $state$jscomp$47$$[26];
-  this.flags_changed[0] = $state$jscomp$47$$[27];
-  this.last_op1[0] = $state$jscomp$47$$[28];
-  this.last_op_size[0] = $state$jscomp$47$$[30];
-  this.instruction_pointer[0] = $state$jscomp$47$$[37];
-  this.previous_ip[0] = $state$jscomp$47$$[38];
-  this.reg32.set($state$jscomp$47$$[39]);
-  this.sreg.set($state$jscomp$47$$[40]);
-  this.dreg.set($state$jscomp$47$$[41]);
-  $state$jscomp$47$$[42] && this.reg_pdpte.set($state$jscomp$47$$[42]);
-  this.set_tsc($state$jscomp$47$$[43][0], $state$jscomp$47$$[43][1]);
-  this.devices.virtio_9p && this.devices.virtio_9p.set_state($state$jscomp$47$$[45]);
-  this.devices.apic && this.devices.apic.set_state($state$jscomp$47$$[46]);
-  this.devices.rtc && this.devices.rtc.set_state($state$jscomp$47$$[47]);
-  this.devices.pci && this.devices.pci.set_state($state$jscomp$47$$[48]);
-  this.devices.dma && this.devices.dma.set_state($state$jscomp$47$$[49]);
-  this.devices.acpi && this.devices.acpi.set_state($state$jscomp$47$$[50]);
-  this.devices.vga && this.devices.vga.set_state($state$jscomp$47$$[52]);
-  this.devices.ps2 && this.devices.ps2.set_state($state$jscomp$47$$[53]);
-  this.devices.uart0 && this.devices.uart0.set_state($state$jscomp$47$$[54]);
-  this.devices.fdc && this.devices.fdc.set_state($state$jscomp$47$$[55]);
-  this.devices.cdrom && this.devices.cdrom.set_state($state$jscomp$47$$[56]);
-  this.devices.hda && this.devices.hda.set_state($state$jscomp$47$$[57]);
-  this.devices.pit && this.devices.pit.set_state($state$jscomp$47$$[58]);
-  this.devices.net && this.devices.net.set_state($state$jscomp$47$$[59]);
-  this.set_state_pic($state$jscomp$47$$[60]);
-  this.devices.sb16 && this.devices.sb16.set_state($state$jscomp$47$$[61]);
-  this.devices.uart1 && this.devices.uart1.set_state($state$jscomp$47$$[79]);
-  this.devices.uart2 && this.devices.uart2.set_state($state$jscomp$47$$[80]);
-  this.devices.uart3 && this.devices.uart3.set_state($state$jscomp$47$$[81]);
-  this.fw_value = $state$jscomp$47$$[62];
-  this.devices.ioapic && this.devices.ioapic.set_state($state$jscomp$47$$[63]);
-  this.tss_size_32[0] = $state$jscomp$47$$[64];
-  this.reg_xmm32s.set($state$jscomp$47$$[66]);
-  this.fpu_st.set($state$jscomp$47$$[67]);
-  this.fpu_stack_empty[0] = $state$jscomp$47$$[68];
-  this.fpu_stack_ptr[0] = $state$jscomp$47$$[69];
-  this.fpu_control_word[0] = $state$jscomp$47$$[70];
-  this.fpu_ip[0] = $state$jscomp$47$$[71];
-  this.fpu_ip_selector[0] = $state$jscomp$47$$[72];
-  this.fpu_dp[0] = $state$jscomp$47$$[73];
-  this.fpu_dp_selector[0] = $state$jscomp$47$$[74];
-  this.fpu_opcode[0] = $state$jscomp$47$$[75];
-  const $bitmap$jscomp$1$$ = new $v86util$$.Bitmap($state$jscomp$47$$[78].buffer);
-  this.unpack_memory($bitmap$jscomp$1$$, $state$jscomp$47$$[77]);
+  this.segment_is_null.set($state$jscomp$49$$[1]);
+  this.segment_offsets.set($state$jscomp$49$$[2]);
+  this.segment_limits.set($state$jscomp$49$$[3]);
+  this.protected_mode[0] = $state$jscomp$49$$[4];
+  this.idtr_offset[0] = $state$jscomp$49$$[5];
+  this.idtr_size[0] = $state$jscomp$49$$[6];
+  this.gdtr_offset[0] = $state$jscomp$49$$[7];
+  this.gdtr_size[0] = $state$jscomp$49$$[8];
+  this.page_fault[0] = $state$jscomp$49$$[9];
+  this.cr.set($state$jscomp$49$$[10]);
+  this.cpl[0] = $state$jscomp$49$$[11];
+  this.is_32[0] = $state$jscomp$49$$[13];
+  this.stack_size_32[0] = $state$jscomp$49$$[16];
+  this.in_hlt[0] = $state$jscomp$49$$[17];
+  this.last_virt_eip[0] = $state$jscomp$49$$[18];
+  this.eip_phys[0] = $state$jscomp$49$$[19];
+  this.sysenter_cs[0] = $state$jscomp$49$$[22];
+  this.sysenter_eip[0] = $state$jscomp$49$$[23];
+  this.sysenter_esp[0] = $state$jscomp$49$$[24];
+  this.prefixes[0] = $state$jscomp$49$$[25];
+  this.flags[0] = $state$jscomp$49$$[26];
+  this.flags_changed[0] = $state$jscomp$49$$[27];
+  this.last_op1[0] = $state$jscomp$49$$[28];
+  this.last_op_size[0] = $state$jscomp$49$$[30];
+  this.instruction_pointer[0] = $state$jscomp$49$$[37];
+  this.previous_ip[0] = $state$jscomp$49$$[38];
+  this.reg32.set($state$jscomp$49$$[39]);
+  this.sreg.set($state$jscomp$49$$[40]);
+  this.dreg.set($state$jscomp$49$$[41]);
+  $state$jscomp$49$$[42] && this.reg_pdpte.set($state$jscomp$49$$[42]);
+  this.set_tsc($state$jscomp$49$$[43][0], $state$jscomp$49$$[43][1]);
+  this.devices.virtio_9p && this.devices.virtio_9p.set_state($state$jscomp$49$$[45]);
+  this.devices.apic && this.devices.apic.set_state($state$jscomp$49$$[46]);
+  this.devices.rtc && this.devices.rtc.set_state($state$jscomp$49$$[47]);
+  this.devices.pci && this.devices.pci.set_state($state$jscomp$49$$[48]);
+  this.devices.dma && this.devices.dma.set_state($state$jscomp$49$$[49]);
+  this.devices.acpi && this.devices.acpi.set_state($state$jscomp$49$$[50]);
+  this.devices.vga && this.devices.vga.set_state($state$jscomp$49$$[52]);
+  this.devices.ps2 && this.devices.ps2.set_state($state$jscomp$49$$[53]);
+  this.devices.uart0 && this.devices.uart0.set_state($state$jscomp$49$$[54]);
+  this.devices.fdc && this.devices.fdc.set_state($state$jscomp$49$$[55]);
+  this.devices.cdrom && this.devices.cdrom.set_state($state$jscomp$49$$[56]);
+  this.devices.hda && this.devices.hda.set_state($state$jscomp$49$$[57]);
+  this.devices.pit && this.devices.pit.set_state($state$jscomp$49$$[58]);
+  this.devices.net && this.devices.net.set_state($state$jscomp$49$$[59]);
+  this.set_state_pic($state$jscomp$49$$[60]);
+  this.devices.sb16 && this.devices.sb16.set_state($state$jscomp$49$$[61]);
+  this.devices.uart1 && this.devices.uart1.set_state($state$jscomp$49$$[79]);
+  this.devices.uart2 && this.devices.uart2.set_state($state$jscomp$49$$[80]);
+  this.devices.uart3 && this.devices.uart3.set_state($state$jscomp$49$$[81]);
+  this.devices.virtio_console && this.devices.virtio_console.set_state($state$jscomp$49$$[82]);
+  this.fw_value = $state$jscomp$49$$[62];
+  this.devices.ioapic && this.devices.ioapic.set_state($state$jscomp$49$$[63]);
+  this.tss_size_32[0] = $state$jscomp$49$$[64];
+  this.reg_xmm32s.set($state$jscomp$49$$[66]);
+  this.fpu_st.set($state$jscomp$49$$[67]);
+  this.fpu_stack_empty[0] = $state$jscomp$49$$[68];
+  this.fpu_stack_ptr[0] = $state$jscomp$49$$[69];
+  this.fpu_control_word[0] = $state$jscomp$49$$[70];
+  this.fpu_ip[0] = $state$jscomp$49$$[71];
+  this.fpu_ip_selector[0] = $state$jscomp$49$$[72];
+  this.fpu_dp[0] = $state$jscomp$49$$[73];
+  this.fpu_dp_selector[0] = $state$jscomp$49$$[74];
+  this.fpu_opcode[0] = $state$jscomp$49$$[75];
+  const $bitmap$jscomp$1$$ = new $v86util$$.Bitmap($state$jscomp$49$$[78].buffer);
+  this.unpack_memory($bitmap$jscomp$1$$, $state$jscomp$49$$[77]);
   this.update_state_flags();
   this.full_clear_tlb();
   this.jit_clear_cache();
 };
-$CPU$$.prototype.set_state_pic = function($state$jscomp$48$$) {
+$CPU$$.prototype.set_state_pic = function($state$jscomp$50$$) {
   const $pic$jscomp$1$$ = new Uint8Array(this.wasm_memory.buffer, this.get_pic_addr_master(), 13), $pic_slave$jscomp$1$$ = new Uint8Array(this.wasm_memory.buffer, this.get_pic_addr_slave(), 13);
-  $pic$jscomp$1$$[0] = $state$jscomp$48$$[0];
-  $pic$jscomp$1$$[1] = $state$jscomp$48$$[1];
-  $pic$jscomp$1$$[2] = $state$jscomp$48$$[2];
-  $pic$jscomp$1$$[3] = $state$jscomp$48$$[3];
-  $pic$jscomp$1$$[4] = $state$jscomp$48$$[4];
-  const $state_slave$jscomp$1$$ = $state$jscomp$48$$[5];
-  $pic$jscomp$1$$[6] = $state$jscomp$48$$[6];
-  $pic$jscomp$1$$[7] = $state$jscomp$48$$[7];
-  $pic$jscomp$1$$[8] = $state$jscomp$48$$[8];
-  $pic$jscomp$1$$[9] = $state$jscomp$48$$[9];
-  $pic$jscomp$1$$[10] = $state$jscomp$48$$[10];
-  $pic$jscomp$1$$[11] = $state$jscomp$48$$[11];
-  $pic$jscomp$1$$[12] = $state$jscomp$48$$[12];
+  $pic$jscomp$1$$[0] = $state$jscomp$50$$[0];
+  $pic$jscomp$1$$[1] = $state$jscomp$50$$[1];
+  $pic$jscomp$1$$[2] = $state$jscomp$50$$[2];
+  $pic$jscomp$1$$[3] = $state$jscomp$50$$[3];
+  $pic$jscomp$1$$[4] = $state$jscomp$50$$[4];
+  const $state_slave$jscomp$1$$ = $state$jscomp$50$$[5];
+  $pic$jscomp$1$$[6] = $state$jscomp$50$$[6];
+  $pic$jscomp$1$$[7] = $state$jscomp$50$$[7];
+  $pic$jscomp$1$$[8] = $state$jscomp$50$$[8];
+  $pic$jscomp$1$$[9] = $state$jscomp$50$$[9];
+  $pic$jscomp$1$$[10] = $state$jscomp$50$$[10];
+  $pic$jscomp$1$$[11] = $state$jscomp$50$$[11];
+  $pic$jscomp$1$$[12] = $state$jscomp$50$$[12];
   $pic_slave$jscomp$1$$[0] = $state_slave$jscomp$1$$[0];
   $pic_slave$jscomp$1$$[1] = $state_slave$jscomp$1$$[1];
   $pic_slave$jscomp$1$$[2] = $state_slave$jscomp$1$$[2];
@@ -7874,8 +8028,8 @@ $CPU$$.prototype.pack_memory = function() {
     var $offset$jscomp$54_view$jscomp$5$$ = $packed_memory$jscomp$2_page$$ << 12;
     $offset$jscomp$54_view$jscomp$5$$ = this.mem32s.subarray($offset$jscomp$54_view$jscomp$5$$ >> 2, $offset$jscomp$54_view$jscomp$5$$ + 4096 >> 2);
     let $is_zero$$ = !0;
-    for (let $i$jscomp$59$$ = 0; $i$jscomp$59$$ < $offset$jscomp$54_view$jscomp$5$$.length; $i$jscomp$59$$++) {
-      if (0 !== $offset$jscomp$54_view$jscomp$5$$[$i$jscomp$59$$]) {
+    for (let $i$jscomp$62$$ = 0; $i$jscomp$62$$ < $offset$jscomp$54_view$jscomp$5$$.length; $i$jscomp$62$$++) {
+      if (0 !== $offset$jscomp$54_view$jscomp$5$$[$i$jscomp$62$$]) {
         $is_zero$$ = !1;
         break;
       }
@@ -7884,8 +8038,8 @@ $CPU$$.prototype.pack_memory = function() {
   }
   $bitmap$jscomp$2_page_count$$ = new $v86util$$.Bitmap($bitmap$jscomp$2_page_count$$);
   var $packed_memory$jscomp$2_page$$ = new Uint8Array($nonzero_pages_offset$jscomp$55_page_contents$$.length << 12);
-  for (let [$i$jscomp$60$$, $page$jscomp$1$$] of $nonzero_pages_offset$jscomp$55_page_contents$$.entries()) {
-    $bitmap$jscomp$2_page_count$$.set($page$jscomp$1$$, 1), $nonzero_pages_offset$jscomp$55_page_contents$$ = $page$jscomp$1$$ << 12, $nonzero_pages_offset$jscomp$55_page_contents$$ = this.mem8.subarray($nonzero_pages_offset$jscomp$55_page_contents$$, $nonzero_pages_offset$jscomp$55_page_contents$$ + 4096), $packed_memory$jscomp$2_page$$.set($nonzero_pages_offset$jscomp$55_page_contents$$, $i$jscomp$60$$ << 12);
+  for (let [$i$jscomp$63$$, $page$jscomp$1$$] of $nonzero_pages_offset$jscomp$55_page_contents$$.entries()) {
+    $bitmap$jscomp$2_page_count$$.set($page$jscomp$1$$, 1), $nonzero_pages_offset$jscomp$55_page_contents$$ = $page$jscomp$1$$ << 12, $nonzero_pages_offset$jscomp$55_page_contents$$ = this.mem8.subarray($nonzero_pages_offset$jscomp$55_page_contents$$, $nonzero_pages_offset$jscomp$55_page_contents$$ + 4096), $packed_memory$jscomp$2_page$$.set($nonzero_pages_offset$jscomp$55_page_contents$$, $i$jscomp$63$$ << 12);
   }
   return {bitmap:$bitmap$jscomp$2_page_count$$, packed_memory:$packed_memory$jscomp$2_page$$};
 };
@@ -7905,38 +8059,39 @@ $CPU$$.prototype.unpack_memory = function($bitmap$jscomp$3$$, $packed_memory$jsc
 $CPU$$.prototype.reboot_internal = function() {
   this.reset_cpu();
   this.fw_value = [];
-  this.devices.virtio && this.devices.virtio.reset();
+  this.devices.virtio_9p && this.devices.virtio_9p.reset();
+  this.devices.virtio_console && this.devices.virtio_console.reset();
   this.load_bios();
 };
 $CPU$$.prototype.reset_memory = function() {
   this.mem8.fill(0);
 };
-$CPU$$.prototype.create_memory = function($size$jscomp$36$$) {
-  1048576 > $size$jscomp$36$$ ? $size$jscomp$36$$ = 1048576 : 0 > ($size$jscomp$36$$ | 0) && ($size$jscomp$36$$ = Math.pow(2, 31) - 131072);
-  $size$jscomp$36$$ = ($size$jscomp$36$$ - 1 | 131071) + 1 | 0;
-  $dbg_assert$$(0 < ($size$jscomp$36$$ | 0));
-  $dbg_assert$$(0 === ($size$jscomp$36$$ & 131071));
+$CPU$$.prototype.create_memory = function($size$jscomp$37$$) {
+  1048576 > $size$jscomp$37$$ ? $size$jscomp$37$$ = 1048576 : 0 > ($size$jscomp$37$$ | 0) && ($size$jscomp$37$$ = Math.pow(2, 31) - 131072);
+  $size$jscomp$37$$ = ($size$jscomp$37$$ - 1 | 131071) + 1 | 0;
+  $dbg_assert$$(0 < ($size$jscomp$37$$ | 0));
+  $dbg_assert$$(0 === ($size$jscomp$37$$ & 131071));
   console.assert(0 === this.memory_size[0], "Expected uninitialised memory");
-  this.memory_size[0] = $size$jscomp$36$$;
-  const $memory_offset$$ = this.allocate_memory($size$jscomp$36$$);
-  this.mem8 = $v86util$$.view(Uint8Array, this.wasm_memory, $memory_offset$$, $size$jscomp$36$$);
-  this.mem32s = $v86util$$.view(Uint32Array, this.wasm_memory, $memory_offset$$, $size$jscomp$36$$ >> 2);
+  this.memory_size[0] = $size$jscomp$37$$;
+  const $memory_offset$$ = this.allocate_memory($size$jscomp$37$$);
+  this.mem8 = $v86util$$.view(Uint8Array, this.wasm_memory, $memory_offset$$, $size$jscomp$37$$);
+  this.mem32s = $v86util$$.view(Uint32Array, this.wasm_memory, $memory_offset$$, $size$jscomp$37$$ >> 2);
 };
 $goog$$.exportProperty($CPU$$.prototype, "create_memory", $CPU$$.prototype.create_memory);
-$CPU$$.prototype.init = function($settings$jscomp$1$$, $device_bus$$) {
-  "number" === typeof $settings$jscomp$1$$.log_level && ($LOG_LEVEL$$ = $settings$jscomp$1$$.log_level);
-  this.create_memory("number" === typeof $settings$jscomp$1$$.memory_size ? $settings$jscomp$1$$.memory_size : 67108864);
-  $settings$jscomp$1$$.disable_jit && this.set_jit_config(0, 1);
-  $settings$jscomp$1$$.cpuid_level && this.set_cpuid_level($settings$jscomp$1$$.cpuid_level);
-  this.acpi_enabled[0] = +$settings$jscomp$1$$.acpi;
+$CPU$$.prototype.init = function($option_rom$jscomp$1_settings$jscomp$1$$, $device_bus$$) {
+  "number" === typeof $option_rom$jscomp$1_settings$jscomp$1$$.log_level && ($LOG_LEVEL$$ = $option_rom$jscomp$1_settings$jscomp$1$$.log_level);
+  this.create_memory("number" === typeof $option_rom$jscomp$1_settings$jscomp$1$$.memory_size ? $option_rom$jscomp$1_settings$jscomp$1$$.memory_size : 67108864);
+  $option_rom$jscomp$1_settings$jscomp$1$$.disable_jit && this.set_jit_config(0, 1);
+  $option_rom$jscomp$1_settings$jscomp$1$$.cpuid_level && this.set_cpuid_level($option_rom$jscomp$1_settings$jscomp$1$$.cpuid_level);
+  this.acpi_enabled[0] = +$option_rom$jscomp$1_settings$jscomp$1$$.acpi;
   this.reset_cpu();
   var $ide_device_count_io$jscomp$6$$ = new $IO$$(this);
   this.io = $ide_device_count_io$jscomp$6$$;
-  this.bios.main = $settings$jscomp$1$$.bios;
-  this.bios.vga = $settings$jscomp$1$$.vga_bios;
+  this.bios.main = $option_rom$jscomp$1_settings$jscomp$1$$.bios;
+  this.bios.vga = $option_rom$jscomp$1_settings$jscomp$1$$.vga_bios;
   this.load_bios();
-  if ($settings$jscomp$1$$.bzimage) {
-    const {option_rom:$option_rom$$} = $load_kernel$$(this.mem8, $settings$jscomp$1$$.bzimage, $settings$jscomp$1$$.initrd, $settings$jscomp$1$$.cmdline || "");
+  if ($option_rom$jscomp$1_settings$jscomp$1$$.bzimage) {
+    const $option_rom$$ = $load_kernel$$(this.mem8, $option_rom$jscomp$1_settings$jscomp$1$$.bzimage, $option_rom$jscomp$1_settings$jscomp$1$$.initrd, $option_rom$jscomp$1_settings$jscomp$1$$.cmdline || "");
     $option_rom$$ && this.option_roms.push($option_rom$$);
   }
   $ide_device_count_io$jscomp$6$$.register_read(179, this, function() {
@@ -7957,7 +8112,7 @@ $CPU$$.prototype.init = function($settings$jscomp$1$$, $device_bus$$) {
     $dbg_assert$$(!1, "config port: Read past value");
     return 0;
   });
-  $ide_device_count_io$jscomp$6$$.register_write(1296, this, void 0, function($buffer32_value$jscomp$179$$) {
+  $ide_device_count_io$jscomp$6$$.register_write(1296, this, void 0, function($buffer32_value$jscomp$181$$) {
     function $i32$$($x$jscomp$101$$) {
       return new Uint8Array(Int32Array.of($x$jscomp$101$$).buffer);
     }
@@ -7967,43 +8122,43 @@ $CPU$$.prototype.init = function($settings$jscomp$1$$, $device_bus$$) {
     function $to_be32$$($x$jscomp$103$$) {
       return $x$jscomp$103$$ << 24 | $x$jscomp$103$$ << 8 & 16711680 | $x$jscomp$103$$ >> 8 & 65280 | $x$jscomp$103$$ >>> 24;
     }
-    $dbg_log$$("bios config port, index=" + $h$$($buffer32_value$jscomp$179$$));
+    $dbg_log$$("bios config port, index=" + $h$$($buffer32_value$jscomp$181$$));
     this.fw_pointer = 0;
-    if (0 === $buffer32_value$jscomp$179$$) {
+    if (0 === $buffer32_value$jscomp$181$$) {
       this.fw_value = $i32$$(1431127377);
     } else {
-      if (1 === $buffer32_value$jscomp$179$$) {
+      if (1 === $buffer32_value$jscomp$181$$) {
         this.fw_value = $i32$$(0);
       } else {
-        if (3 === $buffer32_value$jscomp$179$$) {
+        if (3 === $buffer32_value$jscomp$181$$) {
           this.fw_value = $i32$$(this.memory_size[0]);
         } else {
-          if (5 === $buffer32_value$jscomp$179$$) {
+          if (5 === $buffer32_value$jscomp$181$$) {
             this.fw_value = $i32$$(1);
           } else {
-            if (15 === $buffer32_value$jscomp$179$$) {
+            if (15 === $buffer32_value$jscomp$181$$) {
               this.fw_value = $i32$$(1);
             } else {
-              if (13 === $buffer32_value$jscomp$179$$) {
+              if (13 === $buffer32_value$jscomp$181$$) {
                 this.fw_value = new Uint8Array(16);
               } else {
-                if (25 === $buffer32_value$jscomp$179$$) {
-                  $buffer32_value$jscomp$179$$ = new Int32Array(4 + 64 * this.option_roms.length);
-                  const $buffer8$$ = new Uint8Array($buffer32_value$jscomp$179$$.buffer);
-                  $buffer32_value$jscomp$179$$[0] = $to_be32$$(this.option_roms.length);
-                  for (let $i$jscomp$61$$ = 0; $i$jscomp$61$$ < this.option_roms.length; $i$jscomp$61$$++) {
-                    const {name:$name$jscomp$86$$, data:$data$jscomp$175$$} = this.option_roms[$i$jscomp$61$$], $file_struct_ptr$$ = 4 + 64 * $i$jscomp$61$$;
-                    $dbg_assert$$(65536 > 49152 + $i$jscomp$61$$);
-                    $buffer32_value$jscomp$179$$[$file_struct_ptr$$ + 0 >> 2] = $to_be32$$($data$jscomp$175$$.length);
-                    $buffer32_value$jscomp$179$$[$file_struct_ptr$$ + 4 >> 2] = $to_be16$$(49152 + $i$jscomp$61$$);
-                    $dbg_assert$$(56 > $name$jscomp$86$$.length);
-                    for (let $j$jscomp$6$$ = 0; $j$jscomp$6$$ < $name$jscomp$86$$.length; $j$jscomp$6$$++) {
-                      $buffer8$$[$file_struct_ptr$$ + 8 + $j$jscomp$6$$] = $name$jscomp$86$$.charCodeAt($j$jscomp$6$$);
+                if (25 === $buffer32_value$jscomp$181$$) {
+                  $buffer32_value$jscomp$181$$ = new Int32Array(4 + 64 * this.option_roms.length);
+                  const $buffer8$$ = new Uint8Array($buffer32_value$jscomp$181$$.buffer);
+                  $buffer32_value$jscomp$181$$[0] = $to_be32$$(this.option_roms.length);
+                  for (let $i$jscomp$64$$ = 0; $i$jscomp$64$$ < this.option_roms.length; $i$jscomp$64$$++) {
+                    const {name:$name$jscomp$87$$, data:$data$jscomp$185$$} = this.option_roms[$i$jscomp$64$$], $file_struct_ptr$$ = 4 + 64 * $i$jscomp$64$$;
+                    $dbg_assert$$(65536 > 49152 + $i$jscomp$64$$);
+                    $buffer32_value$jscomp$181$$[$file_struct_ptr$$ + 0 >> 2] = $to_be32$$($data$jscomp$185$$.length);
+                    $buffer32_value$jscomp$181$$[$file_struct_ptr$$ + 4 >> 2] = $to_be16$$(49152 + $i$jscomp$64$$);
+                    $dbg_assert$$(56 > $name$jscomp$87$$.length);
+                    for (let $j$jscomp$6$$ = 0; $j$jscomp$6$$ < $name$jscomp$87$$.length; $j$jscomp$6$$++) {
+                      $buffer8$$[$file_struct_ptr$$ + 8 + $j$jscomp$6$$] = $name$jscomp$87$$.charCodeAt($j$jscomp$6$$);
                     }
                   }
                   this.fw_value = $buffer8$$;
                 } else {
-                  32768 <= $buffer32_value$jscomp$179$$ && 49152 > $buffer32_value$jscomp$179$$ ? this.fw_value = $i32$$(0) : 49152 <= $buffer32_value$jscomp$179$$ && $buffer32_value$jscomp$179$$ - 49152 < this.option_roms.length ? this.fw_value = this.option_roms[$buffer32_value$jscomp$179$$ - 49152].data : ($dbg_log$$("Warning: Unimplemented fw index: " + $h$$($buffer32_value$jscomp$179$$)), this.fw_value = $i32$$(0));
+                  32768 <= $buffer32_value$jscomp$181$$ && 49152 > $buffer32_value$jscomp$181$$ ? this.fw_value = $i32$$(0) : 49152 <= $buffer32_value$jscomp$181$$ && $buffer32_value$jscomp$181$$ - 49152 < this.option_roms.length ? this.fw_value = this.option_roms[$buffer32_value$jscomp$181$$ - 49152].data : ($dbg_log$$("Warning: Unimplemented fw index: " + $h$$($buffer32_value$jscomp$181$$)), this.fw_value = $i32$$(0));
                 }
               }
             }
@@ -8032,90 +8187,177 @@ $CPU$$.prototype.init = function($settings$jscomp$1$$, $device_bus$$) {
   $ide_device_count_io$jscomp$6$$.register_write(1232, this, this.port4D0_write);
   $ide_device_count_io$jscomp$6$$.register_write(1233, this, this.port4D1_write);
   this.devices = {};
-  $settings$jscomp$1$$.load_devices && (this.devices.pci = new $PCI$$(this), this.acpi_enabled[0] && (this.devices.ioapic = new $IOAPIC$$(this), this.devices.apic = new $APIC$$(this), this.devices.acpi = new $ACPI$$(this)), this.devices.rtc = new $RTC$$(this), this.fill_cmos(this.devices.rtc, $settings$jscomp$1$$), this.devices.dma = new $DMA$$(this), this.devices.vga = new $VGAScreen$$(this, $device_bus$$, $settings$jscomp$1$$.vga_memory_size || 8388608), this.devices.ps2 = new $PS2$$(this, $device_bus$$), 
-  this.devices.uart0 = new $UART$$(this, 1016, $device_bus$$), $settings$jscomp$1$$.uart1 && (this.devices.uart1 = new $UART$$(this, 760, $device_bus$$)), $settings$jscomp$1$$.uart2 && (this.devices.uart2 = new $UART$$(this, 1E3, $device_bus$$)), $settings$jscomp$1$$.uart3 && (this.devices.uart3 = new $UART$$(this, 744, $device_bus$$)), this.devices.fdc = new $FloppyController$$(this, $settings$jscomp$1$$.fda, $settings$jscomp$1$$.fdb), $ide_device_count_io$jscomp$6$$ = 0, $settings$jscomp$1$$.hda && 
-  (this.devices.hda = new $IDEDevice$$(this, $settings$jscomp$1$$.hda, $settings$jscomp$1$$.hdb, !1, $ide_device_count_io$jscomp$6$$++, $device_bus$$)), $settings$jscomp$1$$.cdrom && (this.devices.cdrom = new $IDEDevice$$(this, $settings$jscomp$1$$.cdrom, void 0, !0, $ide_device_count_io$jscomp$6$$++, $device_bus$$)), this.devices.pit = new $PIT$$(this, $device_bus$$), $settings$jscomp$1$$.enable_ne2k && (this.devices.net = new $Ne2k$$(this, $device_bus$$, $settings$jscomp$1$$.preserve_mac_from_state_image, 
-  $settings$jscomp$1$$.mac_address_translation)), $settings$jscomp$1$$.fs9p && (this.devices.virtio_9p = new $Virtio9p$$($settings$jscomp$1$$.fs9p, this, $device_bus$$)), this.devices.sb16 = new $SB16$$(this, $device_bus$$));
-  $settings$jscomp$1$$.multiboot && this.load_multiboot($settings$jscomp$1$$.multiboot);
+  $option_rom$jscomp$1_settings$jscomp$1$$.load_devices && (this.devices.pci = new $PCI$$(this), this.acpi_enabled[0] && (this.devices.ioapic = new $IOAPIC$$(this), this.devices.apic = new $APIC$$(this), this.devices.acpi = new $ACPI$$(this)), this.devices.rtc = new $RTC$$(this), this.fill_cmos(this.devices.rtc, $option_rom$jscomp$1_settings$jscomp$1$$), this.devices.dma = new $DMA$$(this), this.devices.vga = new $VGAScreen$$(this, $device_bus$$, $option_rom$jscomp$1_settings$jscomp$1$$.vga_memory_size || 
+  8388608), this.devices.ps2 = new $PS2$$(this, $device_bus$$), this.devices.uart0 = new $UART$$(this, 1016, $device_bus$$), $option_rom$jscomp$1_settings$jscomp$1$$.uart1 && (this.devices.uart1 = new $UART$$(this, 760, $device_bus$$)), $option_rom$jscomp$1_settings$jscomp$1$$.uart2 && (this.devices.uart2 = new $UART$$(this, 1E3, $device_bus$$)), $option_rom$jscomp$1_settings$jscomp$1$$.uart3 && (this.devices.uart3 = new $UART$$(this, 744, $device_bus$$)), this.devices.fdc = new $FloppyController$$(this, 
+  $option_rom$jscomp$1_settings$jscomp$1$$.fda, $option_rom$jscomp$1_settings$jscomp$1$$.fdb), $ide_device_count_io$jscomp$6$$ = 0, $option_rom$jscomp$1_settings$jscomp$1$$.hda && (this.devices.hda = new $IDEDevice$$(this, $option_rom$jscomp$1_settings$jscomp$1$$.hda, $option_rom$jscomp$1_settings$jscomp$1$$.hdb, !1, $ide_device_count_io$jscomp$6$$++, $device_bus$$)), $option_rom$jscomp$1_settings$jscomp$1$$.cdrom && (this.devices.cdrom = new $IDEDevice$$(this, $option_rom$jscomp$1_settings$jscomp$1$$.cdrom, 
+  void 0, !0, $ide_device_count_io$jscomp$6$$++, $device_bus$$)), this.devices.pit = new $PIT$$(this, $device_bus$$), $option_rom$jscomp$1_settings$jscomp$1$$.enable_ne2k && (this.devices.net = new $Ne2k$$(this, $device_bus$$, $option_rom$jscomp$1_settings$jscomp$1$$.preserve_mac_from_state_image, $option_rom$jscomp$1_settings$jscomp$1$$.mac_address_translation)), $option_rom$jscomp$1_settings$jscomp$1$$.fs9p && (this.devices.virtio_9p = new $Virtio9p$$($option_rom$jscomp$1_settings$jscomp$1$$.fs9p, 
+  this, $device_bus$$)), $option_rom$jscomp$1_settings$jscomp$1$$.virtio_console && (this.devices.virtio_console = new $VirtioConsole$$(this, $device_bus$$)), this.devices.sb16 = new $SB16$$(this, $device_bus$$));
+  $option_rom$jscomp$1_settings$jscomp$1$$.multiboot && ($dbg_log$$("loading multiboot", 2), $option_rom$jscomp$1_settings$jscomp$1$$ = this.load_multiboot_option_rom($option_rom$jscomp$1_settings$jscomp$1$$.multiboot, $option_rom$jscomp$1_settings$jscomp$1$$.initrd, $option_rom$jscomp$1_settings$jscomp$1$$.cmdline)) && (this.bios.main ? ($dbg_log$$("adding option rom for multiboot", 2), this.option_roms.push($option_rom$jscomp$1_settings$jscomp$1$$)) : ($dbg_log$$("loaded multiboot without bios", 
+  2), this.reg32[0] = this.io.port_read32(244)));
   this.debug.init();
 };
-$CPU$$.prototype.load_multiboot = function($blob$jscomp$14_buffer$jscomp$38$$) {
-  $dbg_log$$("Trying multiboot from buffer of size " + $blob$jscomp$14_buffer$jscomp$38$$.byteLength, 2);
-  if (8192 > $blob$jscomp$14_buffer$jscomp$38$$.byteLength) {
-    var $buf32_entry_addr$$ = new Int32Array(2048);
-    (new Uint8Array($buf32_entry_addr$$.buffer)).set(new Uint8Array($blob$jscomp$14_buffer$jscomp$38$$));
+$CPU$$.prototype.load_multiboot = function($buffer$jscomp$40$$) {
+  this.bios.main && $dbg_assert$$(!1, "load_multiboot not supported with BIOS");
+  this.load_multiboot_option_rom($buffer$jscomp$40$$, void 0, "") && ($dbg_log$$("loaded multiboot", 2), this.reg32[0] = this.io.port_read32(244));
+};
+$CPU$$.prototype.load_multiboot_option_rom = function($buffer$jscomp$41$$, $initrd$$, $cmdline$$) {
+  $dbg_log$$("Trying multiboot from buffer of size " + $buffer$jscomp$41$$.byteLength, 2);
+  if (8192 > $buffer$jscomp$41$$.byteLength) {
+    var $buf32$$ = new Int32Array(2048);
+    (new Uint8Array($buf32$$.buffer)).set(new Uint8Array($buffer$jscomp$41$$));
   } else {
-    $buf32_entry_addr$$ = new Int32Array($blob$jscomp$14_buffer$jscomp$38$$, 0, 2048);
+    $buf32$$ = new Int32Array($buffer$jscomp$41$$, 0, 2048);
   }
-  for (var $blob$jscomp$15_elf_file_start_offset$jscomp$57$$ = 0; 8192 > $blob$jscomp$15_elf_file_start_offset$jscomp$57$$; $blob$jscomp$15_elf_file_start_offset$jscomp$57$$ += 4) {
-    if (464367618 === $buf32_entry_addr$$[$blob$jscomp$15_elf_file_start_offset$jscomp$57$$ >> 2]) {
-      var $flags$jscomp$8_length$jscomp$25_load_end_addr$$ = $buf32_entry_addr$$[$blob$jscomp$15_elf_file_start_offset$jscomp$57$$ + 4 >> 2];
-      if (464367618 + $flags$jscomp$8_length$jscomp$25_load_end_addr$$ + $buf32_entry_addr$$[$blob$jscomp$15_elf_file_start_offset$jscomp$57$$ + 8 >> 2] | 0) {
+  for (var $offset$jscomp$57$$ = 0; 8192 > $offset$jscomp$57$$; $offset$jscomp$57$$ += 4) {
+    if (464367618 === $buf32$$[$offset$jscomp$57$$ >> 2]) {
+      var $flags$jscomp$8$$ = $buf32$$[$offset$jscomp$57$$ + 4 >> 2];
+      if (464367618 + $flags$jscomp$8$$ + $buf32$$[$offset$jscomp$57$$ + 8 >> 2] | 0) {
         $dbg_log$$("Multiboot checksum check failed", 2);
-      } else {
-        $dbg_log$$("Multiboot magic found, flags: " + $h$$($flags$jscomp$8_length$jscomp$25_load_end_addr$$ >>> 0, 8), 2);
-        $dbg_assert$$(0 === ($flags$jscomp$8_length$jscomp$25_load_end_addr$$ & -65537), "TODO");
-        this.reg32[0] = 732803074;
-        this.reg32[3] = 31744;
-        this.write32(31744, 0);
-        this.cr[0] = 1;
-        this.protected_mode[0] = 1;
-        this.flags[0] = 2;
-        this.is_32[0] = 1;
-        this.stack_size_32[0] = 1;
-        for (var $header_addr_i$jscomp$63$$ = 0; 6 > $header_addr_i$jscomp$63$$; $header_addr_i$jscomp$63$$++) {
-          this.segment_is_null[$header_addr_i$jscomp$63$$] = 0, this.segment_offsets[$header_addr_i$jscomp$63$$] = 0, this.segment_limits[$header_addr_i$jscomp$63$$] = 4294967295, this.sreg[$header_addr_i$jscomp$63$$] = 45058;
-        }
-        if ($flags$jscomp$8_length$jscomp$25_load_end_addr$$ & 65536) {
-          $dbg_log$$("Multiboot specifies its own address table", 2);
-          $header_addr_i$jscomp$63$$ = $buf32_entry_addr$$[$blob$jscomp$15_elf_file_start_offset$jscomp$57$$ + 12 >> 2];
-          var $load_addr_program$jscomp$63$$ = $buf32_entry_addr$$[$blob$jscomp$15_elf_file_start_offset$jscomp$57$$ + 16 >> 2];
-          $flags$jscomp$8_length$jscomp$25_load_end_addr$$ = $buf32_entry_addr$$[$blob$jscomp$15_elf_file_start_offset$jscomp$57$$ + 20 >> 2];
-          var $bss_end_addr$$ = $buf32_entry_addr$$[$blob$jscomp$15_elf_file_start_offset$jscomp$57$$ + 24 >> 2];
-          $buf32_entry_addr$$ = $buf32_entry_addr$$[$blob$jscomp$15_elf_file_start_offset$jscomp$57$$ + 28 >> 2];
-          $dbg_log$$("header=" + $h$$($header_addr_i$jscomp$63$$, 8) + " load=" + $h$$($load_addr_program$jscomp$63$$, 8) + " load_end=" + $h$$($flags$jscomp$8_length$jscomp$25_load_end_addr$$, 8) + " bss_end=" + $h$$($bss_end_addr$$, 8) + " entry=" + $h$$($buf32_entry_addr$$, 8));
-          $dbg_assert$$($load_addr_program$jscomp$63$$ <= $header_addr_i$jscomp$63$$);
-          $blob$jscomp$15_elf_file_start_offset$jscomp$57$$ -= $header_addr_i$jscomp$63$$ - $load_addr_program$jscomp$63$$;
-          0 === $flags$jscomp$8_length$jscomp$25_load_end_addr$$ ? $flags$jscomp$8_length$jscomp$25_load_end_addr$$ = void 0 : ($dbg_assert$$($flags$jscomp$8_length$jscomp$25_load_end_addr$$ >= $load_addr_program$jscomp$63$$), $flags$jscomp$8_length$jscomp$25_load_end_addr$$ -= $load_addr_program$jscomp$63$$);
-          $blob$jscomp$14_buffer$jscomp$38$$ = new Uint8Array($blob$jscomp$14_buffer$jscomp$38$$, $blob$jscomp$15_elf_file_start_offset$jscomp$57$$, $flags$jscomp$8_length$jscomp$25_load_end_addr$$);
-          this.write_blob($blob$jscomp$14_buffer$jscomp$38$$, $load_addr_program$jscomp$63$$);
-          this.instruction_pointer[0] = this.get_seg_cs() + $buf32_entry_addr$$ | 0;
-        } else {
-          if (1179403647 === $buf32_entry_addr$$[0]) {
-            $dbg_log$$("Multiboot image is in elf format", 2);
-            $blob$jscomp$15_elf_file_start_offset$jscomp$57$$ = $read_elf$$($blob$jscomp$14_buffer$jscomp$38$$);
-            this.instruction_pointer[0] = this.get_seg_cs() + $blob$jscomp$15_elf_file_start_offset$jscomp$57$$.header.entry | 0;
-            for ($load_addr_program$jscomp$63$$ of $blob$jscomp$15_elf_file_start_offset$jscomp$57$$.program_headers) {
-              0 !== $load_addr_program$jscomp$63$$.type && (1 === $load_addr_program$jscomp$63$$.type ? ($dbg_assert$$($load_addr_program$jscomp$63$$.paddr === $load_addr_program$jscomp$63$$.vaddr), $dbg_assert$$($load_addr_program$jscomp$63$$.filesz <= $load_addr_program$jscomp$63$$.memsz), $load_addr_program$jscomp$63$$.paddr + $load_addr_program$jscomp$63$$.memsz < this.memory_size[0] ? $load_addr_program$jscomp$63$$.filesz && ($blob$jscomp$15_elf_file_start_offset$jscomp$57$$ = new Uint8Array($blob$jscomp$14_buffer$jscomp$38$$, 
-              $load_addr_program$jscomp$63$$.offset, $load_addr_program$jscomp$63$$.filesz), this.write_blob($blob$jscomp$15_elf_file_start_offset$jscomp$57$$, $load_addr_program$jscomp$63$$.paddr)) : $dbg_log$$("Warning: Skipped loading section, paddr=" + $h$$($load_addr_program$jscomp$63$$.paddr) + " memsz=" + $load_addr_program$jscomp$63$$.memsz, 2)) : 2 !== $load_addr_program$jscomp$63$$.type && 3 !== $load_addr_program$jscomp$63$$.type && 4 !== $load_addr_program$jscomp$63$$.type && 6 !== $load_addr_program$jscomp$63$$.type && 
-              1685382480 !== $load_addr_program$jscomp$63$$.type && 1685382481 !== $load_addr_program$jscomp$63$$.type && 1685382483 !== $load_addr_program$jscomp$63$$.type && $dbg_assert$$(!1, "unimplemented elf section type: " + $h$$($load_addr_program$jscomp$63$$.type)));
-            }
-          } else {
-            $dbg_assert$$(!1, "Not a bootable multiboot format");
-          }
-        }
-        this.io.register_write_consecutive(244, this, function($value$jscomp$180$$) {
-          console.log("Test exited with code " + $h$$($value$jscomp$180$$, 2));
-          throw "HALT";
-        }, function() {
-        }, function() {
-        }, function() {
-        });
-        for (let $i$jscomp$64$$ = 0; 15 >= $i$jscomp$64$$; $i$jscomp$64$$++) {
-          function $handle_write$$($value$jscomp$181$$) {
-            $dbg_log$$("kvm-unit-test: Set irq " + $h$$($i$jscomp$64$$) + " to " + $h$$($value$jscomp$181$$, 2));
-            $value$jscomp$181$$ ? this.device_raise_irq($i$jscomp$64$$) : this.device_lower_irq($i$jscomp$64$$);
-          }
-          this.io.register_write(8192 + $i$jscomp$64$$, this, $handle_write$$, $handle_write$$, $handle_write$$);
-        }
-        this.update_state_flags();
-        $dbg_log$$("Starting multiboot kernel at:", 2);
-        this.debug.dump_state();
-        this.debug.dump_regs();
-        break;
+        continue;
       }
+    } else {
+      continue;
     }
+    $dbg_log$$("Multiboot magic found, flags: " + $h$$($flags$jscomp$8$$ >>> 0, 8), 2);
+    $dbg_assert$$(0 === ($flags$jscomp$8$$ & -65540), "TODO");
+    var $cpu$jscomp$21$$ = this;
+    this.io.register_read(244, this, function() {
+      return 0;
+    }, function() {
+      return 0;
+    }, function() {
+      var $i$jscomp$67_multiboot_data$$ = 31860, $entry_addr_entrypoint_info_program_headers$jscomp$inline_21$$ = 0;
+      $cmdline$$ && ($entry_addr_entrypoint_info_program_headers$jscomp$inline_21$$ |= 4, $cpu$jscomp$21$$.write32(31760, $i$jscomp$67_multiboot_data$$), $cmdline$$ += "\x00", $cmdline_utf8_length$jscomp$25_multiboot_mmap_count_top_of_load$$ = (new TextEncoder).encode($cmdline$$), $cpu$jscomp$21$$.write_blob($cmdline_utf8_length$jscomp$25_multiboot_mmap_count_top_of_load$$, $i$jscomp$67_multiboot_data$$), $i$jscomp$67_multiboot_data$$ += $cmdline_utf8_length$jscomp$25_multiboot_mmap_count_top_of_load$$.length);
+      if ($flags$jscomp$8$$ & 2) {
+        $entry_addr_entrypoint_info_program_headers$jscomp$inline_21$$ |= 64;
+        $cmdline_utf8_length$jscomp$25_multiboot_mmap_count_top_of_load$$ = 0;
+        $cpu$jscomp$21$$.write32(31788, 0);
+        $cpu$jscomp$21$$.write32(31792, $i$jscomp$67_multiboot_data$$);
+        var $start$jscomp$36_view$jscomp$inline_18$$ = 0;
+        let $was_memory$$ = !1;
+        for (let $addr$jscomp$46$$ = 0; 4294967296 > $addr$jscomp$46$$; $addr$jscomp$46$$ += 131072) {
+          $was_memory$$ && void 0 !== $cpu$jscomp$21$$.memory_map_read8[$addr$jscomp$46$$ >>> 17] ? ($cpu$jscomp$21$$.write32($i$jscomp$67_multiboot_data$$, 20), $cpu$jscomp$21$$.write32($i$jscomp$67_multiboot_data$$ + 4, $start$jscomp$36_view$jscomp$inline_18$$), $cpu$jscomp$21$$.write32($i$jscomp$67_multiboot_data$$ + 8, 0), $cpu$jscomp$21$$.write32($i$jscomp$67_multiboot_data$$ + 12, $addr$jscomp$46$$ - $start$jscomp$36_view$jscomp$inline_18$$), $cpu$jscomp$21$$.write32($i$jscomp$67_multiboot_data$$ + 
+          16, 0), $cpu$jscomp$21$$.write32($i$jscomp$67_multiboot_data$$ + 20, 1), $i$jscomp$67_multiboot_data$$ += 24, $cmdline_utf8_length$jscomp$25_multiboot_mmap_count_top_of_load$$ += 24, $was_memory$$ = !1) : $was_memory$$ || void 0 !== $cpu$jscomp$21$$.memory_map_read8[$addr$jscomp$46$$ >>> 17] || ($start$jscomp$36_view$jscomp$inline_18$$ = $addr$jscomp$46$$, $was_memory$$ = !0);
+        }
+        $dbg_assert$$(!$was_memory$$, "top of 4GB shouldn't have memory");
+        $cpu$jscomp$21$$.write32(31788, $cmdline_utf8_length$jscomp$25_multiboot_mmap_count_top_of_load$$);
+      }
+      $cpu$jscomp$21$$.write32(31744, $entry_addr_entrypoint_info_program_headers$jscomp$inline_21$$);
+      var $cmdline_utf8_length$jscomp$25_multiboot_mmap_count_top_of_load$$ = $entry_addr_entrypoint_info_program_headers$jscomp$inline_21$$ = 0;
+      if ($flags$jscomp$8$$ & 65536) {
+        $dbg_log$$("Multiboot specifies its own address table", 2);
+        var $blob$jscomp$15_file_start_header_addr_key$jscomp$inline_25_sections_headers$jscomp$inline_23$$ = $buf32$$[$offset$jscomp$57$$ + 12 >> 2];
+        var $JSCompiler_object_inline_program_headers_48_blob$jscomp$16_load_addr_section$jscomp$inline_27$$ = $buf32$$[$offset$jscomp$57$$ + 16 >> 2];
+        var $load_end_addr_program$jscomp$63_ramdisk_address$$ = $buf32$$[$offset$jscomp$57$$ + 20 >> 2];
+        var $JSCompiler_object_inline_header_47_bss_end_addr_program$jscomp$inline_26_ramdisk_top$$ = $buf32$$[$offset$jscomp$57$$ + 24 >> 2];
+        $entry_addr_entrypoint_info_program_headers$jscomp$inline_21$$ = $buf32$$[$offset$jscomp$57$$ + 28 >> 2];
+        $dbg_log$$("header=" + $h$$($blob$jscomp$15_file_start_header_addr_key$jscomp$inline_25_sections_headers$jscomp$inline_23$$, 8) + " load=" + $h$$($JSCompiler_object_inline_program_headers_48_blob$jscomp$16_load_addr_section$jscomp$inline_27$$, 8) + " load_end=" + $h$$($load_end_addr_program$jscomp$63_ramdisk_address$$, 8) + " bss_end=" + $h$$($JSCompiler_object_inline_header_47_bss_end_addr_program$jscomp$inline_26_ramdisk_top$$, 8) + " entry=" + $h$$($entry_addr_entrypoint_info_program_headers$jscomp$inline_21$$, 
+        8));
+        $dbg_assert$$($JSCompiler_object_inline_program_headers_48_blob$jscomp$16_load_addr_section$jscomp$inline_27$$ <= $blob$jscomp$15_file_start_header_addr_key$jscomp$inline_25_sections_headers$jscomp$inline_23$$);
+        $blob$jscomp$15_file_start_header_addr_key$jscomp$inline_25_sections_headers$jscomp$inline_23$$ = $offset$jscomp$57$$ - ($blob$jscomp$15_file_start_header_addr_key$jscomp$inline_25_sections_headers$jscomp$inline_23$$ - $JSCompiler_object_inline_program_headers_48_blob$jscomp$16_load_addr_section$jscomp$inline_27$$);
+        0 === $load_end_addr_program$jscomp$63_ramdisk_address$$ ? $cmdline_utf8_length$jscomp$25_multiboot_mmap_count_top_of_load$$ = void 0 : ($dbg_assert$$($load_end_addr_program$jscomp$63_ramdisk_address$$ >= $JSCompiler_object_inline_program_headers_48_blob$jscomp$16_load_addr_section$jscomp$inline_27$$), $cmdline_utf8_length$jscomp$25_multiboot_mmap_count_top_of_load$$ = $load_end_addr_program$jscomp$63_ramdisk_address$$ - $JSCompiler_object_inline_program_headers_48_blob$jscomp$16_load_addr_section$jscomp$inline_27$$);
+        $blob$jscomp$15_file_start_header_addr_key$jscomp$inline_25_sections_headers$jscomp$inline_23$$ = new Uint8Array($buffer$jscomp$41$$, $blob$jscomp$15_file_start_header_addr_key$jscomp$inline_25_sections_headers$jscomp$inline_23$$, $cmdline_utf8_length$jscomp$25_multiboot_mmap_count_top_of_load$$);
+        $cpu$jscomp$21$$.write_blob($blob$jscomp$15_file_start_header_addr_key$jscomp$inline_25_sections_headers$jscomp$inline_23$$, $JSCompiler_object_inline_program_headers_48_blob$jscomp$16_load_addr_section$jscomp$inline_27$$);
+        $entry_addr_entrypoint_info_program_headers$jscomp$inline_21$$ |= 0;
+        $cmdline_utf8_length$jscomp$25_multiboot_mmap_count_top_of_load$$ = Math.max($load_end_addr_program$jscomp$63_ramdisk_address$$, $JSCompiler_object_inline_header_47_bss_end_addr_program$jscomp$inline_26_ramdisk_top$$);
+      } else {
+        if (1179403647 === $buf32$$[0]) {
+          $dbg_log$$("Multiboot image is in elf format", 2);
+          $start$jscomp$36_view$jscomp$inline_18$$ = new DataView($buffer$jscomp$41$$);
+          let [$header$jscomp$inline_19$$, $offset$jscomp$inline_20$$] = $read_struct$$($start$jscomp$36_view$jscomp$inline_18$$, $Header$$);
+          console.assert(52 === $offset$jscomp$inline_20$$);
+          for ($blob$jscomp$15_file_start_header_addr_key$jscomp$inline_25_sections_headers$jscomp$inline_23$$ of Object.keys($header$jscomp$inline_19$$)) {
+            $dbg_log$$($blob$jscomp$15_file_start_header_addr_key$jscomp$inline_25_sections_headers$jscomp$inline_23$$ + ": 0x" + ($header$jscomp$inline_19$$[$blob$jscomp$15_file_start_header_addr_key$jscomp$inline_25_sections_headers$jscomp$inline_23$$].toString(16) >>> 0));
+          }
+          console.assert(1179403647 === $header$jscomp$inline_19$$.magic, "Bad magic");
+          console.assert(1 === $header$jscomp$inline_19$$.class, "Unimplemented: 64 bit elf");
+          console.assert(1 === $header$jscomp$inline_19$$.data, "Unimplemented: big endian");
+          console.assert(1 === $header$jscomp$inline_19$$.version0, "Bad version0");
+          console.assert(2 === $header$jscomp$inline_19$$.type, "Unimplemented type");
+          console.assert(1 === $header$jscomp$inline_19$$.version1, "Bad version1");
+          console.assert(52 === $header$jscomp$inline_19$$.ehsize, "Bad header size");
+          console.assert(32 === $header$jscomp$inline_19$$.phentsize, "Bad program header size");
+          console.assert(40 === $header$jscomp$inline_19$$.shentsize, "Bad section header size");
+          [$entry_addr_entrypoint_info_program_headers$jscomp$inline_21$$] = $read_structs$$(new DataView($start$jscomp$36_view$jscomp$inline_18$$.buffer, $start$jscomp$36_view$jscomp$inline_18$$.byteOffset + $header$jscomp$inline_19$$.phoff, $header$jscomp$inline_19$$.phentsize * $header$jscomp$inline_19$$.phnum), $ProgramHeader$$, $header$jscomp$inline_19$$.phnum);
+          [$blob$jscomp$15_file_start_header_addr_key$jscomp$inline_25_sections_headers$jscomp$inline_23$$] = $read_structs$$(new DataView($start$jscomp$36_view$jscomp$inline_18$$.buffer, $start$jscomp$36_view$jscomp$inline_18$$.byteOffset + $header$jscomp$inline_19$$.shoff, $header$jscomp$inline_19$$.shentsize * $header$jscomp$inline_19$$.shnum), $SectionHeader$$, $header$jscomp$inline_19$$.shnum);
+          if ($LOG_LEVEL$$) {
+            console.log("%d program headers:", $entry_addr_entrypoint_info_program_headers$jscomp$inline_21$$.length);
+            for ($JSCompiler_object_inline_header_47_bss_end_addr_program$jscomp$inline_26_ramdisk_top$$ of $entry_addr_entrypoint_info_program_headers$jscomp$inline_21$$) {
+              console.log("type=%s offset=%s vaddr=%s paddr=%s filesz=%s memsz=%s flags=%s align=%s", $JSCompiler_object_inline_header_47_bss_end_addr_program$jscomp$inline_26_ramdisk_top$$.type.toString(16), $JSCompiler_object_inline_header_47_bss_end_addr_program$jscomp$inline_26_ramdisk_top$$.offset.toString(16), $JSCompiler_object_inline_header_47_bss_end_addr_program$jscomp$inline_26_ramdisk_top$$.vaddr.toString(16), $JSCompiler_object_inline_header_47_bss_end_addr_program$jscomp$inline_26_ramdisk_top$$.paddr.toString(16), 
+              $JSCompiler_object_inline_header_47_bss_end_addr_program$jscomp$inline_26_ramdisk_top$$.filesz.toString(16), $JSCompiler_object_inline_header_47_bss_end_addr_program$jscomp$inline_26_ramdisk_top$$.memsz.toString(16), $JSCompiler_object_inline_header_47_bss_end_addr_program$jscomp$inline_26_ramdisk_top$$.flags.toString(16), $JSCompiler_object_inline_header_47_bss_end_addr_program$jscomp$inline_26_ramdisk_top$$.align.toString(16));
+            }
+            console.log("%d section headers:", $blob$jscomp$15_file_start_header_addr_key$jscomp$inline_25_sections_headers$jscomp$inline_23$$.length);
+            for ($JSCompiler_object_inline_program_headers_48_blob$jscomp$16_load_addr_section$jscomp$inline_27$$ of $blob$jscomp$15_file_start_header_addr_key$jscomp$inline_25_sections_headers$jscomp$inline_23$$) {
+              console.log("name=%s type=%s flags=%s addr=%s offset=%s size=%s link=%s info=%s addralign=%s entsize=%s", $JSCompiler_object_inline_program_headers_48_blob$jscomp$16_load_addr_section$jscomp$inline_27$$.name.toString(16), $JSCompiler_object_inline_program_headers_48_blob$jscomp$16_load_addr_section$jscomp$inline_27$$.type.toString(16), $JSCompiler_object_inline_program_headers_48_blob$jscomp$16_load_addr_section$jscomp$inline_27$$.flags.toString(16), $JSCompiler_object_inline_program_headers_48_blob$jscomp$16_load_addr_section$jscomp$inline_27$$.addr.toString(16), 
+              $JSCompiler_object_inline_program_headers_48_blob$jscomp$16_load_addr_section$jscomp$inline_27$$.offset.toString(16), $JSCompiler_object_inline_program_headers_48_blob$jscomp$16_load_addr_section$jscomp$inline_27$$.size.toString(16), $JSCompiler_object_inline_program_headers_48_blob$jscomp$16_load_addr_section$jscomp$inline_27$$.link.toString(16), $JSCompiler_object_inline_program_headers_48_blob$jscomp$16_load_addr_section$jscomp$inline_27$$.info.toString(16), $JSCompiler_object_inline_program_headers_48_blob$jscomp$16_load_addr_section$jscomp$inline_27$$.addralign.toString(16), 
+              $JSCompiler_object_inline_program_headers_48_blob$jscomp$16_load_addr_section$jscomp$inline_27$$.entsize.toString(16));
+            }
+          }
+          $JSCompiler_object_inline_header_47_bss_end_addr_program$jscomp$inline_26_ramdisk_top$$ = $header$jscomp$inline_19$$;
+          $JSCompiler_object_inline_program_headers_48_blob$jscomp$16_load_addr_section$jscomp$inline_27$$ = $entry_addr_entrypoint_info_program_headers$jscomp$inline_21$$;
+          $entry_addr_entrypoint_info_program_headers$jscomp$inline_21$$ = $JSCompiler_object_inline_header_47_bss_end_addr_program$jscomp$inline_26_ramdisk_top$$.entry;
+          for ($load_end_addr_program$jscomp$63_ramdisk_address$$ of $JSCompiler_object_inline_program_headers_48_blob$jscomp$16_load_addr_section$jscomp$inline_27$$) {
+            0 !== $load_end_addr_program$jscomp$63_ramdisk_address$$.type && (1 === $load_end_addr_program$jscomp$63_ramdisk_address$$.type ? ($dbg_assert$$($load_end_addr_program$jscomp$63_ramdisk_address$$.filesz <= $load_end_addr_program$jscomp$63_ramdisk_address$$.memsz), $load_end_addr_program$jscomp$63_ramdisk_address$$.paddr + $load_end_addr_program$jscomp$63_ramdisk_address$$.memsz < $cpu$jscomp$21$$.memory_size[0] ? ($load_end_addr_program$jscomp$63_ramdisk_address$$.filesz && ($JSCompiler_object_inline_program_headers_48_blob$jscomp$16_load_addr_section$jscomp$inline_27$$ = 
+            new Uint8Array($buffer$jscomp$41$$, $load_end_addr_program$jscomp$63_ramdisk_address$$.offset, $load_end_addr_program$jscomp$63_ramdisk_address$$.filesz), $cpu$jscomp$21$$.write_blob($JSCompiler_object_inline_program_headers_48_blob$jscomp$16_load_addr_section$jscomp$inline_27$$, $load_end_addr_program$jscomp$63_ramdisk_address$$.paddr)), $cmdline_utf8_length$jscomp$25_multiboot_mmap_count_top_of_load$$ = Math.max($cmdline_utf8_length$jscomp$25_multiboot_mmap_count_top_of_load$$, $load_end_addr_program$jscomp$63_ramdisk_address$$.paddr + 
+            $load_end_addr_program$jscomp$63_ramdisk_address$$.memsz), $dbg_log$$("prg load " + $load_end_addr_program$jscomp$63_ramdisk_address$$.paddr + " to " + ($load_end_addr_program$jscomp$63_ramdisk_address$$.paddr + $load_end_addr_program$jscomp$63_ramdisk_address$$.memsz), 2), $entry_addr_entrypoint_info_program_headers$jscomp$inline_21$$ === $JSCompiler_object_inline_header_47_bss_end_addr_program$jscomp$inline_26_ramdisk_top$$.entry && $load_end_addr_program$jscomp$63_ramdisk_address$$.vaddr <= 
+            $entry_addr_entrypoint_info_program_headers$jscomp$inline_21$$ && $load_end_addr_program$jscomp$63_ramdisk_address$$.vaddr + $load_end_addr_program$jscomp$63_ramdisk_address$$.memsz > $entry_addr_entrypoint_info_program_headers$jscomp$inline_21$$ && ($entry_addr_entrypoint_info_program_headers$jscomp$inline_21$$ = $entry_addr_entrypoint_info_program_headers$jscomp$inline_21$$ - $load_end_addr_program$jscomp$63_ramdisk_address$$.vaddr + $load_end_addr_program$jscomp$63_ramdisk_address$$.paddr)) : 
+            $dbg_log$$("Warning: Skipped loading section, paddr=" + $h$$($load_end_addr_program$jscomp$63_ramdisk_address$$.paddr) + " memsz=" + $load_end_addr_program$jscomp$63_ramdisk_address$$.memsz, 2)) : 2 === $load_end_addr_program$jscomp$63_ramdisk_address$$.type || 3 === $load_end_addr_program$jscomp$63_ramdisk_address$$.type || 4 === $load_end_addr_program$jscomp$63_ramdisk_address$$.type || 6 === $load_end_addr_program$jscomp$63_ramdisk_address$$.type || 7 === $load_end_addr_program$jscomp$63_ramdisk_address$$.type || 
+            1685382480 === $load_end_addr_program$jscomp$63_ramdisk_address$$.type || 1685382481 === $load_end_addr_program$jscomp$63_ramdisk_address$$.type || 1685382482 === $load_end_addr_program$jscomp$63_ramdisk_address$$.type || 1685382483 === $load_end_addr_program$jscomp$63_ramdisk_address$$.type ? $dbg_log$$("skip load type " + $load_end_addr_program$jscomp$63_ramdisk_address$$.type + " " + $load_end_addr_program$jscomp$63_ramdisk_address$$.paddr + " to " + ($load_end_addr_program$jscomp$63_ramdisk_address$$.paddr + 
+            $load_end_addr_program$jscomp$63_ramdisk_address$$.memsz), 2) : $dbg_assert$$(!1, "unimplemented elf section type: " + $h$$($load_end_addr_program$jscomp$63_ramdisk_address$$.type)));
+          }
+        } else {
+          $dbg_assert$$(!1, "Not a bootable multiboot format");
+        }
+      }
+      $initrd$$ && ($cpu$jscomp$21$$.write32(31764, 1), $cpu$jscomp$21$$.write32(31768, $i$jscomp$67_multiboot_data$$), $load_end_addr_program$jscomp$63_ramdisk_address$$ = $cmdline_utf8_length$jscomp$25_multiboot_mmap_count_top_of_load$$, 0 !== ($load_end_addr_program$jscomp$63_ramdisk_address$$ & 4095) && ($load_end_addr_program$jscomp$63_ramdisk_address$$ = ($load_end_addr_program$jscomp$63_ramdisk_address$$ & -4096) + 4096), $dbg_log$$("ramdisk address " + $load_end_addr_program$jscomp$63_ramdisk_address$$), 
+      $JSCompiler_object_inline_header_47_bss_end_addr_program$jscomp$inline_26_ramdisk_top$$ = $load_end_addr_program$jscomp$63_ramdisk_address$$ + $initrd$$.byteLength, $cpu$jscomp$21$$.write32($i$jscomp$67_multiboot_data$$, $load_end_addr_program$jscomp$63_ramdisk_address$$), $cpu$jscomp$21$$.write32($i$jscomp$67_multiboot_data$$ + 4, $JSCompiler_object_inline_header_47_bss_end_addr_program$jscomp$inline_26_ramdisk_top$$), $cpu$jscomp$21$$.write32($i$jscomp$67_multiboot_data$$ + 8, 0), $cpu$jscomp$21$$.write32($i$jscomp$67_multiboot_data$$ + 
+      12, 0), $dbg_assert$$($JSCompiler_object_inline_header_47_bss_end_addr_program$jscomp$inline_26_ramdisk_top$$ < $cpu$jscomp$21$$.memory_size[0]), $cpu$jscomp$21$$.write_blob(new Uint8Array($initrd$$), $load_end_addr_program$jscomp$63_ramdisk_address$$));
+      $cpu$jscomp$21$$.reg32[3] = 31744;
+      $cpu$jscomp$21$$.cr[0] = 1;
+      $cpu$jscomp$21$$.protected_mode[0] = 1;
+      $cpu$jscomp$21$$.flags[0] = 2;
+      $cpu$jscomp$21$$.is_32[0] = 1;
+      $cpu$jscomp$21$$.stack_size_32[0] = 1;
+      for ($i$jscomp$67_multiboot_data$$ = 0; 6 > $i$jscomp$67_multiboot_data$$; $i$jscomp$67_multiboot_data$$++) {
+        $cpu$jscomp$21$$.segment_is_null[$i$jscomp$67_multiboot_data$$] = 0, $cpu$jscomp$21$$.segment_offsets[$i$jscomp$67_multiboot_data$$] = 0, $cpu$jscomp$21$$.segment_limits[$i$jscomp$67_multiboot_data$$] = 4294967295, $cpu$jscomp$21$$.sreg[$i$jscomp$67_multiboot_data$$] = 45058;
+      }
+      $cpu$jscomp$21$$.instruction_pointer[0] = $cpu$jscomp$21$$.get_seg_cs() + $entry_addr_entrypoint_info_program_headers$jscomp$inline_21$$ | 0;
+      $cpu$jscomp$21$$.update_state_flags();
+      $dbg_log$$("Starting multiboot kernel at:", 2);
+      $cpu$jscomp$21$$.debug.dump_state();
+      $cpu$jscomp$21$$.debug.dump_regs();
+      return 732803074;
+    });
+    this.io.register_write_consecutive(244, this, function($value$jscomp$182$$) {
+      console.log("Test exited with code " + $h$$($value$jscomp$182$$, 2));
+      throw "HALT";
+    }, function() {
+    }, function() {
+    }, function() {
+    });
+    for (let $i$jscomp$68$$ = 0; 15 >= $i$jscomp$68$$; $i$jscomp$68$$++) {
+      function $handle_write$$($value$jscomp$183$$) {
+        $dbg_log$$("kvm-unit-test: Set irq " + $h$$($i$jscomp$68$$) + " to " + $h$$($value$jscomp$183$$, 2));
+        $value$jscomp$183$$ ? this.device_raise_irq($i$jscomp$68$$) : this.device_lower_irq($i$jscomp$68$$);
+      }
+      this.io.register_write(8192 + $i$jscomp$68$$, this, $handle_write$$, $handle_write$$, $handle_write$$);
+    }
+    const $data8$$ = new Uint8Array(512);
+    (new Uint16Array($data8$$.buffer))[0] = 43605;
+    $data8$$[2] = 1;
+    var $checksum_index_i$jscomp$66$$ = 3;
+    $data8$$[$checksum_index_i$jscomp$66$$++] = 102;
+    $data8$$[$checksum_index_i$jscomp$66$$++] = 229;
+    $data8$$[$checksum_index_i$jscomp$66$$++] = 244;
+    $dbg_assert$$(512 > $checksum_index_i$jscomp$66$$);
+    let $rom_checksum$$ = $data8$$[$checksum_index_i$jscomp$66$$] = 0;
+    for (let $i$jscomp$69$$ = 0; $i$jscomp$69$$ < $data8$$.length; $i$jscomp$69$$++) {
+      $rom_checksum$$ += $data8$$[$i$jscomp$69$$];
+    }
+    $data8$$[$checksum_index_i$jscomp$66$$] = -$rom_checksum$$;
+    return {name:"genroms/multiboot.bin", data:$data8$$};
   }
+  $dbg_log$$("Multiboot header not found", 2);
 };
 $CPU$$.prototype.fill_cmos = function($rtc$jscomp$1$$, $settings$jscomp$2$$) {
   var $boot_order_memory_above_16m_memory_above_1m$$ = $settings$jscomp$2$$.boot_order || 291;
@@ -8143,39 +8385,39 @@ $CPU$$.prototype.fill_cmos = function($rtc$jscomp$1$$, $settings$jscomp$2$$) {
 $CPU$$.prototype.load_bios = function() {
   var $bios$$ = this.bios.main, $vga_bios$$ = this.bios.vga;
   if ($bios$$) {
-    var $data$jscomp$176$$ = new Uint8Array($bios$$);
-    this.write_blob($data$jscomp$176$$, 1048576 - $bios$$.byteLength);
+    var $data$jscomp$186$$ = new Uint8Array($bios$$);
+    this.write_blob($data$jscomp$186$$, 1048576 - $bios$$.byteLength);
     if ($vga_bios$$) {
       var $vga_bios8$$ = new Uint8Array($vga_bios$$);
       this.write_blob($vga_bios8$$, 786432);
-      this.io.mmap_register(4272947200, 1048576, function($addr$jscomp$46$$) {
-        $addr$jscomp$46$$ = $addr$jscomp$46$$ - 4272947200 | 0;
-        return $addr$jscomp$46$$ < $vga_bios8$$.length ? $vga_bios8$$[$addr$jscomp$46$$] : 0;
+      this.io.mmap_register(4272947200, 1048576, function($addr$jscomp$47$$) {
+        $addr$jscomp$47$$ = $addr$jscomp$47$$ - 4272947200 | 0;
+        return $addr$jscomp$47$$ < $vga_bios8$$.length ? $vga_bios8$$[$addr$jscomp$47$$] : 0;
       }, function() {
         $dbg_assert$$(!1, "Unexpected write to VGA rom");
       });
     } else {
       $dbg_log$$("Warning: No VGA BIOS");
     }
-    this.io.mmap_register(4293918720, 1048576, function($addr$jscomp$48$$) {
-      return this.mem8[$addr$jscomp$48$$ & 1048575];
-    }.bind(this), function($addr$jscomp$49$$, $value$jscomp$183$$) {
-      this.mem8[$addr$jscomp$49$$ & 1048575] = $value$jscomp$183$$;
+    this.io.mmap_register(4293918720, 1048576, function($addr$jscomp$49$$) {
+      return this.mem8[$addr$jscomp$49$$ & 1048575];
+    }.bind(this), function($addr$jscomp$50$$, $value$jscomp$185$$) {
+      this.mem8[$addr$jscomp$50$$ & 1048575] = $value$jscomp$185$$;
     }.bind(this));
   } else {
     $dbg_log$$("Warning: No BIOS");
   }
 };
-$CPU$$.prototype.codegen_finalize = function($wasm_table_index$$, $start$jscomp$37$$, $state_flags$$, $ptr$jscomp$4$$, $len$jscomp$18$$) {
+$CPU$$.prototype.codegen_finalize = function($wasm_table_index$$, $start$jscomp$38$$, $state_flags$$, $ptr$jscomp$4$$, $len$jscomp$18$$) {
   $ptr$jscomp$4$$ >>>= 0;
   $len$jscomp$18$$ >>>= 0;
   $dbg_assert$$(0 <= $wasm_table_index$$ && 900 > $wasm_table_index$$);
   const $code$jscomp$3$$ = new Uint8Array(this.wasm_memory.buffer, $ptr$jscomp$4$$, $len$jscomp$18$$);
-  this.seen_code[$start$jscomp$37$$] = (this.seen_code[$start$jscomp$37$$] || 0) + 1;
+  this.seen_code[$start$jscomp$38$$] = (this.seen_code[$start$jscomp$38$$] || 0) + 1;
   this.test_hook_did_generate_wasm && this.test_hook_did_generate_wasm($code$jscomp$3$$);
   WebAssembly.instantiate($code$jscomp$3$$, {e:this.jit_imports}).then($result$jscomp$10$$ => {
     this.wm.wasm_table.set($wasm_table_index$$ + 1024, $result$jscomp$10$$.instance.exports.f);
-    this.codegen_finalize_finished($wasm_table_index$$, $start$jscomp$37$$, $state_flags$$);
+    this.codegen_finalize_finished($wasm_table_index$$, $start$jscomp$38$$, $state_flags$$);
     this.test_hook_did_finalize_wasm && this.test_hook_did_finalize_wasm($code$jscomp$3$$);
   }).catch($e$jscomp$14$$ => {
     console.log($e$jscomp$14$$);
@@ -8193,69 +8435,69 @@ $CPU$$.prototype.run_hardware_timers = function($acpi_enabled$$, $now$jscomp$10$
   $acpi_enabled$$ && ($acpi_time$$ = this.devices.acpi.timer($now$jscomp$10$$), $apic_time$$ = this.devices.apic.timer($now$jscomp$10$$));
   return Math.min($pit_time$$, $rtc_time$$, $acpi_time$$, $apic_time$$);
 };
-$CPU$$.prototype.device_raise_irq = function($i$jscomp$69$$) {
+$CPU$$.prototype.device_raise_irq = function($i$jscomp$74$$) {
   $dbg_assert$$(1 === arguments.length);
-  this.pic_set_irq($i$jscomp$69$$);
-  this.devices.ioapic && this.devices.ioapic.set_irq($i$jscomp$69$$);
+  this.pic_set_irq($i$jscomp$74$$);
+  this.devices.ioapic && this.devices.ioapic.set_irq($i$jscomp$74$$);
 };
-$CPU$$.prototype.device_lower_irq = function($i$jscomp$70$$) {
-  this.pic_clear_irq($i$jscomp$70$$);
-  this.devices.ioapic && this.devices.ioapic.clear_irq($i$jscomp$70$$);
+$CPU$$.prototype.device_lower_irq = function($i$jscomp$75$$) {
+  this.pic_clear_irq($i$jscomp$75$$);
+  this.devices.ioapic && this.devices.ioapic.clear_irq($i$jscomp$75$$);
 };
 "undefined" !== typeof window ? window.CPU = $CPU$$ : "undefined" !== typeof module && "undefined" !== typeof module.exports ? module.exports.CPU = $CPU$$ : "function" === typeof importScripts && (self.CPU = $CPU$$);
 $CPU$$.prototype.debug_init = function() {
   function $get_state$$($where$jscomp$2$$) {
-    for (var $mode$jscomp$24$$ = $cpu$jscomp$20$$.protected_mode[0] ? "prot" : "real", $flags$jscomp$9$$ = $cpu$jscomp$20$$.get_eflags(), $iopl$$ = $cpu$jscomp$20$$.getiopl(), $cpl$$ = $cpu$jscomp$20$$.cpl[0], $cs_eip$$ = $h$$($cpu$jscomp$20$$.sreg[1], 4) + ":" + $h$$($cpu$jscomp$20$$.get_real_eip() >>> 0, 8), $ss_esp$$ = $h$$($cpu$jscomp$20$$.sreg[2], 4) + ":" + $h$$($cpu$jscomp$20$$.reg32[0] >>> 0, 8), $op_size$$ = $cpu$jscomp$20$$.is_32[0] ? "32" : "16", $if_$$ = $cpu$jscomp$20$$.flags[0] & 512 ? 
-    1 : 0, $flag_names$$ = {[1]:"c", [4]:"p", [16]:"a", [64]:"z", [128]:"s", [256]:"t", [512]:"i", [1024]:"d", [2048]:"o", }, $flag_string$$ = "", $i$jscomp$72$$ = 0; 16 > $i$jscomp$72$$; $i$jscomp$72$$++) {
-      $flag_names$$[1 << $i$jscomp$72$$] && ($flag_string$$ = $flags$jscomp$9$$ & 1 << $i$jscomp$72$$ ? $flag_string$$ + $flag_names$$[1 << $i$jscomp$72$$] : $flag_string$$ + " ");
+    for (var $mode$jscomp$24$$ = $cpu$jscomp$22$$.protected_mode[0] ? "prot" : "real", $flags$jscomp$9$$ = $cpu$jscomp$22$$.get_eflags(), $iopl$$ = $cpu$jscomp$22$$.getiopl(), $cpl$$ = $cpu$jscomp$22$$.cpl[0], $cs_eip$$ = $h$$($cpu$jscomp$22$$.sreg[1], 4) + ":" + $h$$($cpu$jscomp$22$$.get_real_eip() >>> 0, 8), $ss_esp$$ = $h$$($cpu$jscomp$22$$.sreg[2], 4) + ":" + $h$$($cpu$jscomp$22$$.reg32[0] >>> 0, 8), $op_size$$ = $cpu$jscomp$22$$.is_32[0] ? "32" : "16", $if_$$ = $cpu$jscomp$22$$.flags[0] & 512 ? 
+    1 : 0, $flag_names$$ = {[1]:"c", [4]:"p", [16]:"a", [64]:"z", [128]:"s", [256]:"t", [512]:"i", [1024]:"d", [2048]:"o", }, $flag_string$$ = "", $i$jscomp$77$$ = 0; 16 > $i$jscomp$77$$; $i$jscomp$77$$++) {
+      $flag_names$$[1 << $i$jscomp$77$$] && ($flag_string$$ = $flags$jscomp$9$$ & 1 << $i$jscomp$77$$ ? $flag_string$$ + $flag_names$$[1 << $i$jscomp$77$$] : $flag_string$$ + " ");
     }
-    return "mode=" + $mode$jscomp$24$$ + "/" + $op_size$$ + " paging=" + +(0 !== ($cpu$jscomp$20$$.cr[0] & -2147483648)) + " pae=" + +(0 !== ($cpu$jscomp$20$$.cr[4] & 32)) + " iopl=" + $iopl$$ + " cpl=" + $cpl$$ + " if=" + $if_$$ + " cs:eip=" + $cs_eip$$ + " cs_off=" + $h$$($cpu$jscomp$20$$.get_seg_cs() >>> 0, 8) + " flgs=" + $h$$($cpu$jscomp$20$$.get_eflags() >>> 0, 6) + " (" + $flag_string$$ + ") ss:esp=" + $ss_esp$$ + " ssize=" + +$cpu$jscomp$20$$.stack_size_32[0] + ($where$jscomp$2$$ ? " in " + 
+    return "mode=" + $mode$jscomp$24$$ + "/" + $op_size$$ + " paging=" + +(0 !== ($cpu$jscomp$22$$.cr[0] & -2147483648)) + " pae=" + +(0 !== ($cpu$jscomp$22$$.cr[4] & 32)) + " iopl=" + $iopl$$ + " cpl=" + $cpl$$ + " if=" + $if_$$ + " cs:eip=" + $cs_eip$$ + " cs_off=" + $h$$($cpu$jscomp$22$$.get_seg_cs() >>> 0, 8) + " flgs=" + $h$$($cpu$jscomp$22$$.get_eflags() >>> 0, 6) + " (" + $flag_string$$ + ") ss:esp=" + $ss_esp$$ + " ssize=" + +$cpu$jscomp$22$$.stack_size_32[0] + ($where$jscomp$2$$ ? " in " + 
     $where$jscomp$2$$ : "");
   }
   function $get_regs_short$$() {
-    for (var $r32$jscomp$2$$ = {eax:0, ecx:1, edx:2, ebx:3, esp:4, ebp:5, esi:6, edi:7}, $r32_names$$ = "eax ecx edx ebx esp ebp esi edi".split(" "), $line1$$ = "", $line2$$ = "", $i$jscomp$73$$ = 0; 4 > $i$jscomp$73$$; $i$jscomp$73$$++) {
-      $line1$$ += $r32_names$$[$i$jscomp$73$$] + "=" + $h$$($cpu$jscomp$20$$.reg32[$r32$jscomp$2$$[$r32_names$$[$i$jscomp$73$$]]] >>> 0, 8) + " ", $line2$$ += $r32_names$$[$i$jscomp$73$$ + 4] + "=" + $h$$($cpu$jscomp$20$$.reg32[$r32$jscomp$2$$[$r32_names$$[$i$jscomp$73$$ + 4]]] >>> 0, 8) + " ";
+    for (var $r32$jscomp$2$$ = {eax:0, ecx:1, edx:2, ebx:3, esp:4, ebp:5, esi:6, edi:7}, $r32_names$$ = "eax ecx edx ebx esp ebp esi edi".split(" "), $line1$$ = "", $line2$$ = "", $i$jscomp$78$$ = 0; 4 > $i$jscomp$78$$; $i$jscomp$78$$++) {
+      $line1$$ += $r32_names$$[$i$jscomp$78$$] + "=" + $h$$($cpu$jscomp$22$$.reg32[$r32$jscomp$2$$[$r32_names$$[$i$jscomp$78$$]]] >>> 0, 8) + " ", $line2$$ += $r32_names$$[$i$jscomp$78$$ + 4] + "=" + $h$$($cpu$jscomp$22$$.reg32[$r32$jscomp$2$$[$r32_names$$[$i$jscomp$78$$ + 4]]] >>> 0, 8) + " ";
     }
-    $line1$$ += "  ds=" + $h$$($cpu$jscomp$20$$.sreg[3], 4) + " es=" + $h$$($cpu$jscomp$20$$.sreg[0], 4) + " fs=" + $h$$($cpu$jscomp$20$$.sreg[4], 4);
-    $line2$$ += "  gs=" + $h$$($cpu$jscomp$20$$.sreg[5], 4) + " cs=" + $h$$($cpu$jscomp$20$$.sreg[1], 4) + " ss=" + $h$$($cpu$jscomp$20$$.sreg[2], 4);
+    $line1$$ += "  ds=" + $h$$($cpu$jscomp$22$$.sreg[3], 4) + " es=" + $h$$($cpu$jscomp$22$$.sreg[0], 4) + " fs=" + $h$$($cpu$jscomp$22$$.sreg[4], 4);
+    $line2$$ += "  gs=" + $h$$($cpu$jscomp$22$$.sreg[5], 4) + " cs=" + $h$$($cpu$jscomp$22$$.sreg[1], 4) + " ss=" + $h$$($cpu$jscomp$22$$.sreg[2], 4);
     return [$line1$$, $line2$$];
   }
   function $load_page_entry$$($dword_entry$$, $pae$$, $is_directory$$) {
     if (!($dword_entry$$ & 1)) {
       return !1;
     }
-    var $size$jscomp$38$$ = 128 === ($dword_entry$$ & 128);
-    return {size:$size$jscomp$38$$, global:256 === ($dword_entry$$ & 256), accessed:32 === ($dword_entry$$ & 32), dirty:64 === ($dword_entry$$ & 64), cache_disable:16 === ($dword_entry$$ & 16), user:4 === ($dword_entry$$ & 4), read_write:2 === ($dword_entry$$ & 2), address:($size$jscomp$38$$ && !$is_directory$$ ? $dword_entry$$ & ($pae$$ ? 4292870144 : 4290772992) : $dword_entry$$ & 4294963200) >>> 0};
+    var $size$jscomp$39$$ = 128 === ($dword_entry$$ & 128);
+    return {size:$size$jscomp$39$$, global:256 === ($dword_entry$$ & 256), accessed:32 === ($dword_entry$$ & 32), dirty:64 === ($dword_entry$$ & 64), cache_disable:16 === ($dword_entry$$ & 16), user:4 === ($dword_entry$$ & 4), read_write:2 === ($dword_entry$$ & 2), address:($size$jscomp$39$$ && !$is_directory$$ ? $dword_entry$$ & ($pae$$ ? 4292870144 : 4290772992) : $dword_entry$$ & 4294963200) >>> 0};
   }
-  function $dump_page_directory$$($pd_addr$$, $pae$jscomp$2$$, $start$jscomp$41$$) {
-    for (var $n$jscomp$11$$ = $pae$jscomp$2$$ ? 512 : 1024, $entry_size$$ = $pae$jscomp$2$$ ? 8 : 4, $pd_shift$$ = $pae$jscomp$2$$ ? 21 : 22, $i$jscomp$77$$ = 0; $i$jscomp$77$$ < $n$jscomp$11$$; $i$jscomp$77$$++) {
-      var $dword$jscomp$4_flags$jscomp$11$$ = $cpu$jscomp$20$$.read32s($pd_addr$$ + $i$jscomp$77$$ * $entry_size$$), $entry$jscomp$7$$ = $load_page_entry$$($dword$jscomp$4_flags$jscomp$11$$, $pae$jscomp$2$$, !0);
+  function $dump_page_directory$$($pd_addr$$, $pae$jscomp$2$$, $start$jscomp$42$$) {
+    for (var $n$jscomp$11$$ = $pae$jscomp$2$$ ? 512 : 1024, $entry_size$$ = $pae$jscomp$2$$ ? 8 : 4, $pd_shift$$ = $pae$jscomp$2$$ ? 21 : 22, $i$jscomp$82$$ = 0; $i$jscomp$82$$ < $n$jscomp$11$$; $i$jscomp$82$$++) {
+      var $dword$jscomp$4_flags$jscomp$11$$ = $cpu$jscomp$22$$.read32s($pd_addr$$ + $i$jscomp$82$$ * $entry_size$$), $entry$jscomp$7$$ = $load_page_entry$$($dword$jscomp$4_flags$jscomp$11$$, $pae$jscomp$2$$, !0);
       if ($entry$jscomp$7$$) {
         if ($dword$jscomp$4_flags$jscomp$11$$ = "", $dword$jscomp$4_flags$jscomp$11$$ += $entry$jscomp$7$$.size ? "S " : "  ", $dword$jscomp$4_flags$jscomp$11$$ += $entry$jscomp$7$$.accessed ? "A " : "  ", $dword$jscomp$4_flags$jscomp$11$$ += $entry$jscomp$7$$.cache_disable ? "Cd " : "  ", $dword$jscomp$4_flags$jscomp$11$$ += $entry$jscomp$7$$.user ? "U " : "  ", $dword$jscomp$4_flags$jscomp$11$$ += $entry$jscomp$7$$.read_write ? "Rw " : "   ", $entry$jscomp$7$$.size) {
-          $dbg_log$$("=== " + $h$$($start$jscomp$41$$ + ($i$jscomp$77$$ << $pd_shift$$) >>> 0, 8) + " -> " + $h$$($entry$jscomp$7$$.address >>> 0, 8) + " | " + $dword$jscomp$4_flags$jscomp$11$$);
+          $dbg_log$$("=== " + $h$$($start$jscomp$42$$ + ($i$jscomp$82$$ << $pd_shift$$) >>> 0, 8) + " -> " + $h$$($entry$jscomp$7$$.address >>> 0, 8) + " | " + $dword$jscomp$4_flags$jscomp$11$$);
         } else {
-          $dbg_log$$("=== " + $h$$($start$jscomp$41$$ + ($i$jscomp$77$$ << $pd_shift$$) >>> 0, 8) + " | " + $dword$jscomp$4_flags$jscomp$11$$);
+          $dbg_log$$("=== " + $h$$($start$jscomp$42$$ + ($i$jscomp$82$$ << $pd_shift$$) >>> 0, 8) + " | " + $dword$jscomp$4_flags$jscomp$11$$);
           for (var $j$jscomp$7$$ = 0; $j$jscomp$7$$ < $n$jscomp$11$$; $j$jscomp$7$$++) {
             var $sub_addr$$ = $entry$jscomp$7$$.address + $j$jscomp$7$$ * $entry_size$$;
-            $dword$jscomp$4_flags$jscomp$11$$ = $cpu$jscomp$20$$.read32s($sub_addr$$);
+            $dword$jscomp$4_flags$jscomp$11$$ = $cpu$jscomp$22$$.read32s($sub_addr$$);
             var $subentry$$ = $load_page_entry$$($dword$jscomp$4_flags$jscomp$11$$, $pae$jscomp$2$$, !1);
             $subentry$$ && ($dword$jscomp$4_flags$jscomp$11$$ = "", $dword$jscomp$4_flags$jscomp$11$$ += $subentry$$.cache_disable ? "Cd " : "   ", $dword$jscomp$4_flags$jscomp$11$$ += $subentry$$.user ? "U " : "  ", $dword$jscomp$4_flags$jscomp$11$$ += $subentry$$.read_write ? "Rw " : "   ", $dword$jscomp$4_flags$jscomp$11$$ += $subentry$$.global ? "G " : "  ", $dword$jscomp$4_flags$jscomp$11$$ += $subentry$$.accessed ? "A " : "  ", $dword$jscomp$4_flags$jscomp$11$$ += $subentry$$.dirty ? "Di " : 
-            "   ", $dbg_log$$("# " + $h$$($start$jscomp$41$$ + ($i$jscomp$77$$ << $pd_shift$$ | $j$jscomp$7$$ << 12) >>> 0, 8) + " -> " + $h$$($subentry$$.address, 8) + " | " + $dword$jscomp$4_flags$jscomp$11$$ + "        (at " + $h$$($sub_addr$$, 8) + ")"));
+            "   ", $dbg_log$$("# " + $h$$($start$jscomp$42$$ + ($i$jscomp$82$$ << $pd_shift$$ | $j$jscomp$7$$ << 12) >>> 0, 8) + " -> " + $h$$($subentry$$.address, 8) + " | " + $dword$jscomp$4_flags$jscomp$11$$ + "        (at " + $h$$($sub_addr$$, 8) + ")"));
           }
         }
       }
     }
   }
-  var $cpu$jscomp$20$$ = this, $debug$$ = {};
+  var $cpu$jscomp$22$$ = this, $debug$$ = {};
   this.debug = $debug$$;
   $debug$$.init = function() {
     function $handle$jscomp$12$$($out_byte$jscomp$17$$) {
       10 === $out_byte$jscomp$17$$ ? ($dbg_log$$($seabios_debug$$, 4096), $seabios_debug$$ = "") : $seabios_debug$$ += String.fromCharCode($out_byte$jscomp$17$$);
     }
-    if ($cpu$jscomp$20$$.io) {
+    if ($cpu$jscomp$22$$.io) {
       var $seabios_debug$$ = "";
-      $cpu$jscomp$20$$.io.register_write(1026, this, $handle$jscomp$12$$);
-      $cpu$jscomp$20$$.io.register_write(1280, this, $handle$jscomp$12$$);
+      $cpu$jscomp$22$$.io.register_write(1026, this, $handle$jscomp$12$$);
+      $cpu$jscomp$22$$.io.register_write(1280, this, $handle$jscomp$12$$);
     }
   };
   $debug$$.get_regs_short = $get_regs_short$$;
@@ -8268,78 +8510,78 @@ $CPU$$.prototype.debug_init = function() {
   $debug$$.dump_state = function($where$jscomp$3$$) {
     $dbg_log$$($get_state$$($where$jscomp$3$$), 2);
   };
-  $debug$$.dump_stack = function($i$jscomp$71_start$jscomp$40$$, $end$jscomp$23$$) {
-    var $esp$$ = $cpu$jscomp$20$$.reg32[4];
+  $debug$$.dump_stack = function($i$jscomp$76_start$jscomp$41$$, $end$jscomp$23$$) {
+    var $esp$$ = $cpu$jscomp$22$$.reg32[4];
     $dbg_log$$("========= STACK ==========");
-    if ($end$jscomp$23$$ >= $i$jscomp$71_start$jscomp$40$$ || void 0 === $end$jscomp$23$$) {
-      $i$jscomp$71_start$jscomp$40$$ = 5, $end$jscomp$23$$ = -5;
+    if ($end$jscomp$23$$ >= $i$jscomp$76_start$jscomp$41$$ || void 0 === $end$jscomp$23$$) {
+      $i$jscomp$76_start$jscomp$41$$ = 5, $end$jscomp$23$$ = -5;
     }
-    for (; $i$jscomp$71_start$jscomp$40$$ > $end$jscomp$23$$; $i$jscomp$71_start$jscomp$40$$--) {
+    for (; $i$jscomp$76_start$jscomp$41$$ > $end$jscomp$23$$; $i$jscomp$76_start$jscomp$41$$--) {
       var $line$jscomp$5$$ = "    ";
-      $i$jscomp$71_start$jscomp$40$$ || ($line$jscomp$5$$ = "=>  ");
-      $line$jscomp$5$$ += $h$$($i$jscomp$71_start$jscomp$40$$, 2) + " | ";
-      $dbg_log$$($line$jscomp$5$$ + $h$$($esp$$ + 4 * $i$jscomp$71_start$jscomp$40$$, 8) + " | " + $h$$($cpu$jscomp$20$$.read32s($esp$$ + 4 * $i$jscomp$71_start$jscomp$40$$) >>> 0));
+      $i$jscomp$76_start$jscomp$41$$ || ($line$jscomp$5$$ = "=>  ");
+      $line$jscomp$5$$ += $h$$($i$jscomp$76_start$jscomp$41$$, 2) + " | ";
+      $dbg_log$$($line$jscomp$5$$ + $h$$($esp$$ + 4 * $i$jscomp$76_start$jscomp$41$$, 8) + " | " + $h$$($cpu$jscomp$22$$.read32s($esp$$ + 4 * $i$jscomp$76_start$jscomp$41$$) >>> 0));
     }
   };
   $debug$$.dump_page_structures = function() {
-    if ($cpu$jscomp$20$$.cr[4] & 32) {
+    if ($cpu$jscomp$22$$.cr[4] & 32) {
       $dbg_log$$("PAE enabled");
-      for (var $i$jscomp$76$$ = 0; 4 > $i$jscomp$76$$; $i$jscomp$76$$++) {
-        var $dword$jscomp$3$$ = $cpu$jscomp$20$$.read32s($cpu$jscomp$20$$.cr[3] + 8 * $i$jscomp$76$$);
-        $dword$jscomp$3$$ & 1 && $dump_page_directory$$($dword$jscomp$3$$ & 4294963200, !0, $i$jscomp$76$$ << 30);
+      for (var $i$jscomp$81$$ = 0; 4 > $i$jscomp$81$$; $i$jscomp$81$$++) {
+        var $dword$jscomp$3$$ = $cpu$jscomp$22$$.read32s($cpu$jscomp$22$$.cr[3] + 8 * $i$jscomp$81$$);
+        $dword$jscomp$3$$ & 1 && $dump_page_directory$$($dword$jscomp$3$$ & 4294963200, !0, $i$jscomp$81$$ << 30);
       }
     } else {
-      $dbg_log$$("PAE disabled"), $dump_page_directory$$($cpu$jscomp$20$$.cr[3], !1, 0);
+      $dbg_log$$("PAE disabled"), $dump_page_directory$$($cpu$jscomp$22$$.cr[3], !1, 0);
     }
   };
   $debug$$.dump_gdt_ldt = function() {
-    function $dump_table$$($addr$jscomp$50$$, $size$jscomp$37$$) {
-      for (var $i$jscomp$74$$ = 0; $i$jscomp$74$$ < $size$jscomp$37$$; $i$jscomp$74$$ += 8, $addr$jscomp$50$$ += 8) {
-        var $base$jscomp$4$$ = $cpu$jscomp$20$$.read16($addr$jscomp$50$$ + 2) | $cpu$jscomp$20$$.read8($addr$jscomp$50$$ + 4) << 16 | $cpu$jscomp$20$$.read8($addr$jscomp$50$$ + 7) << 24, $limit$$ = $cpu$jscomp$20$$.read16($addr$jscomp$50$$) | ($cpu$jscomp$20$$.read8($addr$jscomp$50$$ + 6) & 15) << 16, $access$jscomp$1$$ = $cpu$jscomp$20$$.read8($addr$jscomp$50$$ + 5), $flags$jscomp$10$$ = $cpu$jscomp$20$$.read8($addr$jscomp$50$$ + 6) >> 4, $flags_str$$ = "", $dpl$$ = $access$jscomp$1$$ >> 5 & 3;
+    function $dump_table$$($addr$jscomp$51$$, $size$jscomp$38$$) {
+      for (var $i$jscomp$79$$ = 0; $i$jscomp$79$$ < $size$jscomp$38$$; $i$jscomp$79$$ += 8, $addr$jscomp$51$$ += 8) {
+        var $base$jscomp$4$$ = $cpu$jscomp$22$$.read16($addr$jscomp$51$$ + 2) | $cpu$jscomp$22$$.read8($addr$jscomp$51$$ + 4) << 16 | $cpu$jscomp$22$$.read8($addr$jscomp$51$$ + 7) << 24, $limit$$ = $cpu$jscomp$22$$.read16($addr$jscomp$51$$) | ($cpu$jscomp$22$$.read8($addr$jscomp$51$$ + 6) & 15) << 16, $access$jscomp$1$$ = $cpu$jscomp$22$$.read8($addr$jscomp$51$$ + 5), $flags$jscomp$10$$ = $cpu$jscomp$22$$.read8($addr$jscomp$51$$ + 6) >> 4, $flags_str$$ = "", $dpl$$ = $access$jscomp$1$$ >> 5 & 3;
         $flags_str$$ = $access$jscomp$1$$ & 128 ? $flags_str$$ + " P " : $flags_str$$ + "NP ";
         $access$jscomp$1$$ & 16 ? ($flags_str$$ = $flags$jscomp$10$$ & 4 ? $flags_str$$ + "32b " : $flags_str$$ + "16b ", $access$jscomp$1$$ & 8 ? ($flags_str$$ += "X ", $access$jscomp$1$$ & 4 && ($flags_str$$ += "C ")) : $flags_str$$ += "R ", $flags_str$$ += "RW ") : $flags_str$$ += "sys: " + $h$$($access$jscomp$1$$ & 15);
         $flags$jscomp$10$$ & 8 && ($limit$$ = $limit$$ << 12 | 4095);
-        $dbg_log$$($h$$($i$jscomp$74$$ & -8, 4) + " " + $h$$($base$jscomp$4$$ >>> 0, 8) + " (" + $h$$($limit$$ >>> 0, 8) + " bytes) " + $flags_str$$ + ";  dpl = " + $dpl$$ + ", a = " + $access$jscomp$1$$.toString(2) + ", f = " + $flags$jscomp$10$$.toString(2));
+        $dbg_log$$($h$$($i$jscomp$79$$ & -8, 4) + " " + $h$$($base$jscomp$4$$ >>> 0, 8) + " (" + $h$$($limit$$ >>> 0, 8) + " bytes) " + $flags_str$$ + ";  dpl = " + $dpl$$ + ", a = " + $access$jscomp$1$$.toString(2) + ", f = " + $flags$jscomp$10$$.toString(2));
       }
     }
-    $dbg_log$$("gdt: (len = " + $h$$($cpu$jscomp$20$$.gdtr_size[0]) + ")");
-    $dump_table$$($cpu$jscomp$20$$.translate_address_system_read($cpu$jscomp$20$$.gdtr_offset[0]), $cpu$jscomp$20$$.gdtr_size[0]);
-    $dbg_log$$("\nldt: (len = " + $h$$($cpu$jscomp$20$$.segment_limits[7]) + ")");
-    $dump_table$$($cpu$jscomp$20$$.translate_address_system_read($cpu$jscomp$20$$.segment_offsets[7]), $cpu$jscomp$20$$.segment_limits[7]);
+    $dbg_log$$("gdt: (len = " + $h$$($cpu$jscomp$22$$.gdtr_size[0]) + ")");
+    $dump_table$$($cpu$jscomp$22$$.translate_address_system_read($cpu$jscomp$22$$.gdtr_offset[0]), $cpu$jscomp$22$$.gdtr_size[0]);
+    $dbg_log$$("\nldt: (len = " + $h$$($cpu$jscomp$22$$.segment_limits[7]) + ")");
+    $dump_table$$($cpu$jscomp$22$$.translate_address_system_read($cpu$jscomp$22$$.segment_offsets[7]), $cpu$jscomp$22$$.segment_limits[7]);
   };
   $debug$$.dump_idt = function() {
-    for (var $i$jscomp$75$$ = 0; $i$jscomp$75$$ < $cpu$jscomp$20$$.idtr_size[0]; $i$jscomp$75$$ += 8) {
-      var $addr$jscomp$51_type$jscomp$155$$ = $cpu$jscomp$20$$.translate_address_system_read($cpu$jscomp$20$$.idtr_offset[0] + $i$jscomp$75$$), $base$jscomp$5$$ = $cpu$jscomp$20$$.read16($addr$jscomp$51_type$jscomp$155$$) | $cpu$jscomp$20$$.read16($addr$jscomp$51_type$jscomp$155$$ + 6) << 16, $selector$jscomp$1$$ = $cpu$jscomp$20$$.read16($addr$jscomp$51_type$jscomp$155$$ + 2);
-      $addr$jscomp$51_type$jscomp$155$$ = $cpu$jscomp$20$$.read8($addr$jscomp$51_type$jscomp$155$$ + 5);
-      var $dpl$jscomp$1$$ = $addr$jscomp$51_type$jscomp$155$$ >> 5 & 3;
-      var $line$jscomp$6$$ = 5 === ($addr$jscomp$51_type$jscomp$155$$ & 31) ? "task gate " : 14 === ($addr$jscomp$51_type$jscomp$155$$ & 31) ? "intr gate " : 15 === ($addr$jscomp$51_type$jscomp$155$$ & 31) ? "trap gate " : "invalid   ";
-      $line$jscomp$6$$ = $addr$jscomp$51_type$jscomp$155$$ & 128 ? $line$jscomp$6$$ + " P" : $line$jscomp$6$$ + "NP";
-      $dbg_log$$($h$$($i$jscomp$75$$ >> 3, 4) + " " + $h$$($base$jscomp$5$$ >>> 0, 8) + ", " + $h$$($selector$jscomp$1$$, 4) + "; " + $line$jscomp$6$$ + ";  dpl = " + $dpl$jscomp$1$$ + ", t = " + $addr$jscomp$51_type$jscomp$155$$.toString(2));
+    for (var $i$jscomp$80$$ = 0; $i$jscomp$80$$ < $cpu$jscomp$22$$.idtr_size[0]; $i$jscomp$80$$ += 8) {
+      var $addr$jscomp$52_type$jscomp$155$$ = $cpu$jscomp$22$$.translate_address_system_read($cpu$jscomp$22$$.idtr_offset[0] + $i$jscomp$80$$), $base$jscomp$5$$ = $cpu$jscomp$22$$.read16($addr$jscomp$52_type$jscomp$155$$) | $cpu$jscomp$22$$.read16($addr$jscomp$52_type$jscomp$155$$ + 6) << 16, $selector$jscomp$1$$ = $cpu$jscomp$22$$.read16($addr$jscomp$52_type$jscomp$155$$ + 2);
+      $addr$jscomp$52_type$jscomp$155$$ = $cpu$jscomp$22$$.read8($addr$jscomp$52_type$jscomp$155$$ + 5);
+      var $dpl$jscomp$1$$ = $addr$jscomp$52_type$jscomp$155$$ >> 5 & 3;
+      var $line$jscomp$6$$ = 5 === ($addr$jscomp$52_type$jscomp$155$$ & 31) ? "task gate " : 14 === ($addr$jscomp$52_type$jscomp$155$$ & 31) ? "intr gate " : 15 === ($addr$jscomp$52_type$jscomp$155$$ & 31) ? "trap gate " : "invalid   ";
+      $line$jscomp$6$$ = $addr$jscomp$52_type$jscomp$155$$ & 128 ? $line$jscomp$6$$ + " P" : $line$jscomp$6$$ + "NP";
+      $dbg_log$$($h$$($i$jscomp$80$$ >> 3, 4) + " " + $h$$($base$jscomp$5$$ >>> 0, 8) + ", " + $h$$($selector$jscomp$1$$, 4) + "; " + $line$jscomp$6$$ + ";  dpl = " + $dpl$jscomp$1$$ + ", t = " + $addr$jscomp$52_type$jscomp$155$$.toString(2));
     }
   };
-  $debug$$.get_memory_dump = function($start$jscomp$42$$, $count$jscomp$56$$) {
-    void 0 === $start$jscomp$42$$ ? ($start$jscomp$42$$ = 0, $count$jscomp$56$$ = $cpu$jscomp$20$$.memory_size[0]) : void 0 === $count$jscomp$56$$ && ($count$jscomp$56$$ = $start$jscomp$42$$, $start$jscomp$42$$ = 0);
-    return $cpu$jscomp$20$$.mem8.slice($start$jscomp$42$$, $start$jscomp$42$$ + $count$jscomp$56$$).buffer;
+  $debug$$.get_memory_dump = function($start$jscomp$43$$, $count$jscomp$56$$) {
+    void 0 === $start$jscomp$43$$ ? ($start$jscomp$43$$ = 0, $count$jscomp$56$$ = $cpu$jscomp$22$$.memory_size[0]) : void 0 === $count$jscomp$56$$ && ($count$jscomp$56$$ = $start$jscomp$43$$, $start$jscomp$43$$ = 0);
+    return $cpu$jscomp$22$$.mem8.slice($start$jscomp$43$$, $start$jscomp$43$$ + $count$jscomp$56$$).buffer;
   };
-  $debug$$.memory_hex_dump = function($addr$jscomp$54$$, $length$jscomp$26$$) {
+  $debug$$.memory_hex_dump = function($addr$jscomp$55$$, $length$jscomp$26$$) {
     $length$jscomp$26$$ = $length$jscomp$26$$ || 64;
-    for (var $line$jscomp$7$$, $byt$$, $i$jscomp$78$$ = 0; $i$jscomp$78$$ < $length$jscomp$26$$ >> 4; $i$jscomp$78$$++) {
-      $line$jscomp$7$$ = $h$$($addr$jscomp$54$$ + ($i$jscomp$78$$ << 4), 5) + "   ";
+    for (var $line$jscomp$7$$, $byt$$, $i$jscomp$83$$ = 0; $i$jscomp$83$$ < $length$jscomp$26$$ >> 4; $i$jscomp$83$$++) {
+      $line$jscomp$7$$ = $h$$($addr$jscomp$55$$ + ($i$jscomp$83$$ << 4), 5) + "   ";
       for (var $j$jscomp$8$$ = 0; 16 > $j$jscomp$8$$; $j$jscomp$8$$++) {
-        $byt$$ = $cpu$jscomp$20$$.read8($addr$jscomp$54$$ + ($i$jscomp$78$$ << 4) + $j$jscomp$8$$), $line$jscomp$7$$ += $h$$($byt$$, 2) + " ";
+        $byt$$ = $cpu$jscomp$22$$.read8($addr$jscomp$55$$ + ($i$jscomp$83$$ << 4) + $j$jscomp$8$$), $line$jscomp$7$$ += $h$$($byt$$, 2) + " ";
       }
       $line$jscomp$7$$ += "  ";
       for ($j$jscomp$8$$ = 0; 16 > $j$jscomp$8$$; $j$jscomp$8$$++) {
-        $byt$$ = $cpu$jscomp$20$$.read8($addr$jscomp$54$$ + ($i$jscomp$78$$ << 4) + $j$jscomp$8$$), $line$jscomp$7$$ += 33 > $byt$$ || 126 < $byt$$ ? "." : String.fromCharCode($byt$$);
+        $byt$$ = $cpu$jscomp$22$$.read8($addr$jscomp$55$$ + ($i$jscomp$83$$ << 4) + $j$jscomp$8$$), $line$jscomp$7$$ += 33 > $byt$$ || 126 < $byt$$ ? "." : String.fromCharCode($byt$$);
       }
       $dbg_log$$($line$jscomp$7$$);
     }
   };
   $debug$$.used_memory_dump = function() {
-    for (var $block_size$$ = $cpu$jscomp$20$$.memory_size[0] / 128 / 16 | 0, $row$jscomp$8$$, $i$jscomp$79$$ = 0; 16 > $i$jscomp$79$$; $i$jscomp$79$$++) {
-      $row$jscomp$8$$ = $h$$(128 * $i$jscomp$79$$ * $block_size$$, 8) + " | ";
+    for (var $block_size$$ = $cpu$jscomp$22$$.memory_size[0] / 128 / 16 | 0, $row$jscomp$8$$, $i$jscomp$84$$ = 0; 16 > $i$jscomp$84$$; $i$jscomp$84$$++) {
+      $row$jscomp$8$$ = $h$$(128 * $i$jscomp$84$$ * $block_size$$, 8) + " | ";
       for (var $j$jscomp$9$$ = 0; 128 > $j$jscomp$9$$; $j$jscomp$9$$++) {
-        $row$jscomp$8$$ += 0 < $cpu$jscomp$20$$.mem32s[(128 * $i$jscomp$79$$ + $j$jscomp$9$$) * $block_size$$] ? "X" : " ";
+        $row$jscomp$8$$ += 0 < $cpu$jscomp$22$$.mem32s[(128 * $i$jscomp$84$$ + $j$jscomp$9$$) * $block_size$$] ? "X" : " ";
       }
       $dbg_log$$($row$jscomp$8$$);
     }
@@ -8347,7 +8589,7 @@ $CPU$$.prototype.debug_init = function() {
   $debug$$.debug_interrupt = function() {
   };
   let $cs$jscomp$1$$, $capstone_decoder$$;
-  $debug$$.dump_code = function($is_32$jscomp$1$$, $buffer$jscomp$42$$, $start$jscomp$43$$) {
+  $debug$$.dump_code = function($is_32$jscomp$1$$, $buffer$jscomp$45$$, $start$jscomp$44$$) {
     if (!$capstone_decoder$$) {
       if (void 0 === $cs$jscomp$1$$ && ($cs$jscomp$1$$ = "function" === typeof require ? require("./capstone-x86.min.js") : window.cs, void 0 === $cs$jscomp$1$$)) {
         $dbg_log$$("Warning: Missing capstone library, disassembly not available");
@@ -8356,41 +8598,41 @@ $CPU$$.prototype.debug_init = function() {
       $capstone_decoder$$ = [new $cs$jscomp$1$$.Capstone($cs$jscomp$1$$.ARCH_X86, $cs$jscomp$1$$.MODE_16), new $cs$jscomp$1$$.Capstone($cs$jscomp$1$$.ARCH_X86, $cs$jscomp$1$$.MODE_32), ];
     }
     try {
-      $capstone_decoder$$[$is_32$jscomp$1$$].disasm($buffer$jscomp$42$$, $start$jscomp$43$$).forEach(function($instr$$) {
+      $capstone_decoder$$[$is_32$jscomp$1$$].disasm($buffer$jscomp$45$$, $start$jscomp$44$$).forEach(function($instr$$) {
         $dbg_log$$($h$$($instr$$.address >>> 0) + ": " + $v86util$$.pads($instr$$.bytes.map($x$jscomp$104$$ => $h$$($x$jscomp$104$$, 2).slice(-2)).join(" "), 20) + " " + $instr$$.mnemonic + " " + $instr$$.op_str);
       }), $dbg_log$$("");
     } catch ($e$jscomp$15$$) {
-      $dbg_log$$("Could not disassemble: " + Array.from($buffer$jscomp$42$$).map($x$jscomp$105$$ => $h$$($x$jscomp$105$$, 2)).join(" "));
+      $dbg_log$$("Could not disassemble: " + Array.from($buffer$jscomp$45$$).map($x$jscomp$105$$ => $h$$($x$jscomp$105$$, 2)).join(" "));
     }
   };
   let $wabt$$;
-  $debug$$.dump_wasm = function($buffer$jscomp$43$$) {
+  $debug$$.dump_wasm = function($buffer$jscomp$46$$) {
     if (void 0 === $wabt$$ && ($wabt$$ = "function" === typeof require ? require("./libwabt.js") : new window.WabtModule, void 0 === $wabt$$)) {
       $dbg_log$$("Warning: Missing libwabt, wasm dump not available");
       return;
     }
-    $buffer$jscomp$43$$ = $buffer$jscomp$43$$.slice();
+    $buffer$jscomp$46$$ = $buffer$jscomp$46$$.slice();
     try {
-      var $module$jscomp$2$$ = $wabt$$.readWasm($buffer$jscomp$43$$, {readDebugNames:!1});
+      var $module$jscomp$2$$ = $wabt$$.readWasm($buffer$jscomp$46$$, {readDebugNames:!1});
       $module$jscomp$2$$.generateNames();
       $module$jscomp$2$$.applyNames();
       const $result$jscomp$11$$ = $module$jscomp$2$$.toText({foldExprs:!0, inlineExport:!0});
       $dbg_log$$($result$jscomp$11$$);
     } catch ($e$jscomp$16$$) {
-      var $blob$jscomp$inline_18$$ = new Blob([$buffer$jscomp$43$$]), $a$jscomp$inline_19$$ = document.createElement("a");
-      $a$jscomp$inline_19$$.download = "failed.wasm";
-      $a$jscomp$inline_19$$.href = window.URL.createObjectURL($blob$jscomp$inline_18$$);
-      $a$jscomp$inline_19$$.dataset.downloadurl = ["application/octet-stream", $a$jscomp$inline_19$$.download, $a$jscomp$inline_19$$.href].join(":");
-      $a$jscomp$inline_19$$.click();
-      window.URL.revokeObjectURL($a$jscomp$inline_19$$.src);
+      var $blob$jscomp$inline_31$$ = new Blob([$buffer$jscomp$46$$]), $a$jscomp$inline_32$$ = document.createElement("a");
+      $a$jscomp$inline_32$$.download = "failed.wasm";
+      $a$jscomp$inline_32$$.href = window.URL.createObjectURL($blob$jscomp$inline_31$$);
+      $a$jscomp$inline_32$$.dataset.downloadurl = ["application/octet-stream", $a$jscomp$inline_32$$.download, $a$jscomp$inline_32$$.href].join(":");
+      $a$jscomp$inline_32$$.click();
+      window.URL.revokeObjectURL($a$jscomp$inline_32$$.src);
       console.log($e$jscomp$16$$.toString());
     } finally {
       $module$jscomp$2$$ && $module$jscomp$2$$.destroy();
     }
   };
 };
-let $types$$ = DataView.prototype, $U8$$ = {size:1, get:$types$$.getUint8, set:$types$$.setUint8, }, $U16$$ = {size:2, get:$types$$.getUint16, set:$types$$.setUint16, }, $U32$$ = {size:4, get:$types$$.getUint32, set:$types$$.setUint32, }, $Header$$ = $create_struct$$([{magic:$U32$$, }, {class:$U8$$, }, {data:$U8$$, }, {version0:$U8$$, }, {osabi:$U8$$, }, {abiversion:$U8$$, }, {pad0:function($size$jscomp$39$$) {
-  return {size:$size$jscomp$39$$, get:() => -1, };
+let $types$$ = DataView.prototype, $U8$$ = {size:1, get:$types$$.getUint8, set:$types$$.setUint8, }, $U16$$ = {size:2, get:$types$$.getUint16, set:$types$$.setUint16, }, $U32$$ = {size:4, get:$types$$.getUint32, set:$types$$.setUint32, }, $Header$$ = $create_struct$$([{magic:$U32$$, }, {class:$U8$$, }, {data:$U8$$, }, {version0:$U8$$, }, {osabi:$U8$$, }, {abiversion:$U8$$, }, {pad0:function($size$jscomp$40$$) {
+  return {size:$size$jscomp$40$$, get:() => -1, };
 }(7)}, {type:$U16$$, }, {machine:$U16$$, }, {version1:$U32$$, }, {entry:$U32$$, }, {phoff:$U32$$, }, {shoff:$U32$$, }, {flags:$U32$$, }, {ehsize:$U16$$, }, {phentsize:$U16$$, }, {phnum:$U16$$, }, {shentsize:$U16$$, }, {shnum:$U16$$, }, {shstrndx:$U16$$, }, ]);
 console.assert(52 === $Header$$.reduce(($a$jscomp$5$$, $entry$jscomp$8$$) => $a$jscomp$5$$ + $entry$jscomp$8$$.size, 0));
 let $ProgramHeader$$ = $create_struct$$([{type:$U32$$, }, {offset:$U32$$, }, {vaddr:$U32$$, }, {paddr:$U32$$, }, {filesz:$U32$$, }, {memsz:$U32$$, }, {flags:$U32$$, }, {align:$U32$$, }, ]);
@@ -8399,65 +8641,35 @@ let $SectionHeader$$ = $create_struct$$([{name:$U32$$, }, {type:$U32$$, }, {flag
 console.assert(40 === $SectionHeader$$.reduce(($a$jscomp$7$$, $entry$jscomp$10$$) => $a$jscomp$7$$ + $entry$jscomp$10$$.size, 0));
 function $create_struct$$($struct$$) {
   return $struct$$.map(function($entry$jscomp$11_type$jscomp$156$$) {
-    var $keys_name$jscomp$88$$ = Object.keys($entry$jscomp$11_type$jscomp$156$$);
-    console.assert(1 === $keys_name$jscomp$88$$.length);
-    $keys_name$jscomp$88$$ = $keys_name$jscomp$88$$[0];
-    $entry$jscomp$11_type$jscomp$156$$ = $entry$jscomp$11_type$jscomp$156$$[$keys_name$jscomp$88$$];
+    var $keys_name$jscomp$89$$ = Object.keys($entry$jscomp$11_type$jscomp$156$$);
+    console.assert(1 === $keys_name$jscomp$89$$.length);
+    $keys_name$jscomp$89$$ = $keys_name$jscomp$89$$[0];
+    $entry$jscomp$11_type$jscomp$156$$ = $entry$jscomp$11_type$jscomp$156$$[$keys_name$jscomp$89$$];
     console.assert(0 < $entry$jscomp$11_type$jscomp$156$$.size);
-    return {name:$keys_name$jscomp$88$$, type:$entry$jscomp$11_type$jscomp$156$$, size:$entry$jscomp$11_type$jscomp$156$$.size, get:$entry$jscomp$11_type$jscomp$156$$.get, set:$entry$jscomp$11_type$jscomp$156$$.set, };
+    return {name:$keys_name$jscomp$89$$, type:$entry$jscomp$11_type$jscomp$156$$, size:$entry$jscomp$11_type$jscomp$156$$.size, get:$entry$jscomp$11_type$jscomp$156$$.get, set:$entry$jscomp$11_type$jscomp$156$$.set, };
   });
 }
-function $read_elf$$($buffer$jscomp$44_sections_headers_view$jscomp$7$$) {
-  $buffer$jscomp$44_sections_headers_view$jscomp$7$$ = new DataView($buffer$jscomp$44_sections_headers_view$jscomp$7$$);
-  let [$header$jscomp$4$$, $offset$jscomp$59$$] = $read_struct$$($buffer$jscomp$44_sections_headers_view$jscomp$7$$, $Header$$);
-  console.assert(52 === $offset$jscomp$59$$);
-  for ($key$jscomp$37_program_headers$$ of Object.keys($header$jscomp$4$$)) {
-    $dbg_log$$($key$jscomp$37_program_headers$$ + ": 0x" + ($header$jscomp$4$$[$key$jscomp$37_program_headers$$].toString(16) >>> 0));
-  }
-  console.assert(1179403647 === $header$jscomp$4$$.magic, "Bad magic");
-  console.assert(1 === $header$jscomp$4$$.class, "Unimplemented: 64 bit elf");
-  console.assert(1 === $header$jscomp$4$$.data, "Unimplemented: big endian");
-  console.assert(1 === $header$jscomp$4$$.version0, "Bad version0");
-  console.assert(2 === $header$jscomp$4$$.type, "Unimplemented type");
-  console.assert(1 === $header$jscomp$4$$.version1, "Bad version1");
-  console.assert(52 === $header$jscomp$4$$.ehsize, "Bad header size");
-  console.assert(32 === $header$jscomp$4$$.phentsize, "Bad program header size");
-  console.assert(40 === $header$jscomp$4$$.shentsize, "Bad section header size");
-  var [$key$jscomp$37_program_headers$$] = $read_structs$$(new DataView($buffer$jscomp$44_sections_headers_view$jscomp$7$$.buffer, $buffer$jscomp$44_sections_headers_view$jscomp$7$$.byteOffset + $header$jscomp$4$$.phoff, $header$jscomp$4$$.phentsize * $header$jscomp$4$$.phnum), $ProgramHeader$$, $header$jscomp$4$$.phnum);
-  [$buffer$jscomp$44_sections_headers_view$jscomp$7$$] = $read_structs$$(new DataView($buffer$jscomp$44_sections_headers_view$jscomp$7$$.buffer, $buffer$jscomp$44_sections_headers_view$jscomp$7$$.byteOffset + $header$jscomp$4$$.shoff, $header$jscomp$4$$.shentsize * $header$jscomp$4$$.shnum), $SectionHeader$$, $header$jscomp$4$$.shnum);
-  if ($LOG_LEVEL$$) {
-    console.log("%d program headers:", $key$jscomp$37_program_headers$$.length);
-    for (let $program$jscomp$64$$ of $key$jscomp$37_program_headers$$) {
-      console.log("type=%s offset=%s vaddr=%s paddr=%s filesz=%s memsz=%s flags=%s align=%s", $program$jscomp$64$$.type.toString(16), $program$jscomp$64$$.offset.toString(16), $program$jscomp$64$$.vaddr.toString(16), $program$jscomp$64$$.paddr.toString(16), $program$jscomp$64$$.filesz.toString(16), $program$jscomp$64$$.memsz.toString(16), $program$jscomp$64$$.flags.toString(16), $program$jscomp$64$$.align.toString(16));
-    }
-    console.log("%d program headers:", $buffer$jscomp$44_sections_headers_view$jscomp$7$$.length);
-    for (let $section$$ of $buffer$jscomp$44_sections_headers_view$jscomp$7$$) {
-      console.log("name=%s type=%s flags=%s addr=%s offset=%s size=%s link=%s info=%s addralign=%s entsize=%s", $section$$.name.toString(16), $section$$.type.toString(16), $section$$.flags.toString(16), $section$$.addr.toString(16), $section$$.offset.toString(16), $section$$.size.toString(16), $section$$.link.toString(16), $section$$.info.toString(16), $section$$.addralign.toString(16), $section$$.entsize.toString(16));
-    }
-  }
-  return {header:$header$jscomp$4$$, program_headers:$key$jscomp$37_program_headers$$, sections_headers:$buffer$jscomp$44_sections_headers_view$jscomp$7$$, };
-}
-function $read_struct$$($view$jscomp$8$$, $Struct_value$jscomp$184$$) {
+function $read_struct$$($view$jscomp$8$$, $Struct_value$jscomp$186$$) {
   let $result$jscomp$12$$ = {}, $offset$jscomp$60$$ = 0;
-  for (let $entry$jscomp$12$$ of $Struct_value$jscomp$184$$) {
-    $Struct_value$jscomp$184$$ = $entry$jscomp$12$$.get.call($view$jscomp$8$$, $offset$jscomp$60$$, !0), console.assert(void 0 === $result$jscomp$12$$[$entry$jscomp$12$$.name]), $result$jscomp$12$$[$entry$jscomp$12$$.name] = $Struct_value$jscomp$184$$, $offset$jscomp$60$$ += $entry$jscomp$12$$.size;
+  for (let $entry$jscomp$12$$ of $Struct_value$jscomp$186$$) {
+    $Struct_value$jscomp$186$$ = $entry$jscomp$12$$.get.call($view$jscomp$8$$, $offset$jscomp$60$$, !0), console.assert(void 0 === $result$jscomp$12$$[$entry$jscomp$12$$.name]), $result$jscomp$12$$[$entry$jscomp$12$$.name] = $Struct_value$jscomp$186$$, $offset$jscomp$60$$ += $entry$jscomp$12$$.size;
   }
   return [$result$jscomp$12$$, $offset$jscomp$60$$];
 }
 function $read_structs$$($view$jscomp$9$$, $Struct$jscomp$1$$, $count$jscomp$57$$) {
   let $result$jscomp$13$$ = [], $offset$jscomp$61$$ = 0;
-  for (var $i$jscomp$80$$ = 0; $i$jscomp$80$$ < $count$jscomp$57$$; $i$jscomp$80$$++) {
-    let [$s$jscomp$7$$, $size$jscomp$40$$] = $read_struct$$(new DataView($view$jscomp$9$$.buffer, $view$jscomp$9$$.byteOffset + $offset$jscomp$61$$, void 0), $Struct$jscomp$1$$);
+  for (var $i$jscomp$85$$ = 0; $i$jscomp$85$$ < $count$jscomp$57$$; $i$jscomp$85$$++) {
+    let [$s$jscomp$7$$, $size$jscomp$41$$] = $read_struct$$(new DataView($view$jscomp$9$$.buffer, $view$jscomp$9$$.byteOffset + $offset$jscomp$61$$, void 0), $Struct$jscomp$1$$);
     $result$jscomp$13$$.push($s$jscomp$7$$);
-    $offset$jscomp$61$$ += $size$jscomp$40$$;
+    $offset$jscomp$61$$ += $size$jscomp$41$$;
   }
   return [$result$jscomp$13$$, $offset$jscomp$61$$];
 }
-;function $load_kernel$$($data8$jscomp$inline_24_mem8$$, $bzimage_i$jscomp$inline_29_protected_mode_kernel$$, $checksum_index$jscomp$inline_27_i$jscomp$inline_26_initrd$$, $cmdline_real_mode_kernel$$) {
-  $dbg_log$$("Trying to load kernel of size " + $bzimage_i$jscomp$inline_29_protected_mode_kernel$$.byteLength);
-  var $bzimage8_i$jscomp$81_ramdisk_size$$ = new Uint8Array($bzimage_i$jscomp$inline_29_protected_mode_kernel$$);
-  const $bzimage16$$ = new Uint16Array($bzimage_i$jscomp$inline_29_protected_mode_kernel$$);
-  var $bzimage32_checksum$jscomp$inline_28$$ = new Uint32Array($bzimage_i$jscomp$inline_29_protected_mode_kernel$$), $prot_mode_kernel_start_ramdisk_address_setup_sects$$ = $bzimage8_i$jscomp$81_ramdisk_size$$[497] || 4, $checksum1_checksum2_protocol$jscomp$1$$ = $bzimage16$$[255];
+;function $load_kernel$$($data8$jscomp$inline_37_mem8$$, $bzimage_i$jscomp$inline_42_protected_mode_kernel$$, $checksum_index$jscomp$inline_40_i$jscomp$inline_39_initrd$jscomp$1$$, $cmdline$jscomp$1_real_mode_kernel$$) {
+  $dbg_log$$("Trying to load kernel of size " + $bzimage_i$jscomp$inline_42_protected_mode_kernel$$.byteLength);
+  var $bzimage8_i$jscomp$86_ramdisk_size$$ = new Uint8Array($bzimage_i$jscomp$inline_42_protected_mode_kernel$$);
+  const $bzimage16$$ = new Uint16Array($bzimage_i$jscomp$inline_42_protected_mode_kernel$$);
+  var $bzimage32_checksum$jscomp$inline_41$$ = new Uint32Array($bzimage_i$jscomp$inline_42_protected_mode_kernel$$), $prot_mode_kernel_start_ramdisk_address$jscomp$1_setup_sects$$ = $bzimage8_i$jscomp$86_ramdisk_size$$[497] || 4, $checksum1_checksum2_protocol$jscomp$1$$ = $bzimage16$$[255];
   if (43605 !== $checksum1_checksum2_protocol$jscomp$1$$) {
     $dbg_log$$("Bad checksum1: " + $h$$($checksum1_checksum2_protocol$jscomp$1$$));
   } else {
@@ -8466,13 +8678,13 @@ function $read_structs$$($view$jscomp$9$$, $Struct$jscomp$1$$, $count$jscomp$57$
     } else {
       $checksum1_checksum2_protocol$jscomp$1$$ = $bzimage16$$[259];
       $dbg_assert$$(514 <= $checksum1_checksum2_protocol$jscomp$1$$);
-      var $flags$jscomp$12$$ = $bzimage8_i$jscomp$81_ramdisk_size$$[529];
+      var $flags$jscomp$12$$ = $bzimage8_i$jscomp$86_ramdisk_size$$[529];
       $dbg_assert$$($flags$jscomp$12$$ & 1);
-      var $flags2$$ = $bzimage16$$[283], $initrd_addr_max$$ = $bzimage32_checksum$jscomp$inline_28$$[139], $kernel_alignment$$ = $bzimage32_checksum$jscomp$inline_28$$[140], $relocatable_kernel$$ = $bzimage8_i$jscomp$81_ramdisk_size$$[564], $min_alignment$$ = $bzimage8_i$jscomp$81_ramdisk_size$$[565], $cmdline_size$$ = $bzimage32_checksum$jscomp$inline_28$$[142], $payload_offset$$ = $bzimage32_checksum$jscomp$inline_28$$[146], $payload_length$$ = $bzimage32_checksum$jscomp$inline_28$$[147], $pref_address$$ = 
-      $bzimage32_checksum$jscomp$inline_28$$[150], $pref_address_high$$ = $bzimage32_checksum$jscomp$inline_28$$[151], $init_size$$ = $bzimage32_checksum$jscomp$inline_28$$[152];
+      var $flags2$$ = $bzimage16$$[283], $initrd_addr_max$$ = $bzimage32_checksum$jscomp$inline_41$$[139], $kernel_alignment$$ = $bzimage32_checksum$jscomp$inline_41$$[140], $relocatable_kernel$$ = $bzimage8_i$jscomp$86_ramdisk_size$$[564], $min_alignment$$ = $bzimage8_i$jscomp$86_ramdisk_size$$[565], $cmdline_size$$ = $bzimage32_checksum$jscomp$inline_41$$[142], $payload_offset$$ = $bzimage32_checksum$jscomp$inline_41$$[146], $payload_length$$ = $bzimage32_checksum$jscomp$inline_41$$[147], $pref_address$$ = 
+      $bzimage32_checksum$jscomp$inline_41$$[150], $pref_address_high$$ = $bzimage32_checksum$jscomp$inline_41$$[151], $init_size$$ = $bzimage32_checksum$jscomp$inline_41$$[152];
       $dbg_log$$("kernel boot protocol version: " + $h$$($checksum1_checksum2_protocol$jscomp$1$$));
       $dbg_log$$("flags=" + $h$$($flags$jscomp$12$$) + " xflags=" + $h$$($flags2$$));
-      $dbg_log$$("code32_start=" + $h$$($bzimage32_checksum$jscomp$inline_28$$[133]));
+      $dbg_log$$("code32_start=" + $h$$($bzimage32_checksum$jscomp$inline_41$$[133]));
       $dbg_log$$("initrd_addr_max=" + $h$$($initrd_addr_max$$));
       $dbg_log$$("kernel_alignment=" + $h$$($kernel_alignment$$));
       $dbg_log$$("relocatable=" + $relocatable_kernel$$);
@@ -8481,67 +8693,67 @@ function $read_structs$$($view$jscomp$9$$, $Struct$jscomp$1$$, $count$jscomp$57$
       $dbg_log$$("payload offset=" + $h$$($payload_offset$$) + " size=" + $h$$($payload_length$$));
       $dbg_log$$("pref_address=" + $h$$($pref_address_high$$) + ":" + $h$$($pref_address$$));
       $dbg_log$$("init_size=" + $h$$($init_size$$));
-      $bzimage8_i$jscomp$81_ramdisk_size$$[528] = 255;
-      $bzimage8_i$jscomp$81_ramdisk_size$$[529] = $flags$jscomp$12$$ & -97 | 128;
+      $bzimage8_i$jscomp$86_ramdisk_size$$[528] = 255;
+      $bzimage8_i$jscomp$86_ramdisk_size$$[529] = $flags$jscomp$12$$ & -97 | 128;
       $bzimage16$$[274] = 56832;
       $bzimage16$$[253] = 65535;
       $dbg_log$$("heap_end_ptr=" + $h$$(56832));
-      $cmdline_real_mode_kernel$$ += "\x00";
-      $dbg_assert$$($cmdline_real_mode_kernel$$.length < $cmdline_size$$);
+      $cmdline$jscomp$1_real_mode_kernel$$ += "\x00";
+      $dbg_assert$$($cmdline$jscomp$1_real_mode_kernel$$.length < $cmdline_size$$);
       $dbg_log$$("cmd_line_ptr=" + $h$$(581632));
-      $bzimage32_checksum$jscomp$inline_28$$[138] = 581632;
-      for ($bzimage8_i$jscomp$81_ramdisk_size$$ = 0; $bzimage8_i$jscomp$81_ramdisk_size$$ < $cmdline_real_mode_kernel$$.length; $bzimage8_i$jscomp$81_ramdisk_size$$++) {
-        $data8$jscomp$inline_24_mem8$$[581632 + $bzimage8_i$jscomp$81_ramdisk_size$$] = $cmdline_real_mode_kernel$$.charCodeAt($bzimage8_i$jscomp$81_ramdisk_size$$);
+      $bzimage32_checksum$jscomp$inline_41$$[138] = 581632;
+      for ($bzimage8_i$jscomp$86_ramdisk_size$$ = 0; $bzimage8_i$jscomp$86_ramdisk_size$$ < $cmdline$jscomp$1_real_mode_kernel$$.length; $bzimage8_i$jscomp$86_ramdisk_size$$++) {
+        $data8$jscomp$inline_37_mem8$$[581632 + $bzimage8_i$jscomp$86_ramdisk_size$$] = $cmdline$jscomp$1_real_mode_kernel$$.charCodeAt($bzimage8_i$jscomp$86_ramdisk_size$$);
       }
-      $prot_mode_kernel_start_ramdisk_address_setup_sects$$ = 512 * ($prot_mode_kernel_start_ramdisk_address_setup_sects$$ + 1);
-      $dbg_log$$("prot_mode_kernel_start=" + $h$$($prot_mode_kernel_start_ramdisk_address_setup_sects$$));
-      $cmdline_real_mode_kernel$$ = new Uint8Array($bzimage_i$jscomp$inline_29_protected_mode_kernel$$, 0, $prot_mode_kernel_start_ramdisk_address_setup_sects$$);
-      $bzimage_i$jscomp$inline_29_protected_mode_kernel$$ = new Uint8Array($bzimage_i$jscomp$inline_29_protected_mode_kernel$$, $prot_mode_kernel_start_ramdisk_address_setup_sects$$);
-      $bzimage8_i$jscomp$81_ramdisk_size$$ = $prot_mode_kernel_start_ramdisk_address_setup_sects$$ = 0;
-      $checksum_index$jscomp$inline_27_i$jscomp$inline_26_initrd$$ && ($prot_mode_kernel_start_ramdisk_address_setup_sects$$ = 67108864, $bzimage8_i$jscomp$81_ramdisk_size$$ = $checksum_index$jscomp$inline_27_i$jscomp$inline_26_initrd$$.byteLength, $dbg_assert$$(1048576 + $bzimage_i$jscomp$inline_29_protected_mode_kernel$$.length < $prot_mode_kernel_start_ramdisk_address_setup_sects$$), $data8$jscomp$inline_24_mem8$$.set(new Uint8Array($checksum_index$jscomp$inline_27_i$jscomp$inline_26_initrd$$), 
-      $prot_mode_kernel_start_ramdisk_address_setup_sects$$));
-      $bzimage32_checksum$jscomp$inline_28$$[134] = $prot_mode_kernel_start_ramdisk_address_setup_sects$$;
-      $bzimage32_checksum$jscomp$inline_28$$[135] = $bzimage8_i$jscomp$81_ramdisk_size$$;
-      $dbg_assert$$(655360 > 524288 + $cmdline_real_mode_kernel$$.length);
-      $data8$jscomp$inline_24_mem8$$.set($cmdline_real_mode_kernel$$, 524288);
-      $data8$jscomp$inline_24_mem8$$.set($bzimage_i$jscomp$inline_29_protected_mode_kernel$$, 1048576);
-      $data8$jscomp$inline_24_mem8$$ = new Uint8Array(256);
-      (new Uint16Array($data8$jscomp$inline_24_mem8$$.buffer))[0] = 43605;
-      $data8$jscomp$inline_24_mem8$$[2] = 1;
-      $checksum_index$jscomp$inline_27_i$jscomp$inline_26_initrd$$ = 3;
-      $data8$jscomp$inline_24_mem8$$[$checksum_index$jscomp$inline_27_i$jscomp$inline_26_initrd$$++] = 250;
-      $data8$jscomp$inline_24_mem8$$[$checksum_index$jscomp$inline_27_i$jscomp$inline_26_initrd$$++] = 184;
-      $data8$jscomp$inline_24_mem8$$[$checksum_index$jscomp$inline_27_i$jscomp$inline_26_initrd$$++] = 32768;
-      $data8$jscomp$inline_24_mem8$$[$checksum_index$jscomp$inline_27_i$jscomp$inline_26_initrd$$++] = 128;
-      $data8$jscomp$inline_24_mem8$$[$checksum_index$jscomp$inline_27_i$jscomp$inline_26_initrd$$++] = 142;
-      $data8$jscomp$inline_24_mem8$$[$checksum_index$jscomp$inline_27_i$jscomp$inline_26_initrd$$++] = 192;
-      $data8$jscomp$inline_24_mem8$$[$checksum_index$jscomp$inline_27_i$jscomp$inline_26_initrd$$++] = 142;
-      $data8$jscomp$inline_24_mem8$$[$checksum_index$jscomp$inline_27_i$jscomp$inline_26_initrd$$++] = 216;
-      $data8$jscomp$inline_24_mem8$$[$checksum_index$jscomp$inline_27_i$jscomp$inline_26_initrd$$++] = 142;
-      $data8$jscomp$inline_24_mem8$$[$checksum_index$jscomp$inline_27_i$jscomp$inline_26_initrd$$++] = 224;
-      $data8$jscomp$inline_24_mem8$$[$checksum_index$jscomp$inline_27_i$jscomp$inline_26_initrd$$++] = 142;
-      $data8$jscomp$inline_24_mem8$$[$checksum_index$jscomp$inline_27_i$jscomp$inline_26_initrd$$++] = 232;
-      $data8$jscomp$inline_24_mem8$$[$checksum_index$jscomp$inline_27_i$jscomp$inline_26_initrd$$++] = 142;
-      $data8$jscomp$inline_24_mem8$$[$checksum_index$jscomp$inline_27_i$jscomp$inline_26_initrd$$++] = 208;
-      $data8$jscomp$inline_24_mem8$$[$checksum_index$jscomp$inline_27_i$jscomp$inline_26_initrd$$++] = 188;
-      $data8$jscomp$inline_24_mem8$$[$checksum_index$jscomp$inline_27_i$jscomp$inline_26_initrd$$++] = 57344;
-      $data8$jscomp$inline_24_mem8$$[$checksum_index$jscomp$inline_27_i$jscomp$inline_26_initrd$$++] = 224;
-      $data8$jscomp$inline_24_mem8$$[$checksum_index$jscomp$inline_27_i$jscomp$inline_26_initrd$$++] = 234;
-      $data8$jscomp$inline_24_mem8$$[$checksum_index$jscomp$inline_27_i$jscomp$inline_26_initrd$$++] = 0;
-      $data8$jscomp$inline_24_mem8$$[$checksum_index$jscomp$inline_27_i$jscomp$inline_26_initrd$$++] = 0;
-      $data8$jscomp$inline_24_mem8$$[$checksum_index$jscomp$inline_27_i$jscomp$inline_26_initrd$$++] = 32800;
-      $data8$jscomp$inline_24_mem8$$[$checksum_index$jscomp$inline_27_i$jscomp$inline_26_initrd$$++] = 128;
-      $dbg_assert$$(512 > $checksum_index$jscomp$inline_27_i$jscomp$inline_26_initrd$$);
-      $bzimage32_checksum$jscomp$inline_28$$ = $data8$jscomp$inline_24_mem8$$[$checksum_index$jscomp$inline_27_i$jscomp$inline_26_initrd$$] = 0;
-      for ($bzimage_i$jscomp$inline_29_protected_mode_kernel$$ = 0; $bzimage_i$jscomp$inline_29_protected_mode_kernel$$ < $data8$jscomp$inline_24_mem8$$.length; $bzimage_i$jscomp$inline_29_protected_mode_kernel$$++) {
-        $bzimage32_checksum$jscomp$inline_28$$ += $data8$jscomp$inline_24_mem8$$[$bzimage_i$jscomp$inline_29_protected_mode_kernel$$];
+      $prot_mode_kernel_start_ramdisk_address$jscomp$1_setup_sects$$ = 512 * ($prot_mode_kernel_start_ramdisk_address$jscomp$1_setup_sects$$ + 1);
+      $dbg_log$$("prot_mode_kernel_start=" + $h$$($prot_mode_kernel_start_ramdisk_address$jscomp$1_setup_sects$$));
+      $cmdline$jscomp$1_real_mode_kernel$$ = new Uint8Array($bzimage_i$jscomp$inline_42_protected_mode_kernel$$, 0, $prot_mode_kernel_start_ramdisk_address$jscomp$1_setup_sects$$);
+      $bzimage_i$jscomp$inline_42_protected_mode_kernel$$ = new Uint8Array($bzimage_i$jscomp$inline_42_protected_mode_kernel$$, $prot_mode_kernel_start_ramdisk_address$jscomp$1_setup_sects$$);
+      $bzimage8_i$jscomp$86_ramdisk_size$$ = $prot_mode_kernel_start_ramdisk_address$jscomp$1_setup_sects$$ = 0;
+      $checksum_index$jscomp$inline_40_i$jscomp$inline_39_initrd$jscomp$1$$ && ($prot_mode_kernel_start_ramdisk_address$jscomp$1_setup_sects$$ = 67108864, $bzimage8_i$jscomp$86_ramdisk_size$$ = $checksum_index$jscomp$inline_40_i$jscomp$inline_39_initrd$jscomp$1$$.byteLength, $dbg_assert$$(1048576 + $bzimage_i$jscomp$inline_42_protected_mode_kernel$$.length < $prot_mode_kernel_start_ramdisk_address$jscomp$1_setup_sects$$), $data8$jscomp$inline_37_mem8$$.set(new Uint8Array($checksum_index$jscomp$inline_40_i$jscomp$inline_39_initrd$jscomp$1$$), 
+      $prot_mode_kernel_start_ramdisk_address$jscomp$1_setup_sects$$));
+      $bzimage32_checksum$jscomp$inline_41$$[134] = $prot_mode_kernel_start_ramdisk_address$jscomp$1_setup_sects$$;
+      $bzimage32_checksum$jscomp$inline_41$$[135] = $bzimage8_i$jscomp$86_ramdisk_size$$;
+      $dbg_assert$$(655360 > 524288 + $cmdline$jscomp$1_real_mode_kernel$$.length);
+      $data8$jscomp$inline_37_mem8$$.set($cmdline$jscomp$1_real_mode_kernel$$, 524288);
+      $data8$jscomp$inline_37_mem8$$.set($bzimage_i$jscomp$inline_42_protected_mode_kernel$$, 1048576);
+      $data8$jscomp$inline_37_mem8$$ = new Uint8Array(512);
+      (new Uint16Array($data8$jscomp$inline_37_mem8$$.buffer))[0] = 43605;
+      $data8$jscomp$inline_37_mem8$$[2] = 1;
+      $checksum_index$jscomp$inline_40_i$jscomp$inline_39_initrd$jscomp$1$$ = 3;
+      $data8$jscomp$inline_37_mem8$$[$checksum_index$jscomp$inline_40_i$jscomp$inline_39_initrd$jscomp$1$$++] = 250;
+      $data8$jscomp$inline_37_mem8$$[$checksum_index$jscomp$inline_40_i$jscomp$inline_39_initrd$jscomp$1$$++] = 184;
+      $data8$jscomp$inline_37_mem8$$[$checksum_index$jscomp$inline_40_i$jscomp$inline_39_initrd$jscomp$1$$++] = 32768;
+      $data8$jscomp$inline_37_mem8$$[$checksum_index$jscomp$inline_40_i$jscomp$inline_39_initrd$jscomp$1$$++] = 128;
+      $data8$jscomp$inline_37_mem8$$[$checksum_index$jscomp$inline_40_i$jscomp$inline_39_initrd$jscomp$1$$++] = 142;
+      $data8$jscomp$inline_37_mem8$$[$checksum_index$jscomp$inline_40_i$jscomp$inline_39_initrd$jscomp$1$$++] = 192;
+      $data8$jscomp$inline_37_mem8$$[$checksum_index$jscomp$inline_40_i$jscomp$inline_39_initrd$jscomp$1$$++] = 142;
+      $data8$jscomp$inline_37_mem8$$[$checksum_index$jscomp$inline_40_i$jscomp$inline_39_initrd$jscomp$1$$++] = 216;
+      $data8$jscomp$inline_37_mem8$$[$checksum_index$jscomp$inline_40_i$jscomp$inline_39_initrd$jscomp$1$$++] = 142;
+      $data8$jscomp$inline_37_mem8$$[$checksum_index$jscomp$inline_40_i$jscomp$inline_39_initrd$jscomp$1$$++] = 224;
+      $data8$jscomp$inline_37_mem8$$[$checksum_index$jscomp$inline_40_i$jscomp$inline_39_initrd$jscomp$1$$++] = 142;
+      $data8$jscomp$inline_37_mem8$$[$checksum_index$jscomp$inline_40_i$jscomp$inline_39_initrd$jscomp$1$$++] = 232;
+      $data8$jscomp$inline_37_mem8$$[$checksum_index$jscomp$inline_40_i$jscomp$inline_39_initrd$jscomp$1$$++] = 142;
+      $data8$jscomp$inline_37_mem8$$[$checksum_index$jscomp$inline_40_i$jscomp$inline_39_initrd$jscomp$1$$++] = 208;
+      $data8$jscomp$inline_37_mem8$$[$checksum_index$jscomp$inline_40_i$jscomp$inline_39_initrd$jscomp$1$$++] = 188;
+      $data8$jscomp$inline_37_mem8$$[$checksum_index$jscomp$inline_40_i$jscomp$inline_39_initrd$jscomp$1$$++] = 57344;
+      $data8$jscomp$inline_37_mem8$$[$checksum_index$jscomp$inline_40_i$jscomp$inline_39_initrd$jscomp$1$$++] = 224;
+      $data8$jscomp$inline_37_mem8$$[$checksum_index$jscomp$inline_40_i$jscomp$inline_39_initrd$jscomp$1$$++] = 234;
+      $data8$jscomp$inline_37_mem8$$[$checksum_index$jscomp$inline_40_i$jscomp$inline_39_initrd$jscomp$1$$++] = 0;
+      $data8$jscomp$inline_37_mem8$$[$checksum_index$jscomp$inline_40_i$jscomp$inline_39_initrd$jscomp$1$$++] = 0;
+      $data8$jscomp$inline_37_mem8$$[$checksum_index$jscomp$inline_40_i$jscomp$inline_39_initrd$jscomp$1$$++] = 32800;
+      $data8$jscomp$inline_37_mem8$$[$checksum_index$jscomp$inline_40_i$jscomp$inline_39_initrd$jscomp$1$$++] = 128;
+      $dbg_assert$$(512 > $checksum_index$jscomp$inline_40_i$jscomp$inline_39_initrd$jscomp$1$$);
+      $bzimage32_checksum$jscomp$inline_41$$ = $data8$jscomp$inline_37_mem8$$[$checksum_index$jscomp$inline_40_i$jscomp$inline_39_initrd$jscomp$1$$] = 0;
+      for ($bzimage_i$jscomp$inline_42_protected_mode_kernel$$ = 0; $bzimage_i$jscomp$inline_42_protected_mode_kernel$$ < $data8$jscomp$inline_37_mem8$$.length; $bzimage_i$jscomp$inline_42_protected_mode_kernel$$++) {
+        $bzimage32_checksum$jscomp$inline_41$$ += $data8$jscomp$inline_37_mem8$$[$bzimage_i$jscomp$inline_42_protected_mode_kernel$$];
       }
-      $data8$jscomp$inline_24_mem8$$[$checksum_index$jscomp$inline_27_i$jscomp$inline_26_initrd$$] = -$bzimage32_checksum$jscomp$inline_28$$;
-      return {option_rom:{name:"genroms/kernel.bin", data:$data8$jscomp$inline_24_mem8$$, }};
+      $data8$jscomp$inline_37_mem8$$[$checksum_index$jscomp$inline_40_i$jscomp$inline_39_initrd$jscomp$1$$] = -$bzimage32_checksum$jscomp$inline_41$$;
+      return {name:"genroms/kernel.bin", data:$data8$jscomp$inline_37_mem8$$, };
     }
   }
 }
-;function $KeyboardAdapter$$($bus$jscomp$12$$) {
+;function $KeyboardAdapter$$($bus$jscomp$13$$) {
   function $keyup_handler$$($e$jscomp$19$$) {
     !$e$jscomp$19$$.altKey && $keys_pressed$$[56] && $handle_code$$(56, !1);
     return $handler$jscomp$14$$($e$jscomp$19$$, !1);
@@ -8551,25 +8763,25 @@ function $read_structs$$($view$jscomp$9$$, $Struct$jscomp$1$$, $count$jscomp$57$
     return $handler$jscomp$14$$($e$jscomp$20$$, !0);
   }
   function $blur_handler$$() {
-    for (var $keys$jscomp$1$$ = Object.keys($keys_pressed$$), $key$jscomp$38$$, $i$jscomp$84$$ = 0; $i$jscomp$84$$ < $keys$jscomp$1$$.length; $i$jscomp$84$$++) {
-      $key$jscomp$38$$ = +$keys$jscomp$1$$[$i$jscomp$84$$], $keys_pressed$$[$key$jscomp$38$$] && $handle_code$$($key$jscomp$38$$, !1);
+    for (var $keys$jscomp$1$$ = Object.keys($keys_pressed$$), $key$jscomp$38$$, $i$jscomp$89$$ = 0; $i$jscomp$89$$ < $keys$jscomp$1$$.length; $i$jscomp$89$$++) {
+      $key$jscomp$38$$ = +$keys$jscomp$1$$[$i$jscomp$89$$], $keys_pressed$$[$key$jscomp$38$$] && $handle_code$$($key$jscomp$38$$, !1);
     }
     $keys_pressed$$ = {};
   }
   function $handler$jscomp$14$$($e$jscomp$22$$, $keydown$$) {
-    var $JSCompiler_temp$jscomp$39_code$jscomp$7_code$jscomp$inline_32$$;
-    if ($JSCompiler_temp$jscomp$39_code$jscomp$7_code$jscomp$inline_32$$ = $keyboard$$.bus) {
-      $JSCompiler_temp$jscomp$39_code$jscomp$7_code$jscomp$inline_32$$ = $e$jscomp$22$$.shiftKey && $e$jscomp$22$$.ctrlKey && (73 === $e$jscomp$22$$.keyCode || 74 === $e$jscomp$22$$.keyCode || 75 === $e$jscomp$22$$.keyCode) || !$keyboard$$.emu_enabled ? !1 : $e$jscomp$22$$.target ? $e$jscomp$22$$.target.classList.contains("phone_keyboard") || "INPUT" !== $e$jscomp$22$$.target.nodeName && "TEXTAREA" !== $e$jscomp$22$$.target.nodeName : !0;
+    var $JSCompiler_temp$jscomp$55_code$jscomp$7_code$jscomp$inline_45$$;
+    if ($JSCompiler_temp$jscomp$55_code$jscomp$7_code$jscomp$inline_45$$ = $keyboard$$.bus) {
+      $JSCompiler_temp$jscomp$55_code$jscomp$7_code$jscomp$inline_45$$ = $e$jscomp$22$$.shiftKey && $e$jscomp$22$$.ctrlKey && (73 === $e$jscomp$22$$.keyCode || 74 === $e$jscomp$22$$.keyCode || 75 === $e$jscomp$22$$.keyCode) || !$keyboard$$.emu_enabled ? !1 : $e$jscomp$22$$.target ? $e$jscomp$22$$.target.classList.contains("phone_keyboard") || "INPUT" !== $e$jscomp$22$$.target.nodeName && "TEXTAREA" !== $e$jscomp$22$$.target.nodeName : !0;
     }
-    if ($JSCompiler_temp$jscomp$39_code$jscomp$7_code$jscomp$inline_32$$) {
+    if ($JSCompiler_temp$jscomp$55_code$jscomp$7_code$jscomp$inline_45$$) {
       a: {
-        if (void 0 !== $e$jscomp$22$$.code && ($JSCompiler_temp$jscomp$39_code$jscomp$7_code$jscomp$inline_32$$ = $codemap$$[$e$jscomp$22$$.code], void 0 !== $JSCompiler_temp$jscomp$39_code$jscomp$7_code$jscomp$inline_32$$)) {
+        if (void 0 !== $e$jscomp$22$$.code && ($JSCompiler_temp$jscomp$55_code$jscomp$7_code$jscomp$inline_45$$ = $codemap$$[$e$jscomp$22$$.code], void 0 !== $JSCompiler_temp$jscomp$55_code$jscomp$7_code$jscomp$inline_45$$)) {
           break a;
         }
-        $JSCompiler_temp$jscomp$39_code$jscomp$7_code$jscomp$inline_32$$ = $charmap$jscomp$1$$[$e$jscomp$22$$.keyCode];
+        $JSCompiler_temp$jscomp$55_code$jscomp$7_code$jscomp$inline_45$$ = $charmap$jscomp$1$$[$e$jscomp$22$$.keyCode];
       }
-      if ($JSCompiler_temp$jscomp$39_code$jscomp$7_code$jscomp$inline_32$$) {
-        return $handle_code$$($JSCompiler_temp$jscomp$39_code$jscomp$7_code$jscomp$inline_32$$, $keydown$$, $e$jscomp$22$$.repeat), $e$jscomp$22$$.preventDefault && $e$jscomp$22$$.preventDefault(), !1;
+      if ($JSCompiler_temp$jscomp$55_code$jscomp$7_code$jscomp$inline_45$$) {
+        return $handle_code$$($JSCompiler_temp$jscomp$55_code$jscomp$7_code$jscomp$inline_45$$, $keydown$$, $e$jscomp$22$$.repeat), $e$jscomp$22$$.preventDefault && $e$jscomp$22$$.preventDefault(), !1;
       }
       console.log("Missing char in map: keyCode=" + ($e$jscomp$22$$.keyCode || -1).toString(16) + " code=" + $e$jscomp$22$$.code);
     }
@@ -8596,7 +8808,7 @@ function $read_structs$$($view$jscomp$9$$, $Struct$jscomp$1$$, $count$jscomp$57$
   78:78, 79:79, 80:80, 81:81, 82:82, 83:83, 84:84, 85:85, 86:86, 87:87, 88:88, 89:89, 90:90, 94:54, 95:189, 123:219, 124:220, 125:221, 126:192}, $codemap$$ = {Escape:1, Digit1:2, Digit2:3, Digit3:4, Digit4:5, Digit5:6, Digit6:7, Digit7:8, Digit8:9, Digit9:10, Digit0:11, Minus:12, Equal:13, Backspace:14, Tab:15, KeyQ:16, KeyW:17, KeyE:18, KeyR:19, KeyT:20, KeyY:21, KeyU:22, KeyI:23, KeyO:24, KeyP:25, BracketLeft:26, BracketRight:27, Enter:28, ControlLeft:29, KeyA:30, KeyS:31, KeyD:32, KeyF:33, KeyG:34, 
   KeyH:35, KeyJ:36, KeyK:37, KeyL:38, Semicolon:39, Quote:40, Backquote:41, ShiftLeft:42, Backslash:43, KeyZ:44, KeyX:45, KeyC:46, KeyV:47, KeyB:48, KeyN:49, KeyM:50, Comma:51, Period:52, Slash:53, IntlRo:53, ShiftRight:54, NumpadMultiply:55, AltLeft:56, Space:57, CapsLock:58, F1:59, F2:60, F3:61, F4:62, F5:63, F6:64, F7:65, F8:66, F9:67, F10:68, NumLock:69, ScrollLock:70, Numpad7:71, Numpad8:72, Numpad9:73, NumpadSubtract:74, Numpad4:75, Numpad5:76, Numpad6:77, NumpadAdd:78, Numpad1:79, Numpad2:80, 
   Numpad3:81, Numpad0:82, NumpadDecimal:83, IntlBackslash:86, F11:87, F12:88, NumpadEnter:57372, ControlRight:57373, NumpadDivide:57397, AltRight:57400, Home:57415, ArrowUp:57416, PageUp:57417, ArrowLeft:57419, ArrowRight:57421, End:57423, ArrowDown:57424, PageDown:57425, Insert:57426, Delete:57427, OSLeft:57435, OSRight:57436, ContextMenu:57437, };
-  this.bus = $bus$jscomp$12$$;
+  this.bus = $bus$jscomp$13$$;
   this.destroy = function() {
     "undefined" !== typeof window && (window.removeEventListener("keyup", $keyup_handler$$, !1), window.removeEventListener("keydown", $keydown_handler$$, !1), window.removeEventListener("blur", $blur_handler$$, !1));
   };
@@ -8614,25 +8826,25 @@ function $read_structs$$($view$jscomp$9$$, $Struct$jscomp$1$$, $count$jscomp$57$
     $code$jscomp$5$$ in $asciimap$$ ? this.simulate_press($asciimap$$[$code$jscomp$5$$]) : $code$jscomp$5$$ in $asciimap_shift$$ ? ($send_to_controller$$(42), this.simulate_press($asciimap_shift$$[$code$jscomp$5$$]), $send_to_controller$$(170)) : console.log("ascii -> keyCode not found: ", $code$jscomp$5$$, $chr$jscomp$4$$);
   };
 }
-;function $MouseAdapter$$($bus$jscomp$13$$, $screen_container$jscomp$1$$) {
-  function $may_handle$jscomp$1$$($child$jscomp$inline_51_e$jscomp$23$$) {
+;function $MouseAdapter$$($bus$jscomp$14$$, $screen_container$jscomp$1$$) {
+  function $may_handle$jscomp$1$$($child$jscomp$inline_67_e$jscomp$23$$) {
     if (!$mouse$$.enabled || !$mouse$$.emu_enabled) {
       return !1;
     }
-    var $parent$jscomp$5$$ = $screen_container$jscomp$1$$ || document.body, $JSCompiler_temp$jscomp$40$$;
-    if (!($JSCompiler_temp$jscomp$40$$ = document.pointerLockElement)) {
+    var $parent$jscomp$5$$ = $screen_container$jscomp$1$$ || document.body, $JSCompiler_temp$jscomp$56$$;
+    if (!($JSCompiler_temp$jscomp$56$$ = document.pointerLockElement)) {
       a: {
-        for ($child$jscomp$inline_51_e$jscomp$23$$ = $child$jscomp$inline_51_e$jscomp$23$$.target; $child$jscomp$inline_51_e$jscomp$23$$.parentNode;) {
-          if ($child$jscomp$inline_51_e$jscomp$23$$ === $parent$jscomp$5$$) {
-            $JSCompiler_temp$jscomp$40$$ = !0;
+        for ($child$jscomp$inline_67_e$jscomp$23$$ = $child$jscomp$inline_67_e$jscomp$23$$.target; $child$jscomp$inline_67_e$jscomp$23$$.parentNode;) {
+          if ($child$jscomp$inline_67_e$jscomp$23$$ === $parent$jscomp$5$$) {
+            $JSCompiler_temp$jscomp$56$$ = !0;
             break a;
           }
-          $child$jscomp$inline_51_e$jscomp$23$$ = $child$jscomp$inline_51_e$jscomp$23$$.parentNode;
+          $child$jscomp$inline_67_e$jscomp$23$$ = $child$jscomp$inline_67_e$jscomp$23$$.parentNode;
         }
-        $JSCompiler_temp$jscomp$40$$ = !1;
+        $JSCompiler_temp$jscomp$56$$ = !1;
       }
     }
-    return $JSCompiler_temp$jscomp$40$$;
+    return $JSCompiler_temp$jscomp$56$$;
   }
   function $touch_start_handler$$($e$jscomp$24_touch_touches$jscomp$2$$) {
     $may_handle$jscomp$1$$($e$jscomp$24_touch_touches$jscomp$2$$) && ($e$jscomp$24_touch_touches$jscomp$2$$ = $e$jscomp$24_touch_touches$jscomp$2$$.changedTouches) && $e$jscomp$24_touch_touches$jscomp$2$$.length && ($e$jscomp$24_touch_touches$jscomp$2$$ = $e$jscomp$24_touch_touches$jscomp$2$$[$e$jscomp$24_touch_touches$jscomp$2$$.length - 1], $last_x$$ = $e$jscomp$24_touch_touches$jscomp$2$$.clientX, $last_y$$ = $e$jscomp$24_touch_touches$jscomp$2$$.clientY);
@@ -8672,7 +8884,7 @@ function $read_structs$$($view$jscomp$9$$, $Struct$jscomp$1$$, $count$jscomp$57$
   var $left_down$$ = !1, $right_down$$ = !1, $middle_down$$ = !1, $last_x$$ = 0, $last_y$$ = 0, $mouse$$ = this;
   this.enabled = !1;
   this.emu_enabled = !0;
-  this.bus = $bus$jscomp$13$$;
+  this.bus = $bus$jscomp$14$$;
   this.bus.register("mouse-enable", function($enabled$jscomp$1$$) {
     this.enabled = $enabled$jscomp$1$$;
   }, this);
@@ -8691,26 +8903,26 @@ function $read_structs$$($view$jscomp$9$$, $Struct$jscomp$1$$, $count$jscomp$57$
   };
   this.init();
 }
-;function $SpeakerAdapter$$($bus$jscomp$14$$) {
+;function $SpeakerAdapter$$($bus$jscomp$15$$) {
   if ("undefined" !== typeof window) {
     if (window.AudioContext || window.webkitAudioContext) {
       var $SpeakerDAC$$ = window.AudioWorklet ? $SpeakerWorkletDAC$$ : $SpeakerBufferSourceDAC$$;
-      this.bus = $bus$jscomp$14$$;
+      this.bus = $bus$jscomp$15$$;
       this.audio_context = window.AudioContext ? new AudioContext : new webkitAudioContext;
-      this.mixer = new $SpeakerMixer$$($bus$jscomp$14$$, this.audio_context);
-      this.pcspeaker = new $PCSpeaker$$($bus$jscomp$14$$, this.audio_context, this.mixer);
-      this.dac = new $SpeakerDAC$$($bus$jscomp$14$$, this.audio_context, this.mixer);
+      this.mixer = new $SpeakerMixer$$($bus$jscomp$15$$, this.audio_context);
+      this.pcspeaker = new $PCSpeaker$$($bus$jscomp$15$$, this.audio_context, this.mixer);
+      this.dac = new $SpeakerDAC$$($bus$jscomp$15$$, this.audio_context, this.mixer);
       this.pcspeaker.start();
-      $bus$jscomp$14$$.register("emulator-stopped", function() {
+      $bus$jscomp$15$$.register("emulator-stopped", function() {
         this.audio_context.suspend();
       }, this);
-      $bus$jscomp$14$$.register("emulator-started", function() {
+      $bus$jscomp$15$$.register("emulator-started", function() {
         this.audio_context.resume();
       }, this);
-      $bus$jscomp$14$$.register("speaker-confirm-initialized", function() {
-        $bus$jscomp$14$$.send("speaker-has-initialized");
+      $bus$jscomp$15$$.register("speaker-confirm-initialized", function() {
+        $bus$jscomp$15$$.send("speaker-has-initialized");
       }, this);
-      $bus$jscomp$14$$.send("speaker-has-initialized");
+      $bus$jscomp$15$$.send("speaker-has-initialized");
     } else {
       console.warn("Web browser doesn't support Web Audio API");
     }
@@ -8722,7 +8934,7 @@ $SpeakerAdapter$$.prototype.destroy = function() {
   this.dac && this.dac.node_processor && this.dac.node_processor.port.close();
   this.dac = null;
 };
-function $SpeakerMixer$$($bus$jscomp$15$$, $audio_context$$) {
+function $SpeakerMixer$$($bus$jscomp$16$$, $audio_context$$) {
   function $create_gain_handler$$($audio_node$$) {
     return function($decibels$jscomp$3$$) {
       $audio_node$$.gain.setValueAtTime($decibels$jscomp$3$$, this.audio_context.currentTime);
@@ -8755,30 +8967,30 @@ function $SpeakerMixer$$($bus$jscomp$15$$, $audio_context$$) {
   this.node_bass_right.connect(this.node_gain_right);
   this.node_gain_right.connect(this.node_merger, 0, 1);
   this.node_merger.connect(this.audio_context.destination);
-  $bus$jscomp$15$$.register("mixer-connect", function($data$jscomp$177$$) {
-    this.connect_source($data$jscomp$177$$[0], $data$jscomp$177$$[1]);
+  $bus$jscomp$16$$.register("mixer-connect", function($data$jscomp$187$$) {
+    this.connect_source($data$jscomp$187$$[0], $data$jscomp$187$$[1]);
   }, this);
-  $bus$jscomp$15$$.register("mixer-disconnect", function($data$jscomp$178$$) {
-    this.disconnect_source($data$jscomp$178$$[0], $data$jscomp$178$$[1]);
+  $bus$jscomp$16$$.register("mixer-disconnect", function($data$jscomp$188$$) {
+    this.disconnect_source($data$jscomp$188$$[0], $data$jscomp$188$$[1]);
   }, this);
-  $bus$jscomp$15$$.register("mixer-volume", function($data$jscomp$179_gain$$) {
-    var $source_id$jscomp$2$$ = $data$jscomp$179_gain$$[0], $channel$jscomp$22$$ = $data$jscomp$179_gain$$[1];
-    $data$jscomp$179_gain$$ = Math.pow(10, $data$jscomp$179_gain$$[2] / 20);
+  $bus$jscomp$16$$.register("mixer-volume", function($data$jscomp$189_gain$$) {
+    var $source_id$jscomp$2$$ = $data$jscomp$189_gain$$[0], $channel$jscomp$22$$ = $data$jscomp$189_gain$$[1];
+    $data$jscomp$189_gain$$ = Math.pow(10, $data$jscomp$189_gain$$[2] / 20);
     var $source$jscomp$16$$ = 0 === $source_id$jscomp$2$$ ? this : this.sources.get($source_id$jscomp$2$$);
-    void 0 === $source$jscomp$16$$ ? $dbg_assert$$(!1, "Mixer set volume - cannot set volume for undefined source: " + $source_id$jscomp$2$$) : $source$jscomp$16$$.set_volume($data$jscomp$179_gain$$, $channel$jscomp$22$$);
+    void 0 === $source$jscomp$16$$ ? $dbg_assert$$(!1, "Mixer set volume - cannot set volume for undefined source: " + $source_id$jscomp$2$$) : $source$jscomp$16$$.set_volume($data$jscomp$189_gain$$, $channel$jscomp$22$$);
   }, this);
-  $bus$jscomp$15$$.register("mixer-gain-left", function($decibels$jscomp$1$$) {
+  $bus$jscomp$16$$.register("mixer-gain-left", function($decibels$jscomp$1$$) {
     this.gain_left = Math.pow(10, $decibels$jscomp$1$$ / 20);
     this.update();
   }, this);
-  $bus$jscomp$15$$.register("mixer-gain-right", function($decibels$jscomp$2$$) {
+  $bus$jscomp$16$$.register("mixer-gain-right", function($decibels$jscomp$2$$) {
     this.gain_right = Math.pow(10, $decibels$jscomp$2$$ / 20);
     this.update();
   }, this);
-  $bus$jscomp$15$$.register("mixer-treble-left", $create_gain_handler$$(this.node_treble_left), this);
-  $bus$jscomp$15$$.register("mixer-treble-right", $create_gain_handler$$(this.node_treble_right), this);
-  $bus$jscomp$15$$.register("mixer-bass-left", $create_gain_handler$$(this.node_bass_left), this);
-  $bus$jscomp$15$$.register("mixer-bass-right", $create_gain_handler$$(this.node_bass_right), this);
+  $bus$jscomp$16$$.register("mixer-treble-left", $create_gain_handler$$(this.node_treble_left), this);
+  $bus$jscomp$16$$.register("mixer-treble-right", $create_gain_handler$$(this.node_treble_right), this);
+  $bus$jscomp$16$$.register("mixer-bass-left", $create_gain_handler$$(this.node_bass_left), this);
+  $bus$jscomp$16$$.register("mixer-bass-right", $create_gain_handler$$(this.node_bass_right), this);
 }
 $SpeakerMixer$$.prototype.add_source = function($source$jscomp$17_source_node$$, $source_id$jscomp$3$$) {
   $source$jscomp$17_source_node$$ = new $SpeakerMixerSource$$(this.audio_context, $source$jscomp$17_source_node$$, this.input_left, this.input_right);
@@ -8794,17 +9006,17 @@ $SpeakerMixer$$.prototype.disconnect_source = function($source_id$jscomp$5$$, $c
   var $source$jscomp$19$$ = this.sources.get($source_id$jscomp$5$$);
   void 0 === $source$jscomp$19$$ ? $dbg_assert$$(!1, "Mixer disconnect - cannot disconnect undefined source: " + $source_id$jscomp$5$$) : $source$jscomp$19$$.disconnect($channel$jscomp$24$$);
 };
-$SpeakerMixer$$.prototype.set_volume = function($value$jscomp$185$$, $channel$jscomp$25$$) {
+$SpeakerMixer$$.prototype.set_volume = function($value$jscomp$187$$, $channel$jscomp$25$$) {
   void 0 === $channel$jscomp$25$$ && ($channel$jscomp$25$$ = 2);
   switch($channel$jscomp$25$$) {
     case 0:
-      this.volume_left = $value$jscomp$185$$;
+      this.volume_left = $value$jscomp$187$$;
       break;
     case 1:
-      this.volume_right = $value$jscomp$185$$;
+      this.volume_right = $value$jscomp$187$$;
       break;
     case 2:
-      this.volume_both = $value$jscomp$185$$;
+      this.volume_both = $value$jscomp$187$$;
       break;
     default:
       $dbg_assert$$(!1, "Mixer set master volume - unknown channel: " + $channel$jscomp$25$$);
@@ -8855,17 +9067,17 @@ $SpeakerMixerSource$$.prototype.disconnect = function($channel$jscomp$27$$) {
   }
   this.update();
 };
-$SpeakerMixerSource$$.prototype.set_volume = function($value$jscomp$186$$, $channel$jscomp$28$$) {
+$SpeakerMixerSource$$.prototype.set_volume = function($value$jscomp$188$$, $channel$jscomp$28$$) {
   void 0 === $channel$jscomp$28$$ && ($channel$jscomp$28$$ = 2);
   switch($channel$jscomp$28$$) {
     case 0:
-      this.volume_left = $value$jscomp$186$$;
+      this.volume_left = $value$jscomp$188$$;
       break;
     case 1:
-      this.volume_right = $value$jscomp$186$$;
+      this.volume_right = $value$jscomp$188$$;
       break;
     case 2:
-      this.volume_both = $value$jscomp$186$$;
+      this.volume_both = $value$jscomp$188$$;
       break;
     default:
       $dbg_assert$$(!1, "Mixer set volume - unknown channel: " + $channel$jscomp$28$$);
@@ -8873,32 +9085,32 @@ $SpeakerMixerSource$$.prototype.set_volume = function($value$jscomp$186$$, $chan
   }
   this.update();
 };
-$SpeakerMixerSource$$.prototype.set_gain_hidden = function($value$jscomp$187$$) {
-  this.gain_hidden = $value$jscomp$187$$;
+$SpeakerMixerSource$$.prototype.set_gain_hidden = function($value$jscomp$189$$) {
+  this.gain_hidden = $value$jscomp$189$$;
 };
-function $PCSpeaker$$($bus$jscomp$16$$, $audio_context$jscomp$2$$, $mixer$$) {
+function $PCSpeaker$$($bus$jscomp$17$$, $audio_context$jscomp$2$$, $mixer$$) {
   this.node_oscillator = $audio_context$jscomp$2$$.createOscillator();
   this.node_oscillator.type = "square";
   this.node_oscillator.frequency.setValueAtTime(440, $audio_context$jscomp$2$$.currentTime);
   this.mixer_connection = $mixer$$.add_source(this.node_oscillator, 1);
   this.mixer_connection.disconnect();
-  $bus$jscomp$16$$.register("pcspeaker-enable", function() {
+  $bus$jscomp$17$$.register("pcspeaker-enable", function() {
     $mixer$$.connect_source(1);
   }, this);
-  $bus$jscomp$16$$.register("pcspeaker-disable", function() {
+  $bus$jscomp$17$$.register("pcspeaker-disable", function() {
     $mixer$$.disconnect_source(1);
   }, this);
-  $bus$jscomp$16$$.register("pcspeaker-update", function($data$jscomp$180$$) {
-    var $counter_reload$$ = $data$jscomp$180$$[1], $frequency$$ = 0;
-    3 === $data$jscomp$180$$[0] && ($frequency$$ = Math.min(1193181.6665999999 / $counter_reload$$, this.node_oscillator.frequency.maxValue), $frequency$$ = Math.max($frequency$$, 0));
+  $bus$jscomp$17$$.register("pcspeaker-update", function($data$jscomp$190$$) {
+    var $counter_reload$$ = $data$jscomp$190$$[1], $frequency$$ = 0;
+    3 === $data$jscomp$190$$[0] && ($frequency$$ = Math.min(1193181.6665999999 / $counter_reload$$, this.node_oscillator.frequency.maxValue), $frequency$$ = Math.max($frequency$$, 0));
     this.node_oscillator.frequency.setValueAtTime($frequency$$, $audio_context$jscomp$2$$.currentTime);
   }, this);
 }
 $PCSpeaker$$.prototype.start = function() {
   this.node_oscillator.start();
 };
-function $SpeakerWorkletDAC$$($bus$jscomp$17$$, $audio_context$jscomp$3_worklet_blob_worklet_code_worklet_string$$, $mixer$jscomp$1$$) {
-  this.bus = $bus$jscomp$17$$;
+function $SpeakerWorkletDAC$$($bus$jscomp$18$$, $audio_context$jscomp$3_worklet_blob_worklet_code_worklet_string$$, $mixer$jscomp$1$$) {
+  this.bus = $bus$jscomp$18$$;
   this.audio_context = $audio_context$jscomp$3_worklet_blob_worklet_code_worklet_string$$;
   this.enabled = !1;
   this.sampling_rate = 48000;
@@ -8925,13 +9137,13 @@ function $SpeakerWorkletDAC$$($bus$jscomp$17$$, $audio_context$jscomp$3_worklet_
       $self$jscomp$1$$.source_block_start = 0;
       $self$jscomp$1$$.source_time = 0.0;
       $self$jscomp$1$$.source_offset = 0;
-      $self$jscomp$1$$.port.onmessage = $event$jscomp$4$$ => {
-        switch($event$jscomp$4$$.data.type) {
+      $self$jscomp$1$$.port.onmessage = $event$jscomp$6$$ => {
+        switch($event$jscomp$6$$.data.type) {
           case "queue":
-            $self$jscomp$1$$.queue_push($event$jscomp$4$$.data.value);
+            $self$jscomp$1$$.queue_push($event$jscomp$6$$.data.value);
             break;
           case "sampling-rate":
-            $self$jscomp$1$$.source_samples_per_destination = $event$jscomp$4$$.data.value / sampleRate;
+            $self$jscomp$1$$.source_samples_per_destination = $event$jscomp$6$$.data.value / sampleRate;
         }
       };
       return $self$jscomp$1$$;
@@ -8939,8 +9151,8 @@ function $SpeakerWorkletDAC$$($bus$jscomp$17$$, $audio_context$jscomp$3_worklet_
     var $EMPTY_BUFFER$$ = [new Float32Array(256), new Float32Array(256), ];
     Reflect.setPrototypeOf($DACProcessor$$.prototype, AudioWorkletProcessor.prototype);
     Reflect.setPrototypeOf($DACProcessor$$, AudioWorkletProcessor);
-    $DACProcessor$$.prototype.process = $DACProcessor$$.prototype.process = function($i$jscomp$85_inputs$jscomp$1$$, $outputs$jscomp$1_samples_needed_per_block$$) {
-      for ($i$jscomp$85_inputs$jscomp$1$$ = 0; $i$jscomp$85_inputs$jscomp$1$$ < $outputs$jscomp$1_samples_needed_per_block$$[0][0].length; $i$jscomp$85_inputs$jscomp$1$$++) {
+    $DACProcessor$$.prototype.process = $DACProcessor$$.prototype.process = function($i$jscomp$90_inputs$jscomp$1$$, $outputs$jscomp$1_samples_needed_per_block$$) {
+      for ($i$jscomp$90_inputs$jscomp$1$$ = 0; $i$jscomp$90_inputs$jscomp$1$$ < $outputs$jscomp$1_samples_needed_per_block$$[0][0].length; $i$jscomp$90_inputs$jscomp$1$$++) {
         for (var $sum0$$ = 0, $sum1$$ = 0, $end$jscomp$24$$ = this.source_offset + this.kernel_size, $j$jscomp$10$$ = this.source_offset - this.kernel_size + 1; $j$jscomp$10$$ <= $end$jscomp$24$$; $j$jscomp$10$$++) {
           var $convolute_index$$ = this.source_block_start + $j$jscomp$10$$;
           $sum0$$ += this.get_sample($convolute_index$$, 0) * this.kernel(this.source_time - $j$jscomp$10$$);
@@ -8949,8 +9161,8 @@ function $SpeakerWorkletDAC$$($bus$jscomp$17$$, $audio_context$jscomp$3_worklet_
         if (isNaN($sum0$$) || isNaN($sum1$$)) {
           $sum0$$ = $sum1$$ = 0, this.dbg_log("ERROR: NaN values! Ignoring for now.");
         }
-        $outputs$jscomp$1_samples_needed_per_block$$[0][0][$i$jscomp$85_inputs$jscomp$1$$] = $sum0$$;
-        $outputs$jscomp$1_samples_needed_per_block$$[0][1][$i$jscomp$85_inputs$jscomp$1$$] = $sum1$$;
+        $outputs$jscomp$1_samples_needed_per_block$$[0][0][$i$jscomp$90_inputs$jscomp$1$$] = $sum0$$;
+        $outputs$jscomp$1_samples_needed_per_block$$[0][1][$i$jscomp$90_inputs$jscomp$1$$] = $sum1$$;
         this.source_time += this.source_samples_per_destination;
         this.source_offset = Math.floor(this.source_time);
       }
@@ -8986,7 +9198,7 @@ function $SpeakerWorkletDAC$$($bus$jscomp$17$$, $audio_context$jscomp$3_worklet_
         $new_big_buffer_new_big_buffer_size_sample_count$jscomp$1$$[0].set(this.source_buffer_current[0]);
         $new_big_buffer_new_big_buffer_size_sample_count$jscomp$1$$[1].set(this.source_buffer_current[1]);
         $new_big_buffer_pos_queue_pos$$ = this.source_buffer_current[0].length;
-        for (var $i$jscomp$86$$ = 0; $i$jscomp$86$$ < $buffer_count$$; $i$jscomp$86$$++) {
+        for (var $i$jscomp$91$$ = 0; $i$jscomp$91$$ < $buffer_count$$; $i$jscomp$91$$++) {
           var $small_buffer$$ = this.queue_shift();
           $new_big_buffer_new_big_buffer_size_sample_count$jscomp$1$$[0].set($small_buffer$$[0], $new_big_buffer_pos_queue_pos$$);
           $new_big_buffer_new_big_buffer_size_sample_count$jscomp$1$$[1].set($small_buffer$$[1], $new_big_buffer_pos_queue_pos$$);
@@ -9028,43 +9240,43 @@ function $SpeakerWorkletDAC$$($bus$jscomp$17$$, $audio_context$jscomp$3_worklet_
     URL.revokeObjectURL($worklet_url$$);
     this.node_processor = new AudioWorkletNode(this.audio_context, "dac-processor", {numberOfInputs:0, numberOfOutputs:1, outputChannelCount:[2], parameterData:{}, processorOptions:{}, });
     this.node_processor.port.postMessage({type:"sampling-rate", value:this.sampling_rate, });
-    this.node_processor.port.onmessage = $event$jscomp$5$$ => {
-      switch($event$jscomp$5$$.data.type) {
+    this.node_processor.port.onmessage = $event$jscomp$7$$ => {
+      switch($event$jscomp$7$$.data.type) {
         case "pump":
           this.pump();
           break;
         case "debug-log":
-          $dbg_log$$("SpeakerWorkletDAC - Worklet: " + $event$jscomp$5$$.data.value);
+          $dbg_log$$("SpeakerWorkletDAC - Worklet: " + $event$jscomp$7$$.data.value);
       }
     };
     this.node_processor.connect(this.node_output);
   });
   this.mixer_connection = $mixer$jscomp$1$$.add_source(this.node_output, 2);
   this.mixer_connection.set_gain_hidden(3);
-  $bus$jscomp$17$$.register("dac-send-data", function($data$jscomp$181$$) {
-    this.queue($data$jscomp$181$$);
+  $bus$jscomp$18$$.register("dac-send-data", function($data$jscomp$191$$) {
+    this.queue($data$jscomp$191$$);
   }, this);
-  $bus$jscomp$17$$.register("dac-enable", function() {
+  $bus$jscomp$18$$.register("dac-enable", function() {
     this.enabled = !0;
   }, this);
-  $bus$jscomp$17$$.register("dac-disable", function() {
+  $bus$jscomp$18$$.register("dac-disable", function() {
     this.enabled = !1;
   }, this);
-  $bus$jscomp$17$$.register("dac-tell-sampling-rate", function($rate$jscomp$2$$) {
+  $bus$jscomp$18$$.register("dac-tell-sampling-rate", function($rate$jscomp$2$$) {
     $dbg_assert$$(0 < $rate$jscomp$2$$, "Sampling rate should be nonzero");
     this.sampling_rate = $rate$jscomp$2$$;
     this.node_processor && this.node_processor.port.postMessage({type:"sampling-rate", value:$rate$jscomp$2$$, });
   }, this);
   this.debugger = new $SpeakerDACDebugger$$(this.audio_context, this.node_output);
 }
-$SpeakerWorkletDAC$$.prototype.queue = function($data$jscomp$182$$) {
-  this.node_processor && (this.debugger.push_queued_data($data$jscomp$182$$), this.node_processor.port.postMessage({type:"queue", value:$data$jscomp$182$$, }, [$data$jscomp$182$$[0].buffer, $data$jscomp$182$$[1].buffer]));
+$SpeakerWorkletDAC$$.prototype.queue = function($data$jscomp$192$$) {
+  this.node_processor && (this.debugger.push_queued_data($data$jscomp$192$$), this.node_processor.port.postMessage({type:"queue", value:$data$jscomp$192$$, }, [$data$jscomp$192$$[0].buffer, $data$jscomp$192$$[1].buffer]));
 };
 $SpeakerWorkletDAC$$.prototype.pump = function() {
   this.enabled && this.bus.send("dac-request-data");
 };
-function $SpeakerBufferSourceDAC$$($bus$jscomp$18$$, $audio_context$jscomp$4$$, $mixer$jscomp$2$$) {
-  this.bus = $bus$jscomp$18$$;
+function $SpeakerBufferSourceDAC$$($bus$jscomp$19$$, $audio_context$jscomp$4$$, $mixer$jscomp$2$$) {
+  this.bus = $bus$jscomp$19$$;
   this.audio_context = $audio_context$jscomp$4$$;
   this.enabled = !1;
   this.sampling_rate = 22050;
@@ -9075,17 +9287,17 @@ function $SpeakerBufferSourceDAC$$($bus$jscomp$18$$, $audio_context$jscomp$4$$, 
   this.node_output = this.node_lowpass;
   this.mixer_connection = $mixer$jscomp$2$$.add_source(this.node_output, 2);
   this.mixer_connection.set_gain_hidden(3);
-  $bus$jscomp$18$$.register("dac-send-data", function($data$jscomp$183$$) {
-    this.queue($data$jscomp$183$$);
+  $bus$jscomp$19$$.register("dac-send-data", function($data$jscomp$193$$) {
+    this.queue($data$jscomp$193$$);
   }, this);
-  $bus$jscomp$18$$.register("dac-enable", function() {
+  $bus$jscomp$19$$.register("dac-enable", function() {
     this.enabled = !0;
     this.pump();
   }, this);
-  $bus$jscomp$18$$.register("dac-disable", function() {
+  $bus$jscomp$19$$.register("dac-disable", function() {
     this.enabled = !1;
   }, this);
-  $bus$jscomp$18$$.register("dac-tell-sampling-rate", function($rate$jscomp$3$$) {
+  $bus$jscomp$19$$.register("dac-tell-sampling-rate", function($rate$jscomp$3$$) {
     $dbg_assert$$(0 < $rate$jscomp$3$$, "Sampling rate should be nonzero");
     this.sampling_rate = $rate$jscomp$3$$;
     this.rate_ratio = Math.ceil(8000 / $rate$jscomp$3$$);
@@ -9093,31 +9305,31 @@ function $SpeakerBufferSourceDAC$$($bus$jscomp$18$$, $audio_context$jscomp$4$$, 
   }, this);
   this.debugger = new $SpeakerDACDebugger$$(this.audio_context, this.node_output);
 }
-$SpeakerBufferSourceDAC$$.prototype.queue = function($data$jscomp$184_source$jscomp$20$$) {
-  this.debugger.push_queued_data($data$jscomp$184_source$jscomp$20$$);
-  var $current_silence_duration_sample_count$jscomp$2$$ = $data$jscomp$184_source$jscomp$20$$[0].length, $block_duration$$ = $current_silence_duration_sample_count$jscomp$2$$ / this.sampling_rate;
+$SpeakerBufferSourceDAC$$.prototype.queue = function($data$jscomp$194_source$jscomp$20$$) {
+  this.debugger.push_queued_data($data$jscomp$194_source$jscomp$20$$);
+  var $current_silence_duration_sample_count$jscomp$2$$ = $data$jscomp$194_source$jscomp$20$$[0].length, $block_duration$$ = $current_silence_duration_sample_count$jscomp$2$$ / this.sampling_rate;
   if (1 < this.rate_ratio) {
-    var $buffer$jscomp$45_current_time_target_silence_duration$$ = this.audio_context.createBuffer(2, $current_silence_duration_sample_count$jscomp$2$$ * this.rate_ratio, this.sampling_rate * this.rate_ratio);
-    for (var $buffer_data0$$ = $buffer$jscomp$45_current_time_target_silence_duration$$.getChannelData(0), $buffer_data1$$ = $buffer$jscomp$45_current_time_target_silence_duration$$.getChannelData(1), $buffer_index$$ = 0, $i$jscomp$87$$ = 0; $i$jscomp$87$$ < $current_silence_duration_sample_count$jscomp$2$$; $i$jscomp$87$$++) {
+    var $buffer$jscomp$48_current_time_target_silence_duration$$ = this.audio_context.createBuffer(2, $current_silence_duration_sample_count$jscomp$2$$ * this.rate_ratio, this.sampling_rate * this.rate_ratio);
+    for (var $buffer_data0$$ = $buffer$jscomp$48_current_time_target_silence_duration$$.getChannelData(0), $buffer_data1$$ = $buffer$jscomp$48_current_time_target_silence_duration$$.getChannelData(1), $buffer_index$$ = 0, $i$jscomp$92$$ = 0; $i$jscomp$92$$ < $current_silence_duration_sample_count$jscomp$2$$; $i$jscomp$92$$++) {
       for (var $j$jscomp$11$$ = 0; $j$jscomp$11$$ < this.rate_ratio; $j$jscomp$11$$++, $buffer_index$$++) {
-        $buffer_data0$$[$buffer_index$$] = $data$jscomp$184_source$jscomp$20$$[0][$i$jscomp$87$$], $buffer_data1$$[$buffer_index$$] = $data$jscomp$184_source$jscomp$20$$[1][$i$jscomp$87$$];
+        $buffer_data0$$[$buffer_index$$] = $data$jscomp$194_source$jscomp$20$$[0][$i$jscomp$92$$], $buffer_data1$$[$buffer_index$$] = $data$jscomp$194_source$jscomp$20$$[1][$i$jscomp$92$$];
       }
     }
   } else {
-    $buffer$jscomp$45_current_time_target_silence_duration$$ = this.audio_context.createBuffer(2, $current_silence_duration_sample_count$jscomp$2$$, this.sampling_rate), $buffer$jscomp$45_current_time_target_silence_duration$$.copyToChannel ? ($buffer$jscomp$45_current_time_target_silence_duration$$.copyToChannel($data$jscomp$184_source$jscomp$20$$[0], 0), $buffer$jscomp$45_current_time_target_silence_duration$$.copyToChannel($data$jscomp$184_source$jscomp$20$$[1], 1)) : ($buffer$jscomp$45_current_time_target_silence_duration$$.getChannelData(0).set($data$jscomp$184_source$jscomp$20$$[0]), 
-    $buffer$jscomp$45_current_time_target_silence_duration$$.getChannelData(1).set($data$jscomp$184_source$jscomp$20$$[1]));
+    $buffer$jscomp$48_current_time_target_silence_duration$$ = this.audio_context.createBuffer(2, $current_silence_duration_sample_count$jscomp$2$$, this.sampling_rate), $buffer$jscomp$48_current_time_target_silence_duration$$.copyToChannel ? ($buffer$jscomp$48_current_time_target_silence_duration$$.copyToChannel($data$jscomp$194_source$jscomp$20$$[0], 0), $buffer$jscomp$48_current_time_target_silence_duration$$.copyToChannel($data$jscomp$194_source$jscomp$20$$[1], 1)) : ($buffer$jscomp$48_current_time_target_silence_duration$$.getChannelData(0).set($data$jscomp$194_source$jscomp$20$$[0]), 
+    $buffer$jscomp$48_current_time_target_silence_duration$$.getChannelData(1).set($data$jscomp$194_source$jscomp$20$$[1]));
   }
-  $data$jscomp$184_source$jscomp$20$$ = this.audio_context.createBufferSource();
-  $data$jscomp$184_source$jscomp$20$$.buffer = $buffer$jscomp$45_current_time_target_silence_duration$$;
-  $data$jscomp$184_source$jscomp$20$$.connect(this.node_lowpass);
-  $data$jscomp$184_source$jscomp$20$$.addEventListener("ended", this.pump.bind(this));
-  $buffer$jscomp$45_current_time_target_silence_duration$$ = this.audio_context.currentTime;
-  if (this.buffered_time < $buffer$jscomp$45_current_time_target_silence_duration$$) {
-    for ($dbg_log$$("Speaker DAC - Creating/Recreating reserve - shouldn't occur frequently during playback"), this.buffered_time = $buffer$jscomp$45_current_time_target_silence_duration$$, $buffer$jscomp$45_current_time_target_silence_duration$$ = 0.2 - $block_duration$$, $current_silence_duration_sample_count$jscomp$2$$ = 0; $current_silence_duration_sample_count$jscomp$2$$ <= $buffer$jscomp$45_current_time_target_silence_duration$$;) {
+  $data$jscomp$194_source$jscomp$20$$ = this.audio_context.createBufferSource();
+  $data$jscomp$194_source$jscomp$20$$.buffer = $buffer$jscomp$48_current_time_target_silence_duration$$;
+  $data$jscomp$194_source$jscomp$20$$.connect(this.node_lowpass);
+  $data$jscomp$194_source$jscomp$20$$.addEventListener("ended", this.pump.bind(this));
+  $buffer$jscomp$48_current_time_target_silence_duration$$ = this.audio_context.currentTime;
+  if (this.buffered_time < $buffer$jscomp$48_current_time_target_silence_duration$$) {
+    for ($dbg_log$$("Speaker DAC - Creating/Recreating reserve - shouldn't occur frequently during playback"), this.buffered_time = $buffer$jscomp$48_current_time_target_silence_duration$$, $buffer$jscomp$48_current_time_target_silence_duration$$ = 0.2 - $block_duration$$, $current_silence_duration_sample_count$jscomp$2$$ = 0; $current_silence_duration_sample_count$jscomp$2$$ <= $buffer$jscomp$48_current_time_target_silence_duration$$;) {
       $current_silence_duration_sample_count$jscomp$2$$ += $block_duration$$, this.buffered_time += $block_duration$$, setTimeout(() => this.pump(), 1000 * $current_silence_duration_sample_count$jscomp$2$$);
     }
   }
-  $data$jscomp$184_source$jscomp$20$$.start(this.buffered_time);
+  $data$jscomp$194_source$jscomp$20$$.start(this.buffered_time);
   this.buffered_time += $block_duration$$;
   setTimeout(() => this.pump(), 0);
 };
@@ -9144,9 +9356,9 @@ $SpeakerDACDebugger$$.prototype.start = function($duration_ms$$) {
   this.queued_history.push(this.queued);
   this.output_history.push(this.output);
   this.node_processor = this.audio_context.createScriptProcessor(1024, 2, 2);
-  this.node_processor.onaudioprocess = $event$jscomp$6$$ => {
-    this.output[0].push($event$jscomp$6$$.inputBuffer.getChannelData(0).slice());
-    this.output[1].push($event$jscomp$6$$.inputBuffer.getChannelData(1).slice());
+  this.node_processor.onaudioprocess = $event$jscomp$8$$ => {
+    this.output[0].push($event$jscomp$8$$.inputBuffer.getChannelData(0).slice());
+    this.output[1].push($event$jscomp$8$$.inputBuffer.getChannelData(1).slice());
   };
   this.node_source.connect(this.node_processor);
   this.node_processor.connect(this.node_gain);
@@ -9160,8 +9372,8 @@ $SpeakerDACDebugger$$.prototype.stop = function() {
   this.node_processor.disconnect();
   this.node_processor = null;
 };
-$SpeakerDACDebugger$$.prototype.push_queued_data = function($data$jscomp$185$$) {
-  this.is_active && (this.queued[0].push($data$jscomp$185$$[0].slice()), this.queued[1].push($data$jscomp$185$$[1].slice()));
+$SpeakerDACDebugger$$.prototype.push_queued_data = function($data$jscomp$195$$) {
+  this.is_active && (this.queued[0].push($data$jscomp$195$$[0].slice()), this.queued[1].push($data$jscomp$195$$[1].slice()));
 };
 $SpeakerDACDebugger$$.prototype.download_txt = function($history_id_txt$$, $channel$jscomp$30$$) {
   $history_id_txt$$ = this.output_history[$history_id_txt$$][$channel$jscomp$30$$].map($v$jscomp$4$$ => $v$jscomp$4$$.join(" ")).join(" ");
@@ -9170,13 +9382,13 @@ $SpeakerDACDebugger$$.prototype.download_txt = function($history_id_txt$$, $chan
 $SpeakerDACDebugger$$.prototype.download_csv = function($buffers$jscomp$5_history_id$jscomp$1$$) {
   $buffers$jscomp$5_history_id$jscomp$1$$ = this.output_history[$buffers$jscomp$5_history_id$jscomp$1$$];
   for (var $csv_rows$$ = [], $buffer_id$$ = 0; $buffer_id$$ < $buffers$jscomp$5_history_id$jscomp$1$$[0].length; $buffer_id$$++) {
-    for (var $i$jscomp$88$$ = 0; $i$jscomp$88$$ < $buffers$jscomp$5_history_id$jscomp$1$$[0][$buffer_id$$].length; $i$jscomp$88$$++) {
-      $csv_rows$$.push(`${$buffers$jscomp$5_history_id$jscomp$1$$[0][$buffer_id$$][$i$jscomp$88$$]},${$buffers$jscomp$5_history_id$jscomp$1$$[1][$buffer_id$$][$i$jscomp$88$$]}`);
+    for (var $i$jscomp$93$$ = 0; $i$jscomp$93$$ < $buffers$jscomp$5_history_id$jscomp$1$$[0][$buffer_id$$].length; $i$jscomp$93$$++) {
+      $csv_rows$$.push(`${$buffers$jscomp$5_history_id$jscomp$1$$[0][$buffer_id$$][$i$jscomp$93$$]},${$buffers$jscomp$5_history_id$jscomp$1$$[1][$buffer_id$$][$i$jscomp$93$$]}`);
     }
   }
   $dump_file$$($csv_rows$$.join("\n"), "dacdata.csv");
 };
-function $SerialAdapter$$($element$jscomp$8$$, $bus$jscomp$19$$) {
+function $SerialAdapter$$($element$jscomp$8$$, $bus$jscomp$20$$) {
   function $keypress_handler$$($e$jscomp$32$$) {
     $serial$$.bus && $serial$$.enabled && ($serial$$.send_char($e$jscomp$32$$.which), $e$jscomp$32$$.preventDefault());
   }
@@ -9186,8 +9398,8 @@ function $SerialAdapter$$($element$jscomp$8$$, $bus$jscomp$19$$) {
   }
   function $paste_handler$$($e$jscomp$34$$) {
     if ($serial$$.enabled) {
-      for (var $data$jscomp$186$$ = $e$jscomp$34$$.clipboardData.getData("text/plain"), $i$jscomp$89$$ = 0; $i$jscomp$89$$ < $data$jscomp$186$$.length; $i$jscomp$89$$++) {
-        $serial$$.send_char($data$jscomp$186$$.charCodeAt($i$jscomp$89$$));
+      for (var $data$jscomp$196$$ = $e$jscomp$34$$.clipboardData.getData("text/plain"), $i$jscomp$94$$ = 0; $i$jscomp$94$$ < $data$jscomp$196$$.length; $i$jscomp$94$$++) {
+        $serial$$.send_char($data$jscomp$196$$.charCodeAt($i$jscomp$94$$));
       }
       $e$jscomp$34$$.preventDefault();
     }
@@ -9197,7 +9409,7 @@ function $SerialAdapter$$($element$jscomp$8$$, $bus$jscomp$19$$) {
   }
   var $serial$$ = this;
   this.enabled = !0;
-  this.bus = $bus$jscomp$19$$;
+  this.bus = $bus$jscomp$20$$;
   this.text = "";
   this.text_new_line = !1;
   this.last_update = 0;
@@ -9224,14 +9436,14 @@ function $SerialAdapter$$($element$jscomp$8$$, $bus$jscomp$19$$) {
     "\b" === $chr$jscomp$6$$ ? (this.text = this.text.slice(0, -1), this.update()) : "\r" !== $chr$jscomp$6$$ && (this.text += $chr$jscomp$6$$, "\n" === $chr$jscomp$6$$ && (this.text_new_line = !0), this.update());
   };
   this.update = function() {
-    var $now$jscomp$11$$ = Date.now(), $delta$jscomp$3$$ = $now$jscomp$11$$ - this.last_update;
-    16 > $delta$jscomp$3$$ ? void 0 === this.update_timer && (this.update_timer = setTimeout(() => {
+    var $now$jscomp$11$$ = Date.now(), $delta$jscomp$4$$ = $now$jscomp$11$$ - this.last_update;
+    16 > $delta$jscomp$4$$ ? void 0 === this.update_timer && (this.update_timer = setTimeout(() => {
       this.update_timer = void 0;
       var $now$jscomp$12$$ = Date.now();
       $dbg_assert$$(15 <= $now$jscomp$12$$ - this.last_update);
       this.last_update = $now$jscomp$12$$;
       this.render();
-    }, 16 - $delta$jscomp$3$$)) : (void 0 !== this.update_timer && (clearTimeout(this.update_timer), this.update_timer = void 0), this.last_update = $now$jscomp$11$$, this.render());
+    }, 16 - $delta$jscomp$4$$)) : (void 0 !== this.update_timer && (clearTimeout(this.update_timer), this.update_timer = void 0), this.last_update = $now$jscomp$11$$, this.render());
   };
   this.render = function() {
     $element$jscomp$8$$.value = this.text;
@@ -9241,17 +9453,17 @@ function $SerialAdapter$$($element$jscomp$8$$, $bus$jscomp$19$$) {
     $serial$$.bus && $serial$$.bus.send("serial0-input", $chr_code$$);
   };
 }
-function $SerialAdapterXtermJS$$($element$jscomp$9$$, $bus$jscomp$21$$) {
+function $SerialAdapterXtermJS$$($element$jscomp$9$$, $bus$jscomp$22$$) {
   this.element = $element$jscomp$9$$;
   if (window.Terminal) {
     var $term$$ = this.term = new window.Terminal({logLevel:"off", });
     $term$$.write("This is the serial console. Whatever you type or paste here will be sent to COM1");
-    var $on_data_disposable$$ = $term$$.onData(function($data$jscomp$187$$) {
-      for (let $i$jscomp$90$$ = 0; $i$jscomp$90$$ < $data$jscomp$187$$.length; $i$jscomp$90$$++) {
-        $bus$jscomp$21$$.send("serial0-input", $data$jscomp$187$$.charCodeAt($i$jscomp$90$$));
+    var $on_data_disposable$$ = $term$$.onData(function($data$jscomp$197$$) {
+      for (let $i$jscomp$95$$ = 0; $i$jscomp$95$$ < $data$jscomp$197$$.length; $i$jscomp$95$$++) {
+        $bus$jscomp$22$$.send("serial0-input", $data$jscomp$197$$.charCodeAt($i$jscomp$95$$));
       }
     });
-    $bus$jscomp$21$$.register("serial0-output-byte", function($byte$jscomp$4$$) {
+    $bus$jscomp$22$$.register("serial0-output-byte", function($byte$jscomp$4$$) {
       $term$$.write(Uint8Array.of($byte$jscomp$4$$));
     }, this);
     this.destroy = function() {
@@ -9263,16 +9475,16 @@ function $SerialAdapterXtermJS$$($element$jscomp$9$$, $bus$jscomp$21$$) {
 $SerialAdapterXtermJS$$.prototype.show = function() {
   this.term && this.term.open(this.element);
 };
-function $NetworkAdapter$$($url$jscomp$24$$, $bus$jscomp$22$$) {
-  this.bus = $bus$jscomp$22$$;
+function $NetworkAdapter$$($url$jscomp$24$$, $bus$jscomp$23$$) {
+  this.bus = $bus$jscomp$23$$;
   this.socket = void 0;
   this.send_queue = [];
   this.url = $url$jscomp$24$$;
   this.reconnect_interval = 10000;
   this.last_connect_attempt = Date.now() - this.reconnect_interval;
   this.send_queue_limit = 64;
-  this.bus.register("net0-send", function($data$jscomp$188$$) {
-    this.send($data$jscomp$188$$);
+  this.bus.register("net0-send", function($data$jscomp$198$$) {
+    this.send($data$jscomp$198$$);
   }, this);
 }
 $NetworkAdapter$$.prototype.handle_message = function($e$jscomp$36$$) {
@@ -9283,8 +9495,8 @@ $NetworkAdapter$$.prototype.handle_close = function() {
   setTimeout(this.connect.bind(this), this.reconnect_interval);
 };
 $NetworkAdapter$$.prototype.handle_open = function() {
-  for (var $i$jscomp$91$$ = 0; $i$jscomp$91$$ < this.send_queue.length; $i$jscomp$91$$++) {
-    this.send(this.send_queue[$i$jscomp$91$$]);
+  for (var $i$jscomp$96$$ = 0; $i$jscomp$96$$ < this.send_queue.length; $i$jscomp$96$$++) {
+    this.send(this.send_queue[$i$jscomp$96$$]);
   }
   this.send_queue = [];
 };
@@ -9296,17 +9508,17 @@ $NetworkAdapter$$.prototype.destroy = function() {
 $NetworkAdapter$$.prototype.connect = function() {
   if ("undefined" !== typeof WebSocket) {
     if (this.socket) {
-      var $now$jscomp$13_state$jscomp$49$$ = this.socket.readyState;
-      if (0 === $now$jscomp$13_state$jscomp$49$$ || 1 === $now$jscomp$13_state$jscomp$49$$) {
+      var $now$jscomp$13_state$jscomp$51$$ = this.socket.readyState;
+      if (0 === $now$jscomp$13_state$jscomp$51$$ || 1 === $now$jscomp$13_state$jscomp$51$$) {
         return;
       }
     }
-    $now$jscomp$13_state$jscomp$49$$ = Date.now();
-    this.last_connect_attempt + this.reconnect_interval > $now$jscomp$13_state$jscomp$49$$ || (this.last_connect_attempt = Date.now(), this.socket = new WebSocket(this.url), this.socket.binaryType = "arraybuffer", this.socket.onopen = this.handle_open.bind(this), this.socket.onmessage = this.handle_message.bind(this), this.socket.onclose = this.handle_close.bind(this), this.socket.onerror = this.handle_error.bind(this));
+    $now$jscomp$13_state$jscomp$51$$ = Date.now();
+    this.last_connect_attempt + this.reconnect_interval > $now$jscomp$13_state$jscomp$51$$ || (this.last_connect_attempt = Date.now(), this.socket = new WebSocket(this.url), this.socket.binaryType = "arraybuffer", this.socket.onopen = this.handle_open.bind(this), this.socket.onmessage = this.handle_message.bind(this), this.socket.onclose = this.handle_close.bind(this), this.socket.onerror = this.handle_error.bind(this));
   }
 };
-$NetworkAdapter$$.prototype.send = function($data$jscomp$189$$) {
-  this.socket && 1 === this.socket.readyState ? this.socket.send($data$jscomp$189$$) : (this.send_queue.push($data$jscomp$189$$), this.send_queue.length > 2 * this.send_queue_limit && (this.send_queue = this.send_queue.slice(-this.send_queue_limit)), this.connect());
+$NetworkAdapter$$.prototype.send = function($data$jscomp$199$$) {
+  this.socket && 1 === this.socket.readyState ? this.socket.send($data$jscomp$199$$) : (this.send_queue.push($data$jscomp$199$$), this.send_queue.length > 2 * this.send_queue_limit && (this.send_queue = this.send_queue.slice(-this.send_queue_limit)), this.connect());
 };
 $NetworkAdapter$$.prototype.change_proxy = function($url$jscomp$25$$) {
   this.url = $url$jscomp$25$$;
@@ -9318,13 +9530,13 @@ function $V86$$($options$jscomp$42$$) {
   this.cpu_is_running = !1;
   this.cpu_exception_hook = function() {
   };
-  var $bus$jscomp$23_wasm_shared_funcs$$ = $Bus$$.create();
-  this.bus = $bus$jscomp$23_wasm_shared_funcs$$[0];
-  this.emulator_bus = $bus$jscomp$23_wasm_shared_funcs$$[1];
-  var $cpu$jscomp$21$$, $wasm_memory$$;
+  var $bus$jscomp$24_wasm_shared_funcs$$ = $Bus$$.create();
+  this.bus = $bus$jscomp$24_wasm_shared_funcs$$[0];
+  this.emulator_bus = $bus$jscomp$24_wasm_shared_funcs$$[1];
+  var $cpu$jscomp$23$$, $wasm_memory$$;
   const $wasm_table$$ = new WebAssembly.Table({element:"anyfunc", initial:1924});
-  $bus$jscomp$23_wasm_shared_funcs$$ = {cpu_exception_hook:$n$jscomp$13$$ => this.cpu_exception_hook($n$jscomp$13$$), run_hardware_timers:function($a$jscomp$8$$, $t$jscomp$12$$) {
-    return $cpu$jscomp$21$$.run_hardware_timers($a$jscomp$8$$, $t$jscomp$12$$);
+  $bus$jscomp$24_wasm_shared_funcs$$ = {cpu_exception_hook:$n$jscomp$13$$ => this.cpu_exception_hook($n$jscomp$13$$), run_hardware_timers:function($a$jscomp$8$$, $t$jscomp$12$$) {
+    return $cpu$jscomp$23$$.run_hardware_timers($a$jscomp$8$$, $t$jscomp$12$$);
   }, cpu_event_halt:() => {
     this.emulator_bus.send("cpu-event-halt");
   }, abort:function() {
@@ -9332,35 +9544,35 @@ function $V86$$($options$jscomp$42$$) {
   }, microtick:$v86$$.microtick, get_rand_int:function() {
     return $v86util$$.get_rand_int();
   }, apic_acknowledge_irq:function() {
-    return $cpu$jscomp$21$$.devices.apic.acknowledge_irq();
-  }, io_port_read8:function($addr$jscomp$55$$) {
-    return $cpu$jscomp$21$$.io.port_read8($addr$jscomp$55$$);
-  }, io_port_read16:function($addr$jscomp$56$$) {
-    return $cpu$jscomp$21$$.io.port_read16($addr$jscomp$56$$);
-  }, io_port_read32:function($addr$jscomp$57$$) {
-    return $cpu$jscomp$21$$.io.port_read32($addr$jscomp$57$$);
-  }, io_port_write8:function($addr$jscomp$58$$, $value$jscomp$188$$) {
-    $cpu$jscomp$21$$.io.port_write8($addr$jscomp$58$$, $value$jscomp$188$$);
-  }, io_port_write16:function($addr$jscomp$59$$, $value$jscomp$189$$) {
-    $cpu$jscomp$21$$.io.port_write16($addr$jscomp$59$$, $value$jscomp$189$$);
-  }, io_port_write32:function($addr$jscomp$60$$, $value$jscomp$190$$) {
-    $cpu$jscomp$21$$.io.port_write32($addr$jscomp$60$$, $value$jscomp$190$$);
-  }, mmap_read8:function($addr$jscomp$61$$) {
-    return $cpu$jscomp$21$$.mmap_read8($addr$jscomp$61$$);
-  }, mmap_read16:function($addr$jscomp$62$$) {
-    return $cpu$jscomp$21$$.mmap_read16($addr$jscomp$62$$);
-  }, mmap_read32:function($addr$jscomp$63$$) {
-    return $cpu$jscomp$21$$.mmap_read32($addr$jscomp$63$$);
-  }, mmap_write8:function($addr$jscomp$64$$, $value$jscomp$191$$) {
-    $cpu$jscomp$21$$.mmap_write8($addr$jscomp$64$$, $value$jscomp$191$$);
-  }, mmap_write16:function($addr$jscomp$65$$, $value$jscomp$192$$) {
-    $cpu$jscomp$21$$.mmap_write16($addr$jscomp$65$$, $value$jscomp$192$$);
-  }, mmap_write32:function($addr$jscomp$66$$, $value$jscomp$193$$) {
-    $cpu$jscomp$21$$.mmap_write32($addr$jscomp$66$$, $value$jscomp$193$$);
-  }, mmap_write64:function($addr$jscomp$67$$, $value0$jscomp$2$$, $value1$jscomp$9$$) {
-    $cpu$jscomp$21$$.mmap_write64($addr$jscomp$67$$, $value0$jscomp$2$$, $value1$jscomp$9$$);
-  }, mmap_write128:function($addr$jscomp$68$$, $value0$jscomp$3$$, $value1$jscomp$10$$, $value2$jscomp$8$$, $value3$jscomp$5$$) {
-    $cpu$jscomp$21$$.mmap_write128($addr$jscomp$68$$, $value0$jscomp$3$$, $value1$jscomp$10$$, $value2$jscomp$8$$, $value3$jscomp$5$$);
+    return $cpu$jscomp$23$$.devices.apic.acknowledge_irq();
+  }, io_port_read8:function($addr$jscomp$56$$) {
+    return $cpu$jscomp$23$$.io.port_read8($addr$jscomp$56$$);
+  }, io_port_read16:function($addr$jscomp$57$$) {
+    return $cpu$jscomp$23$$.io.port_read16($addr$jscomp$57$$);
+  }, io_port_read32:function($addr$jscomp$58$$) {
+    return $cpu$jscomp$23$$.io.port_read32($addr$jscomp$58$$);
+  }, io_port_write8:function($addr$jscomp$59$$, $value$jscomp$190$$) {
+    $cpu$jscomp$23$$.io.port_write8($addr$jscomp$59$$, $value$jscomp$190$$);
+  }, io_port_write16:function($addr$jscomp$60$$, $value$jscomp$191$$) {
+    $cpu$jscomp$23$$.io.port_write16($addr$jscomp$60$$, $value$jscomp$191$$);
+  }, io_port_write32:function($addr$jscomp$61$$, $value$jscomp$192$$) {
+    $cpu$jscomp$23$$.io.port_write32($addr$jscomp$61$$, $value$jscomp$192$$);
+  }, mmap_read8:function($addr$jscomp$62$$) {
+    return $cpu$jscomp$23$$.mmap_read8($addr$jscomp$62$$);
+  }, mmap_read16:function($addr$jscomp$63$$) {
+    return $cpu$jscomp$23$$.mmap_read16($addr$jscomp$63$$);
+  }, mmap_read32:function($addr$jscomp$64$$) {
+    return $cpu$jscomp$23$$.mmap_read32($addr$jscomp$64$$);
+  }, mmap_write8:function($addr$jscomp$65$$, $value$jscomp$193$$) {
+    $cpu$jscomp$23$$.mmap_write8($addr$jscomp$65$$, $value$jscomp$193$$);
+  }, mmap_write16:function($addr$jscomp$66$$, $value$jscomp$194$$) {
+    $cpu$jscomp$23$$.mmap_write16($addr$jscomp$66$$, $value$jscomp$194$$);
+  }, mmap_write32:function($addr$jscomp$67$$, $value$jscomp$195$$) {
+    $cpu$jscomp$23$$.mmap_write32($addr$jscomp$67$$, $value$jscomp$195$$);
+  }, mmap_write64:function($addr$jscomp$68$$, $value0$jscomp$2$$, $value1$jscomp$9$$) {
+    $cpu$jscomp$23$$.mmap_write64($addr$jscomp$68$$, $value0$jscomp$2$$, $value1$jscomp$9$$);
+  }, mmap_write128:function($addr$jscomp$69$$, $value0$jscomp$3$$, $value1$jscomp$10$$, $value2$jscomp$8$$, $value3$jscomp$5$$) {
+    $cpu$jscomp$23$$.mmap_write128($addr$jscomp$69$$, $value0$jscomp$3$$, $value1$jscomp$10$$, $value2$jscomp$8$$, $value3$jscomp$5$$);
   }, log_from_wasm:function($offset$jscomp$63_str$jscomp$9$$, $len$jscomp$19$$) {
     $offset$jscomp$63_str$jscomp$9$$ = $v86util$$.read_sized_string_from_mem($wasm_memory$$, $offset$jscomp$63_str$jscomp$9$$, $len$jscomp$19$$);
     $dbg_log$$($offset$jscomp$63_str$jscomp$9$$, 2);
@@ -9369,9 +9581,9 @@ function $V86$$($options$jscomp$42$$) {
     console.error($offset$jscomp$64_str$jscomp$10$$);
   }, dbg_trace_from_wasm:function() {
     $dbg_log$$(Error().stack, 2);
-  }, codegen_finalize:($wasm_table_index$jscomp$1$$, $start$jscomp$45$$, $state_flags$jscomp$1$$, $ptr$jscomp$5$$, $len$jscomp$21$$) => {
-    $cpu$jscomp$21$$.codegen_finalize($wasm_table_index$jscomp$1$$, $start$jscomp$45$$, $state_flags$jscomp$1$$, $ptr$jscomp$5$$, $len$jscomp$21$$);
-  }, jit_clear_func:$wasm_table_index$jscomp$2$$ => $cpu$jscomp$21$$.jit_clear_func($wasm_table_index$jscomp$2$$), jit_clear_all_funcs:() => $cpu$jscomp$21$$.jit_clear_all_funcs(), __indirect_function_table:$wasm_table$$, };
+  }, codegen_finalize:($wasm_table_index$jscomp$1$$, $start$jscomp$46$$, $state_flags$jscomp$1$$, $ptr$jscomp$5$$, $len$jscomp$21$$) => {
+    $cpu$jscomp$23$$.codegen_finalize($wasm_table_index$jscomp$1$$, $start$jscomp$46$$, $state_flags$jscomp$1$$, $ptr$jscomp$5$$, $len$jscomp$21$$);
+  }, jit_clear_func:$wasm_table_index$jscomp$2$$ => $cpu$jscomp$23$$.jit_clear_func($wasm_table_index$jscomp$2$$), jit_clear_all_funcs:() => $cpu$jscomp$23$$.jit_clear_all_funcs(), __indirect_function_table:$wasm_table$$, };
   let $wasm_fn$$ = $options$jscomp$42$$.wasm_fn;
   $wasm_fn$$ || ($wasm_fn$$ = $env$$ => new Promise($resolve$$ => {
     let $v86_bin$$ = "v86-debug.wasm", $v86_bin_fallback$$ = "v86-fallback.wasm";
@@ -9398,57 +9610,57 @@ function $V86$$($options$jscomp$42$$) {
       this.emulator_bus.send("download-progress", {file_index:0, file_count:1, file_name:$v86_bin$$, lengthComputable:$e$jscomp$40$$.lengthComputable, total:$e$jscomp$40$$.total, loaded:$e$jscomp$40$$.loaded, });
     }});
   }));
-  $wasm_fn$$({env:$bus$jscomp$23_wasm_shared_funcs$$}).then($emulator_exports$$ => {
+  $wasm_fn$$({env:$bus$jscomp$24_wasm_shared_funcs$$}).then($emulator_exports$$ => {
     $wasm_memory$$ = $emulator_exports$$.memory;
     $emulator_exports$$.rust_init();
     $emulator_exports$$ = this.v86 = new $v86$$(this.emulator_bus, {exports:$emulator_exports$$, wasm_table:$wasm_table$$});
-    $cpu$jscomp$21$$ = $emulator_exports$$.cpu;
+    $cpu$jscomp$23$$ = $emulator_exports$$.cpu;
     this.continue_init($emulator_exports$$, $options$jscomp$42$$);
   });
   this.zstd_worker = null;
   this.zstd_worker_request_id = 0;
 }
 $V86$$.prototype.continue_init = async function($emulator$jscomp$1$$, $options$jscomp$43$$) {
-  function $put_on_settings$$($name$jscomp$89$$, $buffer$jscomp$46$$) {
-    switch($name$jscomp$89$$) {
+  function $put_on_settings$$($name$jscomp$90$$, $buffer$jscomp$49$$) {
+    switch($name$jscomp$90$$) {
       case "hda":
-        $settings$jscomp$3$$.hda = this.disk_images.hda = $buffer$jscomp$46$$;
+        $settings$jscomp$3$$.hda = this.disk_images.hda = $buffer$jscomp$49$$;
         break;
       case "hdb":
-        $settings$jscomp$3$$.hdb = this.disk_images.hdb = $buffer$jscomp$46$$;
+        $settings$jscomp$3$$.hdb = this.disk_images.hdb = $buffer$jscomp$49$$;
         break;
       case "cdrom":
-        $settings$jscomp$3$$.cdrom = this.disk_images.cdrom = $buffer$jscomp$46$$;
+        $settings$jscomp$3$$.cdrom = this.disk_images.cdrom = $buffer$jscomp$49$$;
         break;
       case "fda":
-        $settings$jscomp$3$$.fda = this.disk_images.fda = $buffer$jscomp$46$$;
+        $settings$jscomp$3$$.fda = this.disk_images.fda = $buffer$jscomp$49$$;
         break;
       case "fdb":
-        $settings$jscomp$3$$.fdb = this.disk_images.fdb = $buffer$jscomp$46$$;
+        $settings$jscomp$3$$.fdb = this.disk_images.fdb = $buffer$jscomp$49$$;
         break;
       case "multiboot":
-        $settings$jscomp$3$$.multiboot = this.disk_images.multiboot = $buffer$jscomp$46$$.buffer;
+        $settings$jscomp$3$$.multiboot = this.disk_images.multiboot = $buffer$jscomp$49$$.buffer;
         break;
       case "bzimage":
-        $settings$jscomp$3$$.bzimage = this.disk_images.bzimage = $buffer$jscomp$46$$.buffer;
+        $settings$jscomp$3$$.bzimage = this.disk_images.bzimage = $buffer$jscomp$49$$.buffer;
         break;
       case "initrd":
-        $settings$jscomp$3$$.initrd = this.disk_images.initrd = $buffer$jscomp$46$$.buffer;
+        $settings$jscomp$3$$.initrd = this.disk_images.initrd = $buffer$jscomp$49$$.buffer;
         break;
       case "bios":
-        $settings$jscomp$3$$.bios = $buffer$jscomp$46$$.buffer;
+        $settings$jscomp$3$$.bios = $buffer$jscomp$49$$.buffer;
         break;
       case "vga_bios":
-        $settings$jscomp$3$$.vga_bios = $buffer$jscomp$46$$.buffer;
+        $settings$jscomp$3$$.vga_bios = $buffer$jscomp$49$$.buffer;
         break;
       case "initial_state":
-        $settings$jscomp$3$$.initial_state = $buffer$jscomp$46$$.buffer;
+        $settings$jscomp$3$$.initial_state = $buffer$jscomp$49$$.buffer;
         break;
       case "fs9p_json":
-        $settings$jscomp$3$$.fs9p_json = $buffer$jscomp$46$$;
+        $settings$jscomp$3$$.fs9p_json = $buffer$jscomp$49$$;
         break;
       default:
-        $dbg_assert$$(!1, $name$jscomp$89$$);
+        $dbg_assert$$(!1, $name$jscomp$90$$);
     }
   }
   async function $done$jscomp$3$$() {
@@ -9456,8 +9668,8 @@ $V86$$.prototype.continue_init = async function($emulator$jscomp$1$$, $options$j
       if ($settings$jscomp$3$$.initial_state ? $dbg_log$$("Filesystem basefs ignored: Overridden by state image") : $settings$jscomp$3$$.fs9p.load_from_json($settings$jscomp$3$$.fs9p_json), $options$jscomp$43$$.bzimage_initrd_from_filesystem) {
         const {bzimage_path:$bzimage_path$$, initrd_path:$initrd_path$$} = this.get_bzimage_initrd_from_filesystem($settings$jscomp$3$$.fs9p);
         $dbg_log$$("Found bzimage: " + $bzimage_path$$ + " and initrd: " + $initrd_path$$);
-        const [$initrd$jscomp$1$$, $bzimage$jscomp$1$$] = await Promise.all([$settings$jscomp$3$$.fs9p.read_file($initrd_path$$), $settings$jscomp$3$$.fs9p.read_file($bzimage_path$$), ]);
-        $put_on_settings$$.call(this, "initrd", new $v86util$$.SyncBuffer($initrd$jscomp$1$$.buffer));
+        const [$initrd$jscomp$2$$, $bzimage$jscomp$1$$] = await Promise.all([$settings$jscomp$3$$.fs9p.read_file($initrd_path$$), $settings$jscomp$3$$.fs9p.read_file($bzimage_path$$), ]);
+        $put_on_settings$$.call(this, "initrd", new $v86util$$.SyncBuffer($initrd$jscomp$2$$.buffer));
         $put_on_settings$$.call(this, "bzimage", new $v86util$$.SyncBuffer($bzimage$jscomp$1$$.buffer));
       }
     } else {
@@ -9495,6 +9707,7 @@ $V86$$.prototype.continue_init = async function($emulator$jscomp$1$$, $options$j
   $settings$jscomp$3$$.preserve_mac_from_state_image = $options$jscomp$43$$.preserve_mac_from_state_image;
   $settings$jscomp$3$$.mac_address_translation = $options$jscomp$43$$.mac_address_translation;
   $settings$jscomp$3$$.cpuid_level = $options$jscomp$43$$.cpuid_level;
+  $settings$jscomp$3$$.virtio_console = $options$jscomp$43$$.virtio_console;
   $options$jscomp$43$$.network_adapter ? this.network_adapter = $options$jscomp$43$$.network_adapter(this.bus) : $options$jscomp$43$$.network_relay_url && (this.network_adapter = new $NetworkAdapter$$($options$jscomp$43$$.network_relay_url, this.bus));
   $settings$jscomp$3$$.enable_ne2k = !0;
   $options$jscomp$43$$.disable_keyboard || (this.keyboard_adapter = new $KeyboardAdapter$$(this.bus));
@@ -9504,15 +9717,15 @@ $V86$$.prototype.continue_init = async function($emulator$jscomp$1$$, $options$j
   $options$jscomp$43$$.serial_container_xtermjs && (this.serial_adapter = new $SerialAdapterXtermJS$$($options$jscomp$43$$.serial_container_xtermjs, this.bus));
   $options$jscomp$43$$.disable_speaker || (this.speaker_adapter = new $SpeakerAdapter$$(this.bus));
   var $files_to_load$$ = [];
-  $add_file_boot_order$jscomp$1_fs_url$$ = ($name$jscomp$90$$, $file$jscomp$3$$) => {
+  $add_file_boot_order$jscomp$1_fs_url$$ = ($name$jscomp$91$$, $file$jscomp$3$$) => {
     if ($file$jscomp$3$$) {
       if ($file$jscomp$3$$.get && $file$jscomp$3$$.set && $file$jscomp$3$$.load) {
-        $files_to_load$$.push({name:$name$jscomp$90$$, loadable:$file$jscomp$3$$, });
+        $files_to_load$$.push({name:$name$jscomp$91$$, loadable:$file$jscomp$3$$, });
       } else {
-        if ("bios" === $name$jscomp$90$$ || "vga_bios" === $name$jscomp$90$$ || "initial_state" === $name$jscomp$90$$ || "multiboot" === $name$jscomp$90$$ || "bzimage" === $name$jscomp$90$$ || "initrd" === $name$jscomp$90$$) {
+        if ("bios" === $name$jscomp$91$$ || "vga_bios" === $name$jscomp$91$$ || "initial_state" === $name$jscomp$91$$ || "multiboot" === $name$jscomp$91$$ || "bzimage" === $name$jscomp$91$$ || "initrd" === $name$jscomp$91$$) {
           $file$jscomp$3$$.async = !1;
         }
-        $file$jscomp$3$$.url && !$file$jscomp$3$$.async ? $files_to_load$$.push({name:$name$jscomp$90$$, url:$file$jscomp$3$$.url, size:$file$jscomp$3$$.size, }) : $files_to_load$$.push({name:$name$jscomp$90$$, loadable:$v86util$$.buffer_from_object($file$jscomp$3$$, this.zstd_decompress_worker.bind(this)), });
+        $file$jscomp$3$$.url && !$file$jscomp$3$$.async ? $files_to_load$$.push({name:$name$jscomp$91$$, url:$file$jscomp$3$$.url, size:$file$jscomp$3$$.size, }) : $files_to_load$$.push({name:$name$jscomp$91$$, loadable:$v86util$$.buffer_from_object($file$jscomp$3$$, this.zstd_decompress_worker.bind(this)), });
       }
     }
   };
@@ -9537,11 +9750,11 @@ $V86$$.prototype.continue_init = async function($emulator$jscomp$1$$, $options$j
     if ($add_file_boot_order$jscomp$1_fs_url$$) {
       $dbg_assert$$($base_url$$, "Filesystem: baseurl must be specified");
       if ("object" === typeof $add_file_boot_order$jscomp$1_fs_url$$) {
-        var $size$jscomp$41$$ = $add_file_boot_order$jscomp$1_fs_url$$.size;
+        var $size$jscomp$42$$ = $add_file_boot_order$jscomp$1_fs_url$$.size;
         $add_file_boot_order$jscomp$1_fs_url$$ = $add_file_boot_order$jscomp$1_fs_url$$.url;
       }
       $dbg_assert$$("string" === typeof $add_file_boot_order$jscomp$1_fs_url$$);
-      $files_to_load$$.push({name:"fs9p_json", url:$add_file_boot_order$jscomp$1_fs_url$$, size:$size$jscomp$41$$, as_json:!0, });
+      $files_to_load$$.push({name:"fs9p_json", url:$add_file_boot_order$jscomp$1_fs_url$$, size:$size$jscomp$42$$, as_json:!0, });
     }
   }
   var $starter$$ = this, $total$jscomp$1$$ = $files_to_load$$.length, $cont$$ = function($index$jscomp$92$$) {
@@ -9564,14 +9777,14 @@ $V86$$.prototype.continue_init = async function($emulator$jscomp$1$$, $options$j
   $cont$$(0);
 };
 $V86$$.prototype.zstd_decompress = function($decompressed_size$$, $ptr$jscomp$6_src$jscomp$4$$) {
-  const $cpu$jscomp$22$$ = this.v86.cpu;
+  const $cpu$jscomp$24$$ = this.v86.cpu;
   $dbg_assert$$(!this.zstd_context);
-  this.zstd_context = $cpu$jscomp$22$$.zstd_create_ctx($ptr$jscomp$6_src$jscomp$4$$.length);
-  (new Uint8Array($cpu$jscomp$22$$.wasm_memory.buffer)).set($ptr$jscomp$6_src$jscomp$4$$, $cpu$jscomp$22$$.zstd_get_src_ptr(this.zstd_context));
-  $ptr$jscomp$6_src$jscomp$4$$ = $cpu$jscomp$22$$.zstd_read(this.zstd_context, $decompressed_size$$);
-  const $result$jscomp$15$$ = $cpu$jscomp$22$$.wasm_memory.buffer.slice($ptr$jscomp$6_src$jscomp$4$$, $ptr$jscomp$6_src$jscomp$4$$ + $decompressed_size$$);
-  $cpu$jscomp$22$$.zstd_read_free($ptr$jscomp$6_src$jscomp$4$$, $decompressed_size$$);
-  $cpu$jscomp$22$$.zstd_free_ctx(this.zstd_context);
+  this.zstd_context = $cpu$jscomp$24$$.zstd_create_ctx($ptr$jscomp$6_src$jscomp$4$$.length);
+  (new Uint8Array($cpu$jscomp$24$$.wasm_memory.buffer)).set($ptr$jscomp$6_src$jscomp$4$$, $cpu$jscomp$24$$.zstd_get_src_ptr(this.zstd_context));
+  $ptr$jscomp$6_src$jscomp$4$$ = $cpu$jscomp$24$$.zstd_read(this.zstd_context, $decompressed_size$$);
+  const $result$jscomp$15$$ = $cpu$jscomp$24$$.wasm_memory.buffer.slice($ptr$jscomp$6_src$jscomp$4$$, $ptr$jscomp$6_src$jscomp$4$$ + $decompressed_size$$);
+  $cpu$jscomp$24$$.zstd_read_free($ptr$jscomp$6_src$jscomp$4$$, $decompressed_size$$);
+  $cpu$jscomp$24$$.zstd_free_ctx(this.zstd_context);
   this.zstd_context = null;
   return $result$jscomp$15$$;
 };
@@ -9653,17 +9866,17 @@ $V86$$.prototype.restart = function() {
   this.bus.send("cpu-restart");
 };
 $goog$$.exportProperty($V86$$.prototype, "restart", $V86$$.prototype.restart);
-$V86$$.prototype.add_listener = function($event$jscomp$7$$, $listener$jscomp$66$$) {
-  this.bus.register($event$jscomp$7$$, $listener$jscomp$66$$, this);
+$V86$$.prototype.add_listener = function($event$jscomp$9$$, $listener$jscomp$66$$) {
+  this.bus.register($event$jscomp$9$$, $listener$jscomp$66$$, this);
 };
 $goog$$.exportProperty($V86$$.prototype, "add_listener", $V86$$.prototype.add_listener);
-$V86$$.prototype.remove_listener = function($event$jscomp$8$$, $listener$jscomp$67$$) {
-  this.bus.unregister($event$jscomp$8$$, $listener$jscomp$67$$);
+$V86$$.prototype.remove_listener = function($event$jscomp$10$$, $listener$jscomp$67$$) {
+  this.bus.unregister($event$jscomp$10$$, $listener$jscomp$67$$);
 };
 $goog$$.exportProperty($V86$$.prototype, "remove_listener", $V86$$.prototype.remove_listener);
-$V86$$.prototype.restore_state = async function($state$jscomp$50$$) {
+$V86$$.prototype.restore_state = async function($state$jscomp$52$$) {
   $dbg_assert$$(1 === arguments.length);
-  this.v86.restore_state($state$jscomp$50$$);
+  this.v86.restore_state($state$jscomp$52$$);
 };
 $goog$$.exportProperty($V86$$.prototype, "restore_state", $V86$$.prototype.restore_state);
 $V86$$.prototype.save_state = async function() {
@@ -9698,20 +9911,20 @@ $V86$$.prototype.eject_fda = function() {
 };
 $goog$$.exportProperty($V86$$.prototype, "eject_fda", $V86$$.prototype.eject_fda);
 $V86$$.prototype.keyboard_send_scancodes = function($codes$$) {
-  for (var $i$jscomp$92$$ = 0; $i$jscomp$92$$ < $codes$$.length; $i$jscomp$92$$++) {
-    this.bus.send("keyboard-code", $codes$$[$i$jscomp$92$$]);
+  for (var $i$jscomp$97$$ = 0; $i$jscomp$97$$ < $codes$$.length; $i$jscomp$97$$++) {
+    this.bus.send("keyboard-code", $codes$$[$i$jscomp$97$$]);
   }
 };
 $goog$$.exportProperty($V86$$.prototype, "keyboard_send_scancodes", $V86$$.prototype.keyboard_send_scancodes);
 $V86$$.prototype.keyboard_send_keys = function($codes$jscomp$1$$) {
-  for (var $i$jscomp$93$$ = 0; $i$jscomp$93$$ < $codes$jscomp$1$$.length; $i$jscomp$93$$++) {
-    this.keyboard_adapter.simulate_press($codes$jscomp$1$$[$i$jscomp$93$$]);
+  for (var $i$jscomp$98$$ = 0; $i$jscomp$98$$ < $codes$jscomp$1$$.length; $i$jscomp$98$$++) {
+    this.keyboard_adapter.simulate_press($codes$jscomp$1$$[$i$jscomp$98$$]);
   }
 };
 $goog$$.exportProperty($V86$$.prototype, "keyboard_send_keys", $V86$$.prototype.keyboard_send_keys);
 $V86$$.prototype.keyboard_send_text = function($string$jscomp$3$$) {
-  for (var $i$jscomp$94$$ = 0; $i$jscomp$94$$ < $string$jscomp$3$$.length; $i$jscomp$94$$++) {
-    this.keyboard_adapter.simulate_char($string$jscomp$3$$[$i$jscomp$94$$]);
+  for (var $i$jscomp$99$$ = 0; $i$jscomp$99$$ < $string$jscomp$3$$.length; $i$jscomp$99$$++) {
+    this.keyboard_adapter.simulate_char($string$jscomp$3$$[$i$jscomp$99$$]);
   }
 };
 $goog$$.exportProperty($V86$$.prototype, "keyboard_send_text", $V86$$.prototype.keyboard_send_text);
@@ -9750,18 +9963,33 @@ $V86$$.prototype.keyboard_set_status = function($enabled$jscomp$5$$) {
   this.keyboard_adapter && (this.keyboard_adapter.emu_enabled = $enabled$jscomp$5$$);
 };
 $goog$$.exportProperty($V86$$.prototype, "keyboard_set_status", $V86$$.prototype.keyboard_set_status);
-$V86$$.prototype.serial0_send = function($data$jscomp$190$$) {
-  for (var $i$jscomp$95$$ = 0; $i$jscomp$95$$ < $data$jscomp$190$$.length; $i$jscomp$95$$++) {
-    this.bus.send("serial0-input", $data$jscomp$190$$.charCodeAt($i$jscomp$95$$));
+$V86$$.prototype.serial0_send = function($data$jscomp$200$$) {
+  for (var $i$jscomp$100$$ = 0; $i$jscomp$100$$ < $data$jscomp$200$$.length; $i$jscomp$100$$++) {
+    this.bus.send("serial0-input", $data$jscomp$200$$.charCodeAt($i$jscomp$100$$));
   }
 };
 $goog$$.exportProperty($V86$$.prototype, "serial0_send", $V86$$.prototype.serial0_send);
-$V86$$.prototype.serial_send_bytes = function($serial$jscomp$2$$, $data$jscomp$191$$) {
-  for (var $i$jscomp$96$$ = 0; $i$jscomp$96$$ < $data$jscomp$191$$.length; $i$jscomp$96$$++) {
-    this.bus.send("serial" + $serial$jscomp$2$$ + "-input", $data$jscomp$191$$[$i$jscomp$96$$]);
+$V86$$.prototype.serial_send_bytes = function($serial$jscomp$2$$, $data$jscomp$201$$) {
+  for (var $i$jscomp$101$$ = 0; $i$jscomp$101$$ < $data$jscomp$201$$.length; $i$jscomp$101$$++) {
+    this.bus.send("serial" + $serial$jscomp$2$$ + "-input", $data$jscomp$201$$[$i$jscomp$101$$]);
   }
 };
 $goog$$.exportProperty($V86$$.prototype, "serial_send_bytes", $V86$$.prototype.serial_send_bytes);
+$V86$$.prototype.serial_set_modem_status = function($serial$jscomp$3$$, $status$jscomp$6$$) {
+  this.bus.send("serial" + $serial$jscomp$3$$ + "-modem-status-input", $status$jscomp$6$$);
+};
+$V86$$.prototype.serial_set_carrier_detect = function($serial$jscomp$4$$, $status$jscomp$7$$) {
+  this.bus.send("serial" + $serial$jscomp$4$$ + "-carrier-detect-input", $status$jscomp$7$$);
+};
+$V86$$.prototype.serial_set_ring_indicator = function($serial$jscomp$5$$, $status$jscomp$8$$) {
+  this.bus.send("serial" + $serial$jscomp$5$$ + "-ring-indicator-input", $status$jscomp$8$$);
+};
+$V86$$.prototype.serial_set_data_set_ready = function($serial$jscomp$6$$, $status$jscomp$9$$) {
+  this.bus.send("serial" + $serial$jscomp$6$$ + "-data-set-ready-input", $status$jscomp$9$$);
+};
+$V86$$.prototype.serial_set_clear_to_send = function($serial$jscomp$7$$, $status$jscomp$10$$) {
+  this.bus.send("serial" + $serial$jscomp$7$$ + "-clear-to-send-input", $status$jscomp$10$$);
+};
 $V86$$.prototype.mount_fs = async function($path$jscomp$6$$, $baseurl$$, $basefs$$, $callback$jscomp$47$$) {
   let $file_storage$jscomp$1$$ = new $MemoryFileStorage$$;
   $baseurl$$ && ($file_storage$jscomp$1$$ = new $ServerFileStorageWrapper$$($file_storage$jscomp$1$$, $baseurl$$));
@@ -9772,15 +10000,15 @@ $V86$$.prototype.mount_fs = async function($path$jscomp$6$$, $baseurl$$, $basefs
   $baseurl$$ ? ($dbg_assert$$("object" === typeof $basefs$$, "Filesystem: basefs must be a JSON object"), $newfs$$.load_from_json($basefs$$, () => $mount$$())) : $mount$$();
 };
 $goog$$.exportProperty($V86$$.prototype, "mount_fs", $V86$$.prototype.mount_fs);
-$V86$$.prototype.create_file = async function($file$jscomp$5$$, $data$jscomp$192$$) {
+$V86$$.prototype.create_file = async function($file$jscomp$5$$, $data$jscomp$202$$) {
   $dbg_assert$$(2 === arguments.length);
   var $fs$jscomp$1$$ = this.fs9p;
   if ($fs$jscomp$1$$) {
-    var $filename$jscomp$7_parts$jscomp$2$$ = $file$jscomp$5$$.split("/");
-    $filename$jscomp$7_parts$jscomp$2$$ = $filename$jscomp$7_parts$jscomp$2$$[$filename$jscomp$7_parts$jscomp$2$$.length - 1];
+    var $filename$jscomp$7_parts$jscomp$3$$ = $file$jscomp$5$$.split("/");
+    $filename$jscomp$7_parts$jscomp$3$$ = $filename$jscomp$7_parts$jscomp$3$$[$filename$jscomp$7_parts$jscomp$3$$.length - 1];
     var $parent_id$$ = $fs$jscomp$1$$.SearchPath($file$jscomp$5$$).parentid;
-    if ("" !== $filename$jscomp$7_parts$jscomp$2$$ && -1 !== $parent_id$$) {
-      await $fs$jscomp$1$$.CreateBinaryFile($filename$jscomp$7_parts$jscomp$2$$, $parent_id$$, $data$jscomp$192$$);
+    if ("" !== $filename$jscomp$7_parts$jscomp$3$$ && -1 !== $parent_id$$) {
+      await $fs$jscomp$1$$.CreateBinaryFile($filename$jscomp$7_parts$jscomp$3$$, $parent_id$$, $data$jscomp$202$$);
     } else {
       return Promise.reject(new $FileNotFoundError$$);
     }
@@ -9823,8 +10051,8 @@ $V86$$.prototype.automatically = function($steps$jscomp$1$$) {
 $V86$$.prototype.read_memory = function($offset$jscomp$65$$, $length$jscomp$28$$) {
   return this.v86.cpu.read_blob($offset$jscomp$65$$, $length$jscomp$28$$);
 };
-$V86$$.prototype.write_memory = function($blob$jscomp$17$$, $offset$jscomp$66$$) {
-  this.v86.cpu.write_blob($blob$jscomp$17$$, $offset$jscomp$66$$);
+$V86$$.prototype.write_memory = function($blob$jscomp$18$$, $offset$jscomp$66$$) {
+  this.v86.cpu.write_blob($blob$jscomp$18$$, $offset$jscomp$66$$);
 };
 $V86$$.prototype.set_serial_container_xtermjs = function($element$jscomp$10$$) {
   this.serial_adapter && this.serial_adapter.destroy && this.serial_adapter.destroy();
@@ -9843,52 +10071,52 @@ $FileNotFoundError$$.prototype = Error.prototype;
 var $WorkerBus$$ = {Connector:function($pair$$) {
   this.listeners = {};
   this.pair = $pair$$;
-  $pair$$.addEventListener("message", function($data$jscomp$193_e$jscomp$46$$) {
-    $data$jscomp$193_e$jscomp$46$$ = $data$jscomp$193_e$jscomp$46$$.data;
-    for (var $listeners$jscomp$3$$ = this.listeners[$data$jscomp$193_e$jscomp$46$$[0]], $i$jscomp$97$$ = 0; $i$jscomp$97$$ < $listeners$jscomp$3$$.length; $i$jscomp$97$$++) {
-      var $listener$jscomp$68$$ = $listeners$jscomp$3$$[$i$jscomp$97$$];
-      $listener$jscomp$68$$.fn.call($listener$jscomp$68$$.this_value, $data$jscomp$193_e$jscomp$46$$[1]);
+  $pair$$.addEventListener("message", function($data$jscomp$203_e$jscomp$46$$) {
+    $data$jscomp$203_e$jscomp$46$$ = $data$jscomp$203_e$jscomp$46$$.data;
+    for (var $listeners$jscomp$3$$ = this.listeners[$data$jscomp$203_e$jscomp$46$$[0]], $i$jscomp$102$$ = 0; $i$jscomp$102$$ < $listeners$jscomp$3$$.length; $i$jscomp$102$$++) {
+      var $listener$jscomp$68$$ = $listeners$jscomp$3$$[$i$jscomp$102$$];
+      $listener$jscomp$68$$.fn.call($listener$jscomp$68$$.this_value, $data$jscomp$203_e$jscomp$46$$[1]);
     }
   }.bind(this), !1);
 }};
-$WorkerBus$$.Connector.prototype.register = function($name$jscomp$91$$, $fn$jscomp$20$$, $this_value$jscomp$2$$) {
-  var $listeners$jscomp$4$$ = this.listeners[$name$jscomp$91$$];
-  void 0 === $listeners$jscomp$4$$ && ($listeners$jscomp$4$$ = this.listeners[$name$jscomp$91$$] = []);
+$WorkerBus$$.Connector.prototype.register = function($name$jscomp$92$$, $fn$jscomp$20$$, $this_value$jscomp$2$$) {
+  var $listeners$jscomp$4$$ = this.listeners[$name$jscomp$92$$];
+  void 0 === $listeners$jscomp$4$$ && ($listeners$jscomp$4$$ = this.listeners[$name$jscomp$92$$] = []);
   $listeners$jscomp$4$$.push({fn:$fn$jscomp$20$$, this_value:$this_value$jscomp$2$$, });
 };
-$WorkerBus$$.Connector.prototype.send = function($name$jscomp$92$$, $value$jscomp$194$$, $transfer_list$$) {
+$WorkerBus$$.Connector.prototype.send = function($name$jscomp$93$$, $value$jscomp$196$$, $transfer_list$$) {
   $dbg_assert$$(1 <= arguments.length);
-  this.pair && this.pair.postMessage([$name$jscomp$92$$, $value$jscomp$194$$], $transfer_list$$);
+  this.pair && this.pair.postMessage([$name$jscomp$93$$, $value$jscomp$196$$], $transfer_list$$);
 };
 $WorkerBus$$.init = function($worker$$) {
   return new $WorkerBus$$.Connector($worker$$);
 };
-function $DummyScreenAdapter$$($bus$jscomp$24$$) {
+function $DummyScreenAdapter$$($bus$jscomp$25$$) {
   var $cursor_row$jscomp$1$$, $cursor_col$jscomp$1$$, $text_mode_data$jscomp$1$$, $text_mode_width$jscomp$1$$, $text_mode_height$jscomp$1$$;
-  this.bus = $bus$jscomp$24$$;
-  $bus$jscomp$24$$.register("screen-set-mode", function($data$jscomp$194$$) {
-    this.set_mode($data$jscomp$194$$);
+  this.bus = $bus$jscomp$25$$;
+  $bus$jscomp$25$$.register("screen-set-mode", function($data$jscomp$204$$) {
+    this.set_mode($data$jscomp$204$$);
   }, this);
-  $bus$jscomp$24$$.register("screen-fill-buffer-end", function($data$jscomp$195$$) {
-    this.update_buffer($data$jscomp$195$$[0], $data$jscomp$195$$[1]);
+  $bus$jscomp$25$$.register("screen-fill-buffer-end", function($data$jscomp$205$$) {
+    this.update_buffer($data$jscomp$205$$[0], $data$jscomp$205$$[1]);
   }, this);
-  $bus$jscomp$24$$.register("screen-put-char", function($data$jscomp$196$$) {
-    this.put_char($data$jscomp$196$$[0], $data$jscomp$196$$[1], $data$jscomp$196$$[2], $data$jscomp$196$$[3], $data$jscomp$196$$[4]);
+  $bus$jscomp$25$$.register("screen-put-char", function($data$jscomp$206$$) {
+    this.put_char($data$jscomp$206$$[0], $data$jscomp$206$$[1], $data$jscomp$206$$[2], $data$jscomp$206$$[3], $data$jscomp$206$$[4]);
   }, this);
-  $bus$jscomp$24$$.register("screen-text-scroll", function($rows$jscomp$1$$) {
+  $bus$jscomp$25$$.register("screen-text-scroll", function($rows$jscomp$1$$) {
     console.log("scroll", $rows$jscomp$1$$);
   }, this);
-  $bus$jscomp$24$$.register("screen-update-cursor", function($data$jscomp$197$$) {
-    this.update_cursor($data$jscomp$197$$[0], $data$jscomp$197$$[1]);
+  $bus$jscomp$25$$.register("screen-update-cursor", function($data$jscomp$207$$) {
+    this.update_cursor($data$jscomp$207$$[0], $data$jscomp$207$$[1]);
   }, this);
-  $bus$jscomp$24$$.register("screen-update-cursor-scanline", function($data$jscomp$198$$) {
-    this.update_cursor_scanline($data$jscomp$198$$[0], $data$jscomp$198$$[1]);
+  $bus$jscomp$25$$.register("screen-update-cursor-scanline", function($data$jscomp$208$$) {
+    this.update_cursor_scanline($data$jscomp$208$$[0], $data$jscomp$208$$[1]);
   }, this);
-  $bus$jscomp$24$$.register("screen-set-size-text", function($data$jscomp$199$$) {
-    this.set_size_text($data$jscomp$199$$[0], $data$jscomp$199$$[1]);
+  $bus$jscomp$25$$.register("screen-set-size-text", function($data$jscomp$209$$) {
+    this.set_size_text($data$jscomp$209$$[0], $data$jscomp$209$$[1]);
   }, this);
-  $bus$jscomp$24$$.register("screen-set-size-graphical", function($data$jscomp$200$$) {
-    this.set_size_graphical($data$jscomp$200$$[0], $data$jscomp$200$$[1]);
+  $bus$jscomp$25$$.register("screen-set-size-graphical", function($data$jscomp$210$$) {
+    this.set_size_graphical($data$jscomp$210$$[0], $data$jscomp$210$$[1]);
   }, this);
   this.put_char = function($p$jscomp$1_row$jscomp$9$$, $col$jscomp$7$$, $chr$jscomp$10$$, $bg_color$jscomp$2$$, $fg_color$jscomp$2$$) {
     $p$jscomp$1_row$jscomp$9$$ < $text_mode_height$jscomp$1$$ && $col$jscomp$7$$ < $text_mode_width$jscomp$1$$ && ($p$jscomp$1_row$jscomp$9$$ = 3 * ($p$jscomp$1_row$jscomp$9$$ * $text_mode_width$jscomp$1$$ + $col$jscomp$7$$), $text_mode_data$jscomp$1$$[$p$jscomp$1_row$jscomp$9$$] = $chr$jscomp$10$$, $text_mode_data$jscomp$1$$[$p$jscomp$1_row$jscomp$9$$ + 1] = $bg_color$jscomp$2$$, $text_mode_data$jscomp$1$$[$p$jscomp$1_row$jscomp$9$$ + 2] = $fg_color$jscomp$2$$);
@@ -9918,71 +10146,71 @@ function $DummyScreenAdapter$$($bus$jscomp$24$$) {
   this.update_buffer = function() {
   };
   this.get_text_screen = function() {
-    for (var $screen$jscomp$3$$ = [], $i$jscomp$98$$ = 0; $i$jscomp$98$$ < $text_mode_height$jscomp$1$$; $i$jscomp$98$$++) {
-      $screen$jscomp$3$$.push(this.get_text_row($i$jscomp$98$$));
+    for (var $screen$jscomp$3$$ = [], $i$jscomp$103$$ = 0; $i$jscomp$103$$ < $text_mode_height$jscomp$1$$; $i$jscomp$103$$++) {
+      $screen$jscomp$3$$.push(this.get_text_row($i$jscomp$103$$));
     }
     return $screen$jscomp$3$$;
   };
-  this.get_text_row = function($i$jscomp$99_offset$jscomp$67$$) {
+  this.get_text_row = function($i$jscomp$104_offset$jscomp$67$$) {
     var $row$jscomp$11$$ = "";
-    $i$jscomp$99_offset$jscomp$67$$ = 3 * $i$jscomp$99_offset$jscomp$67$$ * $text_mode_width$jscomp$1$$;
+    $i$jscomp$104_offset$jscomp$67$$ = 3 * $i$jscomp$104_offset$jscomp$67$$ * $text_mode_width$jscomp$1$$;
     for (var $j$jscomp$12$$ = 0; $j$jscomp$12$$ < $text_mode_width$jscomp$1$$; $j$jscomp$12$$++) {
-      $row$jscomp$11$$ += String.fromCharCode($text_mode_data$jscomp$1$$[$i$jscomp$99_offset$jscomp$67$$ + 3 * $j$jscomp$12$$]);
+      $row$jscomp$11$$ += String.fromCharCode($text_mode_data$jscomp$1$$[$i$jscomp$104_offset$jscomp$67$$ + 3 * $j$jscomp$12$$]);
     }
     return $row$jscomp$11$$;
   };
 }
-;const $print_stats$$ = {stats_to_string:function($cpu$jscomp$23$$) {
-  return $print_stats$$.print_misc_stats($cpu$jscomp$23$$) + $print_stats$$.print_instruction_counts($cpu$jscomp$23$$);
-}, print_misc_stats:function($cpu$jscomp$24$$) {
+;const $print_stats$$ = {stats_to_string:function($cpu$jscomp$25$$) {
+  return $print_stats$$.print_misc_stats($cpu$jscomp$25$$) + $print_stats$$.print_instruction_counts($cpu$jscomp$25$$);
+}, print_misc_stats:function($cpu$jscomp$26$$) {
   let $text$jscomp$11$$ = "";
   var $stat_names_tlb_entries$$ = "COMPILE COMPILE_SKIPPED_NO_NEW_ENTRY_POINTS COMPILE_WRONG_ADDRESS_SPACE COMPILE_CUT_OFF_AT_END_OF_PAGE COMPILE_WITH_LOOP_SAFETY COMPILE_PAGE COMPILE_PAGE/COMPILE COMPILE_BASIC_BLOCK COMPILE_DUPLICATED_BASIC_BLOCK COMPILE_WASM_BLOCK COMPILE_WASM_LOOP COMPILE_DISPATCHER COMPILE_ENTRY_POINT COMPILE_WASM_TOTAL_BYTES COMPILE_WASM_TOTAL_BYTES/COMPILE_PAGE RUN_INTERPRETED RUN_INTERPRETED_NEW_PAGE RUN_INTERPRETED_PAGE_HAS_CODE RUN_INTERPRETED_PAGE_HAS_ENTRY_AFTER_PAGE_WALK RUN_INTERPRETED_NEAR_END_OF_PAGE RUN_INTERPRETED_DIFFERENT_STATE RUN_INTERPRETED_DIFFERENT_STATE_CPL3 RUN_INTERPRETED_DIFFERENT_STATE_FLAT RUN_INTERPRETED_DIFFERENT_STATE_IS32 RUN_INTERPRETED_DIFFERENT_STATE_SS32 RUN_INTERPRETED_MISSED_COMPILED_ENTRY_RUN_INTERPRETED RUN_INTERPRETED_STEPS RUN_FROM_CACHE RUN_FROM_CACHE_STEPS RUN_FROM_CACHE_STEPS/RUN_FROM_CACHE RUN_FROM_CACHE_STEPS/RUN_INTERPRETED_STEPS DIRECT_EXIT INDIRECT_JUMP INDIRECT_JUMP_NO_ENTRY NORMAL_PAGE_CHANGE NORMAL_FALLTHRU NORMAL_FALLTHRU_WITH_TARGET_BLOCK NORMAL_BRANCH NORMAL_BRANCH_WITH_TARGET_BLOCK CONDITIONAL_JUMP CONDITIONAL_JUMP_PAGE_CHANGE CONDITIONAL_JUMP_EXIT CONDITIONAL_JUMP_FALLTHRU CONDITIONAL_JUMP_FALLTHRU_WITH_TARGET_BLOCK CONDITIONAL_JUMP_BRANCH CONDITIONAL_JUMP_BRANCH_WITH_TARGET_BLOCK DISPATCHER_SMALL DISPATCHER_LARGE LOOP LOOP_SAFETY CONDITION_OPTIMISED CONDITION_UNOPTIMISED CONDITION_UNOPTIMISED_PF CONDITION_UNOPTIMISED_UNHANDLED_L CONDITION_UNOPTIMISED_UNHANDLED_LE FAILED_PAGE_CHANGE SAFE_READ_FAST SAFE_READ_SLOW_PAGE_CROSSED SAFE_READ_SLOW_NOT_VALID SAFE_READ_SLOW_NOT_USER SAFE_READ_SLOW_IN_MAPPED_RANGE SAFE_WRITE_FAST SAFE_WRITE_SLOW_PAGE_CROSSED SAFE_WRITE_SLOW_NOT_VALID SAFE_WRITE_SLOW_NOT_USER SAFE_WRITE_SLOW_IN_MAPPED_RANGE SAFE_WRITE_SLOW_READ_ONLY SAFE_WRITE_SLOW_HAS_CODE SAFE_READ_WRITE_FAST SAFE_READ_WRITE_SLOW_PAGE_CROSSED SAFE_READ_WRITE_SLOW_NOT_VALID SAFE_READ_WRITE_SLOW_NOT_USER SAFE_READ_WRITE_SLOW_IN_MAPPED_RANGE SAFE_READ_WRITE_SLOW_READ_ONLY SAFE_READ_WRITE_SLOW_HAS_CODE PAGE_FAULT TLB_MISS MAIN_LOOP MAIN_LOOP_IDLE DO_MANY_CYCLES CYCLE_INTERNAL INVALIDATE_ALL_MODULES_NO_FREE_WASM_INDICES INVALIDATE_MODULE_WRITTEN_WHILE_COMPILED INVALIDATE_MODULE_UNUSED_AFTER_OVERWRITE INVALIDATE_MODULE_DIRTY_PAGE INVALIDATE_PAGE_HAD_CODE INVALIDATE_PAGE_HAD_ENTRY_POINTS DIRTY_PAGE_DID_NOT_HAVE_CODE RUN_FROM_CACHE_EXIT_SAME_PAGE RUN_FROM_CACHE_EXIT_NEAR_END_OF_PAGE RUN_FROM_CACHE_EXIT_DIFFERENT_PAGE CLEAR_TLB FULL_CLEAR_TLB TLB_FULL TLB_GLOBAL_FULL MODRM_SIMPLE_REG MODRM_SIMPLE_REG_WITH_OFFSET MODRM_SIMPLE_CONST_OFFSET MODRM_COMPLEX SEG_OFFSET_OPTIMISED SEG_OFFSET_NOT_OPTIMISED SEG_OFFSET_NOT_OPTIMISED_ES SEG_OFFSET_NOT_OPTIMISED_FS SEG_OFFSET_NOT_OPTIMISED_GS SEG_OFFSET_NOT_OPTIMISED_NOT_FLAT".split(" "), 
   $global_tlb_entries_j$jscomp$13$$ = 0;
   const $stat_values$$ = {};
-  for (let $i$jscomp$100$$ = 0; $i$jscomp$100$$ < $stat_names_tlb_entries$$.length; $i$jscomp$100$$++) {
-    const $name$jscomp$93$$ = $stat_names_tlb_entries$$[$i$jscomp$100$$];
-    var $stat_value$jscomp$195$$ = void 0;
-    if ($name$jscomp$93$$.includes("/")) {
+  for (let $i$jscomp$105$$ = 0; $i$jscomp$105$$ < $stat_names_tlb_entries$$.length; $i$jscomp$105$$++) {
+    const $name$jscomp$94$$ = $stat_names_tlb_entries$$[$i$jscomp$105$$];
+    var $stat_value$jscomp$197$$ = void 0;
+    if ($name$jscomp$94$$.includes("/")) {
       $global_tlb_entries_j$jscomp$13$$++;
-      const [$left$jscomp$5$$, $right$jscomp$5$$] = $name$jscomp$93$$.split("/");
-      $stat_value$jscomp$195$$ = $stat_values$$[$left$jscomp$5$$] / $stat_values$$[$right$jscomp$5$$];
+      const [$left$jscomp$5$$, $right$jscomp$5$$] = $name$jscomp$94$$.split("/");
+      $stat_value$jscomp$197$$ = $stat_values$$[$left$jscomp$5$$] / $stat_values$$[$right$jscomp$5$$];
     } else {
-      $stat_value$jscomp$195$$ = $stat_values$$[$name$jscomp$93$$] = $cpu$jscomp$24$$.wm.exports.profiler_stat_get($i$jscomp$100$$ - $global_tlb_entries_j$jscomp$13$$), $stat_value$jscomp$195$$ = 100e6 <= $stat_value$jscomp$195$$ ? Math.round($stat_value$jscomp$195$$ / 1e6) + "m" : 100e3 <= $stat_value$jscomp$195$$ ? Math.round($stat_value$jscomp$195$$ / 1e3) + "k" : $stat_value$jscomp$195$$;
+      $stat_value$jscomp$197$$ = $stat_values$$[$name$jscomp$94$$] = $cpu$jscomp$26$$.wm.exports.profiler_stat_get($i$jscomp$105$$ - $global_tlb_entries_j$jscomp$13$$), $stat_value$jscomp$197$$ = 100e6 <= $stat_value$jscomp$197$$ ? Math.round($stat_value$jscomp$197$$ / 1e6) + "m" : 100e3 <= $stat_value$jscomp$197$$ ? Math.round($stat_value$jscomp$197$$ / 1e3) + "k" : $stat_value$jscomp$197$$;
     }
-    $text$jscomp$11$$ += $name$jscomp$93$$ + "=" + $stat_value$jscomp$195$$ + "\n";
+    $text$jscomp$11$$ += $name$jscomp$94$$ + "=" + $stat_value$jscomp$197$$ + "\n";
   }
   $text$jscomp$11$$ += "\n";
-  $stat_names_tlb_entries$$ = $cpu$jscomp$24$$.wm.exports.get_valid_tlb_entries_count();
-  $global_tlb_entries_j$jscomp$13$$ = $cpu$jscomp$24$$.wm.exports.get_valid_global_tlb_entries_count();
-  $text$jscomp$11$$ = $text$jscomp$11$$ + ("TLB_ENTRIES=" + $stat_names_tlb_entries$$ + " (" + $global_tlb_entries_j$jscomp$13$$ + " global, " + ($stat_names_tlb_entries$$ - $global_tlb_entries_j$jscomp$13$$) + " non-global)\nWASM_TABLE_FREE=") + ($cpu$jscomp$24$$.wm.exports.jit_get_wasm_table_index_free_list_count() + "\n");
-  $text$jscomp$11$$ += "JIT_CACHE_SIZE=" + $cpu$jscomp$24$$.wm.exports.jit_get_cache_size() + "\n";
-  $text$jscomp$11$$ += "FLAT_SEGMENTS=" + $cpu$jscomp$24$$.wm.exports.has_flat_segmentation() + "\n";
-  $text$jscomp$11$$ += "wasm memory size: " + ($cpu$jscomp$24$$.wasm_memory.buffer.byteLength >> 20) + "m\n";
-  $text$jscomp$11$$ = $text$jscomp$11$$ + "Config:\nJIT_DISABLED=" + ($cpu$jscomp$24$$.wm.exports.get_jit_config(0) + "\n");
-  $text$jscomp$11$$ += "MAX_PAGES=" + $cpu$jscomp$24$$.wm.exports.get_jit_config(1) + "\n";
-  $text$jscomp$11$$ += "JIT_USE_LOOP_SAFETY=" + !!$cpu$jscomp$24$$.wm.exports.get_jit_config(2) + "\n";
-  return $text$jscomp$11$$ += "MAX_EXTRA_BASIC_BLOCKS=" + $cpu$jscomp$24$$.wm.exports.get_jit_config(3) + "\n";
-}, print_instruction_counts:function($cpu$jscomp$25$$) {
-  return [$print_stats$$.print_instruction_counts_offset($cpu$jscomp$25$$, !1, !1, !1, !1), $print_stats$$.print_instruction_counts_offset($cpu$jscomp$25$$, !0, !1, !1, !1), $print_stats$$.print_instruction_counts_offset($cpu$jscomp$25$$, !1, !0, !1, !1), $print_stats$$.print_instruction_counts_offset($cpu$jscomp$25$$, !1, !1, !0, !1), $print_stats$$.print_instruction_counts_offset($cpu$jscomp$25$$, !1, !1, !1, !0), ].join("\n\n");
-}, print_instruction_counts_offset:function($cpu$jscomp$26_total$jscomp$2$$, $compiled_per_opcode0f_prefixes$$, $jit_exit_per_opcode$$, $max_count_pad_length_unguarded_register$$, $i$jscomp$101_wasm_size$$) {
+  $stat_names_tlb_entries$$ = $cpu$jscomp$26$$.wm.exports.get_valid_tlb_entries_count();
+  $global_tlb_entries_j$jscomp$13$$ = $cpu$jscomp$26$$.wm.exports.get_valid_global_tlb_entries_count();
+  $text$jscomp$11$$ = $text$jscomp$11$$ + ("TLB_ENTRIES=" + $stat_names_tlb_entries$$ + " (" + $global_tlb_entries_j$jscomp$13$$ + " global, " + ($stat_names_tlb_entries$$ - $global_tlb_entries_j$jscomp$13$$) + " non-global)\nWASM_TABLE_FREE=") + ($cpu$jscomp$26$$.wm.exports.jit_get_wasm_table_index_free_list_count() + "\n");
+  $text$jscomp$11$$ += "JIT_CACHE_SIZE=" + $cpu$jscomp$26$$.wm.exports.jit_get_cache_size() + "\n";
+  $text$jscomp$11$$ += "FLAT_SEGMENTS=" + $cpu$jscomp$26$$.wm.exports.has_flat_segmentation() + "\n";
+  $text$jscomp$11$$ += "wasm memory size: " + ($cpu$jscomp$26$$.wasm_memory.buffer.byteLength >> 20) + "m\n";
+  $text$jscomp$11$$ = $text$jscomp$11$$ + "Config:\nJIT_DISABLED=" + ($cpu$jscomp$26$$.wm.exports.get_jit_config(0) + "\n");
+  $text$jscomp$11$$ += "MAX_PAGES=" + $cpu$jscomp$26$$.wm.exports.get_jit_config(1) + "\n";
+  $text$jscomp$11$$ += "JIT_USE_LOOP_SAFETY=" + !!$cpu$jscomp$26$$.wm.exports.get_jit_config(2) + "\n";
+  return $text$jscomp$11$$ += "MAX_EXTRA_BASIC_BLOCKS=" + $cpu$jscomp$26$$.wm.exports.get_jit_config(3) + "\n";
+}, print_instruction_counts:function($cpu$jscomp$27$$) {
+  return [$print_stats$$.print_instruction_counts_offset($cpu$jscomp$27$$, !1, !1, !1, !1), $print_stats$$.print_instruction_counts_offset($cpu$jscomp$27$$, !0, !1, !1, !1), $print_stats$$.print_instruction_counts_offset($cpu$jscomp$27$$, !1, !0, !1, !1), $print_stats$$.print_instruction_counts_offset($cpu$jscomp$27$$, !1, !1, !0, !1), $print_stats$$.print_instruction_counts_offset($cpu$jscomp$27$$, !1, !1, !1, !0), ].join("\n\n");
+}, print_instruction_counts_offset:function($cpu$jscomp$28_total$jscomp$2$$, $compiled_per_opcode0f_prefixes$$, $jit_exit_per_opcode$$, $max_count_pad_length_unguarded_register$$, $i$jscomp$106_wasm_size$$) {
   let $text$jscomp$12$$ = "";
-  var $counts_opcode_description_top_counts$$ = [], $i$jscomp$102_label$jscomp$9$$ = $compiled_per_opcode0f_prefixes$$ ? "compiled" : $jit_exit_per_opcode$$ ? "jit exit" : $max_count_pad_length_unguarded_register$$ ? "unguarded register" : $i$jscomp$101_wasm_size$$ ? "wasm size" : "executed";
+  var $counts_opcode_description_top_counts$$ = [], $i$jscomp$107_label$jscomp$9$$ = $compiled_per_opcode0f_prefixes$$ ? "compiled" : $jit_exit_per_opcode$$ ? "jit exit" : $max_count_pad_length_unguarded_register$$ ? "unguarded register" : $i$jscomp$106_wasm_size$$ ? "wasm size" : "executed";
   for (let $opcode$$ = 0; 256 > $opcode$$; $opcode$$++) {
     for (let $fixed_g$$ = 0; 8 > $fixed_g$$; $fixed_g$$++) {
       for (let $is_mem$$ of [!1, !0]) {
-        var $count$jscomp$58_count_0f$$ = $cpu$jscomp$26_total$jscomp$2$$.wm.exports.get_opstats_buffer($compiled_per_opcode0f_prefixes$$, $jit_exit_per_opcode$$, $max_count_pad_length_unguarded_register$$, $i$jscomp$101_wasm_size$$, $opcode$$, !1, $is_mem$$, $fixed_g$$);
+        var $count$jscomp$58_count_0f$$ = $cpu$jscomp$28_total$jscomp$2$$.wm.exports.get_opstats_buffer($compiled_per_opcode0f_prefixes$$, $jit_exit_per_opcode$$, $max_count_pad_length_unguarded_register$$, $i$jscomp$106_wasm_size$$, $opcode$$, !1, $is_mem$$, $fixed_g$$);
         $counts_opcode_description_top_counts$$.push({opcode:$opcode$$, count:$count$jscomp$58_count_0f$$, is_mem:$is_mem$$, fixed_g:$fixed_g$$});
-        $count$jscomp$58_count_0f$$ = $cpu$jscomp$26_total$jscomp$2$$.wm.exports.get_opstats_buffer($compiled_per_opcode0f_prefixes$$, $jit_exit_per_opcode$$, $max_count_pad_length_unguarded_register$$, $i$jscomp$101_wasm_size$$, $opcode$$, !0, $is_mem$$, $fixed_g$$);
+        $count$jscomp$58_count_0f$$ = $cpu$jscomp$28_total$jscomp$2$$.wm.exports.get_opstats_buffer($compiled_per_opcode0f_prefixes$$, $jit_exit_per_opcode$$, $max_count_pad_length_unguarded_register$$, $i$jscomp$106_wasm_size$$, $opcode$$, !0, $is_mem$$, $fixed_g$$);
         $counts_opcode_description_top_counts$$.push({opcode:3840 | $opcode$$, count:$count$jscomp$58_count_0f$$, is_mem:$is_mem$$, fixed_g:$fixed_g$$});
       }
     }
   }
-  $cpu$jscomp$26_total$jscomp$2$$ = 0;
+  $cpu$jscomp$28_total$jscomp$2$$ = 0;
   $compiled_per_opcode0f_prefixes$$ = new Set([38, 46, 54, 62, 100, 101, 102, 103, 240, 242, 243, ]);
   for (let {count:$count$jscomp$59$$, opcode:$opcode$jscomp$1$$} of $counts_opcode_description_top_counts$$) {
-    $compiled_per_opcode0f_prefixes$$.has($opcode$jscomp$1$$) || ($cpu$jscomp$26_total$jscomp$2$$ += $count$jscomp$59$$);
+    $compiled_per_opcode0f_prefixes$$.has($opcode$jscomp$1$$) || ($cpu$jscomp$28_total$jscomp$2$$ += $count$jscomp$59$$);
   }
-  if (0 === $cpu$jscomp$26_total$jscomp$2$$) {
+  if (0 === $cpu$jscomp$28_total$jscomp$2$$) {
     return "";
   }
   $jit_exit_per_opcode$$ = new Uint32Array(256);
@@ -9990,22 +10218,22 @@ function $DummyScreenAdapter$$($bus$jscomp$24$$) {
   for (let {opcode:$opcode$jscomp$2$$, count:$count$jscomp$60$$} of $counts_opcode_description_top_counts$$) {
     3840 == ($opcode$jscomp$2$$ & 65280) ? $compiled_per_opcode0f_prefixes$$[$opcode$jscomp$2$$ & 255] += $count$jscomp$60$$ : $jit_exit_per_opcode$$[$opcode$jscomp$2$$ & 255] += $count$jscomp$60$$;
   }
-  $text$jscomp$12$$ = $text$jscomp$12$$ + "------------------\nTotal: " + ($cpu$jscomp$26_total$jscomp$2$$ + "\n");
-  const $factor$jscomp$2$$ = 1e7 < $cpu$jscomp$26_total$jscomp$2$$ ? 1000 : 1;
+  $text$jscomp$12$$ = $text$jscomp$12$$ + "------------------\nTotal: " + ($cpu$jscomp$28_total$jscomp$2$$ + "\n");
+  const $factor$jscomp$2$$ = 1e7 < $cpu$jscomp$28_total$jscomp$2$$ ? 1000 : 1;
   $max_count_pad_length_unguarded_register$$ = Math.max.apply(Math, $counts_opcode_description_top_counts$$.map(({count:$count$jscomp$61$$}) => Math.round($count$jscomp$61$$ / $factor$jscomp$2$$)));
   $max_count_pad_length_unguarded_register$$ = String($max_count_pad_length_unguarded_register$$).length;
-  $text$jscomp$12$$ += `Instruction counts ${$i$jscomp$102_label$jscomp$9$$} (in ${$factor$jscomp$2$$}):\n`;
-  for ($i$jscomp$101_wasm_size$$ = 0; 256 > $i$jscomp$101_wasm_size$$; $i$jscomp$101_wasm_size$$++) {
-    $text$jscomp$12$$ += $i$jscomp$101_wasm_size$$.toString(16).padStart(2, "0") + ":" + $v86util$$.pads(Math.round($jit_exit_per_opcode$$[$i$jscomp$101_wasm_size$$] / $factor$jscomp$2$$), $max_count_pad_length_unguarded_register$$), $text$jscomp$12$$ = 15 == $i$jscomp$101_wasm_size$$ % 16 ? $text$jscomp$12$$ + "\n" : $text$jscomp$12$$ + " ";
+  $text$jscomp$12$$ += `Instruction counts ${$i$jscomp$107_label$jscomp$9$$} (in ${$factor$jscomp$2$$}):\n`;
+  for ($i$jscomp$106_wasm_size$$ = 0; 256 > $i$jscomp$106_wasm_size$$; $i$jscomp$106_wasm_size$$++) {
+    $text$jscomp$12$$ += $i$jscomp$106_wasm_size$$.toString(16).padStart(2, "0") + ":" + $v86util$$.pads(Math.round($jit_exit_per_opcode$$[$i$jscomp$106_wasm_size$$] / $factor$jscomp$2$$), $max_count_pad_length_unguarded_register$$), $text$jscomp$12$$ = 15 == $i$jscomp$106_wasm_size$$ % 16 ? $text$jscomp$12$$ + "\n" : $text$jscomp$12$$ + " ";
   }
-  $text$jscomp$12$$ = $text$jscomp$12$$ + "\n" + `Instruction counts ${$i$jscomp$102_label$jscomp$9$$} (0f, in ${$factor$jscomp$2$$}):\n`;
-  for ($i$jscomp$102_label$jscomp$9$$ = 0; 256 > $i$jscomp$102_label$jscomp$9$$; $i$jscomp$102_label$jscomp$9$$++) {
-    $text$jscomp$12$$ += ($i$jscomp$102_label$jscomp$9$$ & 255).toString(16).padStart(2, "0") + ":" + $v86util$$.pads(Math.round($compiled_per_opcode0f_prefixes$$[$i$jscomp$102_label$jscomp$9$$] / $factor$jscomp$2$$), $max_count_pad_length_unguarded_register$$), $text$jscomp$12$$ = 15 == $i$jscomp$102_label$jscomp$9$$ % 16 ? $text$jscomp$12$$ + "\n" : $text$jscomp$12$$ + " ";
+  $text$jscomp$12$$ = $text$jscomp$12$$ + "\n" + `Instruction counts ${$i$jscomp$107_label$jscomp$9$$} (0f, in ${$factor$jscomp$2$$}):\n`;
+  for ($i$jscomp$107_label$jscomp$9$$ = 0; 256 > $i$jscomp$107_label$jscomp$9$$; $i$jscomp$107_label$jscomp$9$$++) {
+    $text$jscomp$12$$ += ($i$jscomp$107_label$jscomp$9$$ & 255).toString(16).padStart(2, "0") + ":" + $v86util$$.pads(Math.round($compiled_per_opcode0f_prefixes$$[$i$jscomp$107_label$jscomp$9$$] / $factor$jscomp$2$$), $max_count_pad_length_unguarded_register$$), $text$jscomp$12$$ = 15 == $i$jscomp$107_label$jscomp$9$$ % 16 ? $text$jscomp$12$$ + "\n" : $text$jscomp$12$$ + " ";
   }
   $text$jscomp$12$$ += "\n";
   $counts_opcode_description_top_counts$$ = $counts_opcode_description_top_counts$$.filter(({count:$count$jscomp$62$$}) => $count$jscomp$62$$).sort(({count:$count1$$}, {count:$count2$$}) => $count2$$ - $count1$$);
   for (let {opcode:$opcode$jscomp$3$$, is_mem:$is_mem$jscomp$1$$, fixed_g:$fixed_g$jscomp$1$$, count:$count$jscomp$63$$} of $counts_opcode_description_top_counts$$.slice(0, 200)) {
-    $counts_opcode_description_top_counts$$ = $opcode$jscomp$3$$.toString(16) + "_" + $fixed_g$jscomp$1$$ + ($is_mem$jscomp$1$$ ? "_m" : "_r"), $text$jscomp$12$$ += $counts_opcode_description_top_counts$$ + ":" + ($count$jscomp$63$$ / $cpu$jscomp$26_total$jscomp$2$$ * 100).toFixed(2) + " ";
+    $counts_opcode_description_top_counts$$ = $opcode$jscomp$3$$.toString(16) + "_" + $fixed_g$jscomp$1$$ + ($is_mem$jscomp$1$$ ? "_m" : "_r"), $text$jscomp$12$$ += $counts_opcode_description_top_counts$$ + ":" + ($count$jscomp$63$$ / $cpu$jscomp$28_total$jscomp$2$$ * 100).toFixed(2) + " ";
   }
   return $text$jscomp$12$$ + "\n";
 }, };
@@ -10013,13 +10241,13 @@ function $DummyScreenAdapter$$($bus$jscomp$24$$) {
 function $MemoryFileStorage$$() {
   this.filedata = new Map;
 }
-$MemoryFileStorage$$.prototype.read = async function($data$jscomp$202_sha256sum$jscomp$3$$, $offset$jscomp$69$$, $count$jscomp$65$$) {
-  $dbg_assert$$($data$jscomp$202_sha256sum$jscomp$3$$, "MemoryFileStorage read: sha256sum should be a non-empty string");
-  return ($data$jscomp$202_sha256sum$jscomp$3$$ = this.filedata.get($data$jscomp$202_sha256sum$jscomp$3$$)) ? $data$jscomp$202_sha256sum$jscomp$3$$.subarray($offset$jscomp$69$$, $offset$jscomp$69$$ + $count$jscomp$65$$) : null;
+$MemoryFileStorage$$.prototype.read = async function($data$jscomp$212_sha256sum$jscomp$3$$, $offset$jscomp$69$$, $count$jscomp$65$$) {
+  $dbg_assert$$($data$jscomp$212_sha256sum$jscomp$3$$, "MemoryFileStorage read: sha256sum should be a non-empty string");
+  return ($data$jscomp$212_sha256sum$jscomp$3$$ = this.filedata.get($data$jscomp$212_sha256sum$jscomp$3$$)) ? $data$jscomp$212_sha256sum$jscomp$3$$.subarray($offset$jscomp$69$$, $offset$jscomp$69$$ + $count$jscomp$65$$) : null;
 };
-$MemoryFileStorage$$.prototype.cache = async function($sha256sum$jscomp$4$$, $data$jscomp$203$$) {
+$MemoryFileStorage$$.prototype.cache = async function($sha256sum$jscomp$4$$, $data$jscomp$213$$) {
   $dbg_assert$$($sha256sum$jscomp$4$$, "MemoryFileStorage cache: sha256sum should be a non-empty string");
-  this.filedata.set($sha256sum$jscomp$4$$, $data$jscomp$203$$);
+  this.filedata.set($sha256sum$jscomp$4$$, $data$jscomp$213$$);
 };
 $MemoryFileStorage$$.prototype.uncache = function($sha256sum$jscomp$5$$) {
   this.filedata.delete($sha256sum$jscomp$5$$);
@@ -10031,19 +10259,19 @@ function $ServerFileStorageWrapper$$($file_storage$jscomp$2$$, $baseurl$jscomp$1
 }
 $ServerFileStorageWrapper$$.prototype.load_from_server = function($sha256sum$jscomp$6$$) {
   return new Promise($resolve$jscomp$3$$ => {
-    $v86util$$.load_file(this.baseurl + $sha256sum$jscomp$6$$, {done:async $buffer$jscomp$47_data$jscomp$204$$ => {
-      $buffer$jscomp$47_data$jscomp$204$$ = new Uint8Array($buffer$jscomp$47_data$jscomp$204$$);
-      await this.cache($sha256sum$jscomp$6$$, $buffer$jscomp$47_data$jscomp$204$$);
-      $resolve$jscomp$3$$($buffer$jscomp$47_data$jscomp$204$$);
+    $v86util$$.load_file(this.baseurl + $sha256sum$jscomp$6$$, {done:async $buffer$jscomp$50_data$jscomp$214$$ => {
+      $buffer$jscomp$50_data$jscomp$214$$ = new Uint8Array($buffer$jscomp$50_data$jscomp$214$$);
+      await this.cache($sha256sum$jscomp$6$$, $buffer$jscomp$50_data$jscomp$214$$);
+      $resolve$jscomp$3$$($buffer$jscomp$50_data$jscomp$214$$);
     }});
   });
 };
 $ServerFileStorageWrapper$$.prototype.read = async function($sha256sum$jscomp$7$$, $offset$jscomp$70$$, $count$jscomp$66$$) {
-  const $data$jscomp$205$$ = await this.storage.read($sha256sum$jscomp$7$$, $offset$jscomp$70$$, $count$jscomp$66$$);
-  return $data$jscomp$205$$ ? $data$jscomp$205$$ : (await this.load_from_server($sha256sum$jscomp$7$$)).subarray($offset$jscomp$70$$, $offset$jscomp$70$$ + $count$jscomp$66$$);
+  const $data$jscomp$215$$ = await this.storage.read($sha256sum$jscomp$7$$, $offset$jscomp$70$$, $count$jscomp$66$$);
+  return $data$jscomp$215$$ ? $data$jscomp$215$$ : (await this.load_from_server($sha256sum$jscomp$7$$)).subarray($offset$jscomp$70$$, $offset$jscomp$70$$ + $count$jscomp$66$$);
 };
-$ServerFileStorageWrapper$$.prototype.cache = async function($sha256sum$jscomp$8$$, $data$jscomp$206$$) {
-  return await this.storage.cache($sha256sum$jscomp$8$$, $data$jscomp$206$$);
+$ServerFileStorageWrapper$$.prototype.cache = async function($sha256sum$jscomp$8$$, $data$jscomp$216$$) {
+  return await this.storage.cache($sha256sum$jscomp$8$$, $data$jscomp$216$$);
 };
 $ServerFileStorageWrapper$$.prototype.uncache = function($sha256sum$jscomp$9$$) {
   this.storage.uncache($sha256sum$jscomp$9$$);
@@ -10062,31 +10290,31 @@ function $FS$$($storage$$, $qidcounter$$) {
   this.CreateDirectory("", -1);
 }
 $FS$$.prototype.get_state = function() {
-  let $state$jscomp$51$$ = [];
-  $state$jscomp$51$$[0] = this.inodes;
-  $state$jscomp$51$$[1] = this.qidcounter.last_qidnumber;
-  $state$jscomp$51$$[2] = [];
-  for (const [$id$jscomp$11$$, $data$jscomp$207$$] of Object.entries(this.inodedata)) {
-    0 === (this.inodes[$id$jscomp$11$$].mode & $S_IFDIR$$) && $state$jscomp$51$$[2].push([$id$jscomp$11$$, $data$jscomp$207$$]);
+  let $state$jscomp$53$$ = [];
+  $state$jscomp$53$$[0] = this.inodes;
+  $state$jscomp$53$$[1] = this.qidcounter.last_qidnumber;
+  $state$jscomp$53$$[2] = [];
+  for (const [$id$jscomp$11$$, $data$jscomp$217$$] of Object.entries(this.inodedata)) {
+    0 === (this.inodes[$id$jscomp$11$$].mode & $S_IFDIR$$) && $state$jscomp$53$$[2].push([$id$jscomp$11$$, $data$jscomp$217$$]);
   }
-  $state$jscomp$51$$[3] = this.total_size;
-  $state$jscomp$51$$[4] = this.used_size;
-  return $state$jscomp$51$$ = $state$jscomp$51$$.concat(this.mounts);
+  $state$jscomp$53$$[3] = this.total_size;
+  $state$jscomp$53$$[4] = this.used_size;
+  return $state$jscomp$53$$ = $state$jscomp$53$$.concat(this.mounts);
 };
-$FS$$.prototype.set_state = function($state$jscomp$52$$) {
-  this.inodes = $state$jscomp$52$$[0].map($state$jscomp$53$$ => {
+$FS$$.prototype.set_state = function($state$jscomp$54$$) {
+  this.inodes = $state$jscomp$54$$[0].map($state$jscomp$55$$ => {
     const $inode$jscomp$1$$ = new $Inode$$(0);
-    $inode$jscomp$1$$.set_state($state$jscomp$53$$);
+    $inode$jscomp$1$$.set_state($state$jscomp$55$$);
     return $inode$jscomp$1$$;
   });
-  this.qidcounter.last_qidnumber = $state$jscomp$52$$[1];
+  this.qidcounter.last_qidnumber = $state$jscomp$54$$[1];
   this.inodedata = {};
-  for (let [$key$jscomp$39$$, $value$jscomp$196$$] of $state$jscomp$52$$[2]) {
-    $value$jscomp$196$$.buffer.byteLength !== $value$jscomp$196$$.byteLength && ($value$jscomp$196$$ = $value$jscomp$196$$.slice()), this.inodedata[$key$jscomp$39$$] = $value$jscomp$196$$;
+  for (let [$key$jscomp$39$$, $value$jscomp$198$$] of $state$jscomp$54$$[2]) {
+    $value$jscomp$198$$.buffer.byteLength !== $value$jscomp$198$$.byteLength && ($value$jscomp$198$$ = $value$jscomp$198$$.slice()), this.inodedata[$key$jscomp$39$$] = $value$jscomp$198$$;
   }
-  this.total_size = $state$jscomp$52$$[3];
-  this.used_size = $state$jscomp$52$$[4];
-  this.mounts = $state$jscomp$52$$.slice(5);
+  this.total_size = $state$jscomp$54$$[3];
+  this.used_size = $state$jscomp$54$$[4];
+  this.mounts = $state$jscomp$54$$.slice(5);
 };
 $FS$$.prototype.AddEvent = function($id$jscomp$12$$, $OnEvent$$) {
   var $inode$jscomp$2$$ = this.inodes[$id$jscomp$12$$];
@@ -10096,65 +10324,65 @@ $FS$$.prototype.HandleEvent = function($id$jscomp$13$$) {
   var $inode$jscomp$3_newevents$$ = this.inodes[$id$jscomp$13$$];
   this.is_forwarder($inode$jscomp$3_newevents$$) && this.follow_fs($inode$jscomp$3_newevents$$).HandleEvent($inode$jscomp$3_newevents$$.foreign_id);
   $inode$jscomp$3_newevents$$ = [];
-  for (var $i$jscomp$103$$ = 0; $i$jscomp$103$$ < this.events.length; $i$jscomp$103$$++) {
-    this.events[$i$jscomp$103$$].id == $id$jscomp$13$$ ? this.events[$i$jscomp$103$$].OnEvent() : $inode$jscomp$3_newevents$$.push(this.events[$i$jscomp$103$$]);
+  for (var $i$jscomp$108$$ = 0; $i$jscomp$108$$ < this.events.length; $i$jscomp$108$$++) {
+    this.events[$i$jscomp$108$$].id == $id$jscomp$13$$ ? this.events[$i$jscomp$108$$].OnEvent() : $inode$jscomp$3_newevents$$.push(this.events[$i$jscomp$108$$]);
   }
   this.events = $inode$jscomp$3_newevents$$;
 };
-$FS$$.prototype.load_from_json = function($fs$jscomp$3_i$jscomp$104$$, $done$jscomp$5$$) {
-  $dbg_assert$$($fs$jscomp$3_i$jscomp$104$$, "Invalid fs passed to load_from_json");
-  if (3 !== $fs$jscomp$3_i$jscomp$104$$.version) {
+$FS$$.prototype.load_from_json = function($fs$jscomp$3_i$jscomp$109$$, $done$jscomp$5$$) {
+  $dbg_assert$$($fs$jscomp$3_i$jscomp$109$$, "Invalid fs passed to load_from_json");
+  if (3 !== $fs$jscomp$3_i$jscomp$109$$.version) {
     throw "The filesystem JSON format has changed. Please update your fs2json (https://github.com/copy/fs2json) and recreate the filesystem JSON.";
   }
-  var $fsroot$$ = $fs$jscomp$3_i$jscomp$104$$.fsroot;
-  this.used_size = $fs$jscomp$3_i$jscomp$104$$.size;
-  for ($fs$jscomp$3_i$jscomp$104$$ = 0; $fs$jscomp$3_i$jscomp$104$$ < $fsroot$$.length; $fs$jscomp$3_i$jscomp$104$$++) {
-    this.LoadRecursive($fsroot$$[$fs$jscomp$3_i$jscomp$104$$], 0);
+  var $fsroot$$ = $fs$jscomp$3_i$jscomp$109$$.fsroot;
+  this.used_size = $fs$jscomp$3_i$jscomp$109$$.size;
+  for ($fs$jscomp$3_i$jscomp$109$$ = 0; $fs$jscomp$3_i$jscomp$109$$ < $fsroot$$.length; $fs$jscomp$3_i$jscomp$109$$++) {
+    this.LoadRecursive($fsroot$$[$fs$jscomp$3_i$jscomp$109$$], 0);
   }
   $done$jscomp$5$$ && $done$jscomp$5$$();
 };
-$FS$$.prototype.LoadRecursive = function($data$jscomp$208$$, $parentid$$) {
+$FS$$.prototype.LoadRecursive = function($data$jscomp$218$$, $parentid$$) {
   var $inode$jscomp$4$$ = this.CreateInode();
-  const $name$jscomp$94$$ = $data$jscomp$208$$[0];
-  $inode$jscomp$4$$.size = $data$jscomp$208$$[1];
-  $inode$jscomp$4$$.mtime = $data$jscomp$208$$[2];
+  const $name$jscomp$95$$ = $data$jscomp$218$$[0];
+  $inode$jscomp$4$$.size = $data$jscomp$218$$[1];
+  $inode$jscomp$4$$.mtime = $data$jscomp$218$$[2];
   $inode$jscomp$4$$.ctime = $inode$jscomp$4$$.mtime;
   $inode$jscomp$4$$.atime = $inode$jscomp$4$$.mtime;
-  $inode$jscomp$4$$.mode = $data$jscomp$208$$[3];
-  $inode$jscomp$4$$.uid = $data$jscomp$208$$[4];
-  $inode$jscomp$4$$.gid = $data$jscomp$208$$[5];
+  $inode$jscomp$4$$.mode = $data$jscomp$218$$[3];
+  $inode$jscomp$4$$.uid = $data$jscomp$218$$[4];
+  $inode$jscomp$4$$.gid = $data$jscomp$218$$[5];
   var $ifmt$$ = $inode$jscomp$4$$.mode & 61440;
-  $ifmt$$ === $S_IFDIR$$ ? (this.PushInode($inode$jscomp$4$$, $parentid$$, $name$jscomp$94$$), this.LoadDir(this.inodes.length - 1, $data$jscomp$208$$[6])) : 32768 === $ifmt$$ ? ($inode$jscomp$4$$.status = 2, $inode$jscomp$4$$.sha256sum = $data$jscomp$208$$[6], $dbg_assert$$($inode$jscomp$4$$.sha256sum), this.PushInode($inode$jscomp$4$$, $parentid$$, $name$jscomp$94$$)) : 40960 === $ifmt$$ ? ($inode$jscomp$4$$.symlink = $data$jscomp$208$$[6], this.PushInode($inode$jscomp$4$$, $parentid$$, $name$jscomp$94$$)) : 
-  49152 !== $ifmt$$ && $dbg_log$$("Unexpected ifmt: " + $h$$($ifmt$$) + " (" + $name$jscomp$94$$ + ")");
+  $ifmt$$ === $S_IFDIR$$ ? (this.PushInode($inode$jscomp$4$$, $parentid$$, $name$jscomp$95$$), this.LoadDir(this.inodes.length - 1, $data$jscomp$218$$[6])) : 32768 === $ifmt$$ ? ($inode$jscomp$4$$.status = 2, $inode$jscomp$4$$.sha256sum = $data$jscomp$218$$[6], $dbg_assert$$($inode$jscomp$4$$.sha256sum), this.PushInode($inode$jscomp$4$$, $parentid$$, $name$jscomp$95$$)) : 40960 === $ifmt$$ ? ($inode$jscomp$4$$.symlink = $data$jscomp$218$$[6], this.PushInode($inode$jscomp$4$$, $parentid$$, $name$jscomp$95$$)) : 
+  49152 !== $ifmt$$ && $dbg_log$$("Unexpected ifmt: " + $h$$($ifmt$$) + " (" + $name$jscomp$95$$ + ")");
 };
 $FS$$.prototype.LoadDir = function($parentid$jscomp$1$$, $children$jscomp$2$$) {
-  for (var $i$jscomp$105$$ = 0; $i$jscomp$105$$ < $children$jscomp$2$$.length; $i$jscomp$105$$++) {
-    this.LoadRecursive($children$jscomp$2$$[$i$jscomp$105$$], $parentid$jscomp$1$$);
+  for (var $i$jscomp$110$$ = 0; $i$jscomp$110$$ < $children$jscomp$2$$.length; $i$jscomp$110$$++) {
+    this.LoadRecursive($children$jscomp$2$$[$i$jscomp$110$$], $parentid$jscomp$1$$);
   }
 };
 $FS$$.prototype.should_be_linked = function($inode$jscomp$5$$) {
   return !this.is_forwarder($inode$jscomp$5$$) || 0 === $inode$jscomp$5$$.foreign_id;
 };
-$FS$$.prototype.link_under_dir = function($parentid$jscomp$2$$, $idx$jscomp$3$$, $name$jscomp$95$$) {
+$FS$$.prototype.link_under_dir = function($parentid$jscomp$2$$, $idx$jscomp$3$$, $name$jscomp$96$$) {
   const $inode$jscomp$6$$ = this.inodes[$idx$jscomp$3$$], $parent_inode$$ = this.inodes[$parentid$jscomp$2$$];
   $dbg_assert$$(!this.is_forwarder($parent_inode$$), "Filesystem: Shouldn't link under fowarder parents");
   $dbg_assert$$(this.IsDirectory($parentid$jscomp$2$$), "Filesystem: Can't link under non-directories");
   $dbg_assert$$(this.should_be_linked($inode$jscomp$6$$), "Filesystem: Can't link across filesystems apart from their root");
   $dbg_assert$$(0 <= $inode$jscomp$6$$.nlinks, "Filesystem: Found negative nlinks value of " + $inode$jscomp$6$$.nlinks);
-  $dbg_assert$$(!$parent_inode$$.direntries.has($name$jscomp$95$$), "Filesystem: Name '" + $name$jscomp$95$$ + "' is already taken");
-  $parent_inode$$.direntries.set($name$jscomp$95$$, $idx$jscomp$3$$);
+  $dbg_assert$$(!$parent_inode$$.direntries.has($name$jscomp$96$$), "Filesystem: Name '" + $name$jscomp$96$$ + "' is already taken");
+  $parent_inode$$.direntries.set($name$jscomp$96$$, $idx$jscomp$3$$);
   $inode$jscomp$6$$.nlinks++;
   this.IsDirectory($idx$jscomp$3$$) && ($dbg_assert$$(!$inode$jscomp$6$$.direntries.has(".."), "Filesystem: Cannot link a directory twice"), $inode$jscomp$6$$.direntries.has(".") || $inode$jscomp$6$$.nlinks++, $inode$jscomp$6$$.direntries.set(".", $idx$jscomp$3$$), $inode$jscomp$6$$.direntries.set("..", $parentid$jscomp$2$$), $parent_inode$$.nlinks++);
 };
-$FS$$.prototype.unlink_from_dir = function($parentid$jscomp$3$$, $name$jscomp$96$$) {
-  const $idx$jscomp$4$$ = this.Search($parentid$jscomp$3$$, $name$jscomp$96$$), $inode$jscomp$7$$ = this.inodes[$idx$jscomp$4$$], $parent_inode$jscomp$1$$ = this.inodes[$parentid$jscomp$3$$];
+$FS$$.prototype.unlink_from_dir = function($parentid$jscomp$3$$, $name$jscomp$97$$) {
+  const $idx$jscomp$4$$ = this.Search($parentid$jscomp$3$$, $name$jscomp$97$$), $inode$jscomp$7$$ = this.inodes[$idx$jscomp$4$$], $parent_inode$jscomp$1$$ = this.inodes[$parentid$jscomp$3$$];
   $dbg_assert$$(!this.is_forwarder($parent_inode$jscomp$1$$), "Filesystem: Can't unlink from forwarders");
   $dbg_assert$$(this.IsDirectory($parentid$jscomp$3$$), "Filesystem: Can't unlink from non-directories");
-  $parent_inode$jscomp$1$$.direntries.delete($name$jscomp$96$$) ? ($inode$jscomp$7$$.nlinks--, this.IsDirectory($idx$jscomp$4$$) && ($dbg_assert$$($inode$jscomp$7$$.direntries.get("..") === $parentid$jscomp$3$$, "Filesystem: Found directory with bad parent id"), $inode$jscomp$7$$.direntries.delete(".."), $parent_inode$jscomp$1$$.nlinks--), $dbg_assert$$(0 <= $inode$jscomp$7$$.nlinks, "Filesystem: Found negative nlinks value of " + $inode$jscomp$7$$.nlinks)) : $dbg_assert$$(!1, "Filesystem: Can't unlink non-existent file: " + 
-  $name$jscomp$96$$);
+  $parent_inode$jscomp$1$$.direntries.delete($name$jscomp$97$$) ? ($inode$jscomp$7$$.nlinks--, this.IsDirectory($idx$jscomp$4$$) && ($dbg_assert$$($inode$jscomp$7$$.direntries.get("..") === $parentid$jscomp$3$$, "Filesystem: Found directory with bad parent id"), $inode$jscomp$7$$.direntries.delete(".."), $parent_inode$jscomp$1$$.nlinks--), $dbg_assert$$(0 <= $inode$jscomp$7$$.nlinks, "Filesystem: Found negative nlinks value of " + $inode$jscomp$7$$.nlinks)) : $dbg_assert$$(!1, "Filesystem: Can't unlink non-existent file: " + 
+  $name$jscomp$97$$);
 };
-$FS$$.prototype.PushInode = function($inode$jscomp$8$$, $parentid$jscomp$4$$, $name$jscomp$97$$) {
-  -1 != $parentid$jscomp$4$$ ? (this.inodes.push($inode$jscomp$8$$), $inode$jscomp$8$$.fid = this.inodes.length - 1, this.link_under_dir($parentid$jscomp$4$$, $inode$jscomp$8$$.fid, $name$jscomp$97$$)) : 0 == this.inodes.length ? (this.inodes.push($inode$jscomp$8$$), $inode$jscomp$8$$.direntries.set(".", 0), $inode$jscomp$8$$.direntries.set("..", 0), $inode$jscomp$8$$.nlinks = 2) : ($message$$.Debug("Error in Filesystem: Pushed inode with name = " + $name$jscomp$97$$ + " has no parent"), $message$$.Abort());
+$FS$$.prototype.PushInode = function($inode$jscomp$8$$, $parentid$jscomp$4$$, $name$jscomp$98$$) {
+  -1 != $parentid$jscomp$4$$ ? (this.inodes.push($inode$jscomp$8$$), $inode$jscomp$8$$.fid = this.inodes.length - 1, this.link_under_dir($parentid$jscomp$4$$, $inode$jscomp$8$$.fid, $name$jscomp$98$$)) : 0 == this.inodes.length ? (this.inodes.push($inode$jscomp$8$$), $inode$jscomp$8$$.direntries.set(".", 0), $inode$jscomp$8$$.direntries.set("..", 0), $inode$jscomp$8$$.nlinks = 2) : ($message$$.Debug("Error in Filesystem: Pushed inode with name = " + $name$jscomp$98$$ + " has no parent"), $message$$.Abort());
 };
 function $Inode$$($qidnumber$$) {
   this.direntries = new Map;
@@ -10169,51 +10397,51 @@ function $Inode$$($qidnumber$$) {
   this.foreign_id = this.mount_id = -1;
 }
 $Inode$$.prototype.get_state = function() {
-  const $state$jscomp$54$$ = [];
-  $state$jscomp$54$$[0] = this.mode;
-  $state$jscomp$54$$[1] = (this.mode & 61440) === $S_IFDIR$$ ? [...this.direntries] : 32768 === (this.mode & 61440) ? this.sha256sum : 40960 === (this.mode & 61440) ? this.symlink : 49152 === (this.mode & 61440) ? [this.minor, this.major] : null;
-  $state$jscomp$54$$[2] = this.locks;
-  $state$jscomp$54$$[3] = this.status;
-  $state$jscomp$54$$[4] = this.size;
-  $state$jscomp$54$$[5] = this.uid;
-  $state$jscomp$54$$[6] = this.gid;
-  $state$jscomp$54$$[7] = this.fid;
-  $state$jscomp$54$$[8] = this.ctime;
-  $state$jscomp$54$$[9] = this.atime;
-  $state$jscomp$54$$[10] = this.mtime;
-  $state$jscomp$54$$[11] = this.qid.version;
-  $state$jscomp$54$$[12] = this.qid.path;
-  $state$jscomp$54$$[13] = this.nlinks;
-  return $state$jscomp$54$$;
+  const $state$jscomp$56$$ = [];
+  $state$jscomp$56$$[0] = this.mode;
+  $state$jscomp$56$$[1] = (this.mode & 61440) === $S_IFDIR$$ ? [...this.direntries] : 32768 === (this.mode & 61440) ? this.sha256sum : 40960 === (this.mode & 61440) ? this.symlink : 49152 === (this.mode & 61440) ? [this.minor, this.major] : null;
+  $state$jscomp$56$$[2] = this.locks;
+  $state$jscomp$56$$[3] = this.status;
+  $state$jscomp$56$$[4] = this.size;
+  $state$jscomp$56$$[5] = this.uid;
+  $state$jscomp$56$$[6] = this.gid;
+  $state$jscomp$56$$[7] = this.fid;
+  $state$jscomp$56$$[8] = this.ctime;
+  $state$jscomp$56$$[9] = this.atime;
+  $state$jscomp$56$$[10] = this.mtime;
+  $state$jscomp$56$$[11] = this.qid.version;
+  $state$jscomp$56$$[12] = this.qid.path;
+  $state$jscomp$56$$[13] = this.nlinks;
+  return $state$jscomp$56$$;
 };
-$Inode$$.prototype.set_state = function($state$jscomp$55$$) {
-  this.mode = $state$jscomp$55$$[0];
+$Inode$$.prototype.set_state = function($state$jscomp$57$$) {
+  this.mode = $state$jscomp$57$$[0];
   if ((this.mode & 61440) === $S_IFDIR$$) {
     this.direntries = new Map;
-    for (const [$name$jscomp$98$$, $entry$jscomp$13$$] of $state$jscomp$55$$[1]) {
-      this.direntries.set($name$jscomp$98$$, $entry$jscomp$13$$);
+    for (const [$name$jscomp$99$$, $entry$jscomp$13$$] of $state$jscomp$57$$[1]) {
+      this.direntries.set($name$jscomp$99$$, $entry$jscomp$13$$);
     }
   } else {
-    32768 === (this.mode & 61440) ? this.sha256sum = $state$jscomp$55$$[1] : 40960 === (this.mode & 61440) ? this.symlink = $state$jscomp$55$$[1] : 49152 === (this.mode & 61440) && ([this.minor, this.major] = $state$jscomp$55$$[1]);
+    32768 === (this.mode & 61440) ? this.sha256sum = $state$jscomp$57$$[1] : 40960 === (this.mode & 61440) ? this.symlink = $state$jscomp$57$$[1] : 49152 === (this.mode & 61440) && ([this.minor, this.major] = $state$jscomp$57$$[1]);
   }
   this.locks = [];
-  for (const $lock_state$$ of $state$jscomp$55$$[2]) {
+  for (const $lock_state$$ of $state$jscomp$57$$[2]) {
     const $lock$$ = new $FSLockRegion$$;
     $lock$$.set_state($lock_state$$);
     this.locks.push($lock$$);
   }
-  this.status = $state$jscomp$55$$[3];
-  this.size = $state$jscomp$55$$[4];
-  this.uid = $state$jscomp$55$$[5];
-  this.gid = $state$jscomp$55$$[6];
-  this.fid = $state$jscomp$55$$[7];
-  this.ctime = $state$jscomp$55$$[8];
-  this.atime = $state$jscomp$55$$[9];
-  this.mtime = $state$jscomp$55$$[10];
+  this.status = $state$jscomp$57$$[3];
+  this.size = $state$jscomp$57$$[4];
+  this.uid = $state$jscomp$57$$[5];
+  this.gid = $state$jscomp$57$$[6];
+  this.fid = $state$jscomp$57$$[7];
+  this.ctime = $state$jscomp$57$$[8];
+  this.atime = $state$jscomp$57$$[9];
+  this.mtime = $state$jscomp$57$$[10];
   this.qid.type = (this.mode & 61440) >> 8;
-  this.qid.version = $state$jscomp$55$$[11];
-  this.qid.path = $state$jscomp$55$$[12];
-  this.nlinks = $state$jscomp$55$$[13];
+  this.qid.version = $state$jscomp$57$$[11];
+  this.qid.path = $state$jscomp$57$$[12];
+  this.nlinks = $state$jscomp$57$$[13];
 };
 $FS$$.prototype.divert = function($parentid$jscomp$5$$, $filename$jscomp$8$$) {
   const $old_idx$jscomp$1$$ = this.Search($parentid$jscomp$5$$, $filename$jscomp$8$$), $old_inode$$ = this.inodes[$old_idx$jscomp$1$$], $new_inode$$ = new $Inode$$(-1);
@@ -10226,8 +10454,8 @@ $FS$$.prototype.divert = function($parentid$jscomp$5$$, $filename$jscomp$8$$) {
   this.is_forwarder($old_inode$$) && this.mounts[$old_inode$$.mount_id].backtrack.set($old_inode$$.foreign_id, $idx$jscomp$5$$);
   this.should_be_linked($old_inode$$) && (this.unlink_from_dir($parentid$jscomp$5$$, $filename$jscomp$8$$), this.link_under_dir($parentid$jscomp$5$$, $idx$jscomp$5$$, $filename$jscomp$8$$));
   if (this.IsDirectory($old_idx$jscomp$1$$) && !this.is_forwarder($old_inode$$)) {
-    for (const [$name$jscomp$99$$, $child_id$$] of $new_inode$$.direntries) {
-      "." !== $name$jscomp$99$$ && ".." !== $name$jscomp$99$$ && this.IsDirectory($child_id$$) && this.inodes[$child_id$$].direntries.set("..", $idx$jscomp$5$$);
+    for (const [$name$jscomp$100$$, $child_id$$] of $new_inode$$.direntries) {
+      "." !== $name$jscomp$100$$ && ".." !== $name$jscomp$100$$ && this.IsDirectory($child_id$$) && this.inodes[$child_id$$].direntries.set("..", $idx$jscomp$5$$);
     }
   }
   this.inodedata[$idx$jscomp$5$$] = this.inodedata[$old_idx$jscomp$1$$];
@@ -10244,16 +10472,16 @@ $FS$$.prototype.CreateInode = function() {
   $inode$jscomp$9$$.atime = $inode$jscomp$9$$.ctime = $inode$jscomp$9$$.mtime = $now$jscomp$14$$;
   return $inode$jscomp$9$$;
 };
-$FS$$.prototype.CreateDirectory = function($foreign_id_name$jscomp$100$$, $foreign_parentid_parentid$jscomp$6$$) {
+$FS$$.prototype.CreateDirectory = function($foreign_id_name$jscomp$101$$, $foreign_parentid_parentid$jscomp$6$$) {
   var $parent_inode$jscomp$2_x$jscomp$110$$ = this.inodes[$foreign_parentid_parentid$jscomp$6$$];
   if (0 <= $foreign_parentid_parentid$jscomp$6$$ && this.is_forwarder($parent_inode$jscomp$2_x$jscomp$110$$)) {
-    return $foreign_parentid_parentid$jscomp$6$$ = $parent_inode$jscomp$2_x$jscomp$110$$.foreign_id, $foreign_id_name$jscomp$100$$ = this.follow_fs($parent_inode$jscomp$2_x$jscomp$110$$).CreateDirectory($foreign_id_name$jscomp$100$$, $foreign_parentid_parentid$jscomp$6$$), this.create_forwarder($parent_inode$jscomp$2_x$jscomp$110$$.mount_id, $foreign_id_name$jscomp$100$$);
+    return $foreign_parentid_parentid$jscomp$6$$ = $parent_inode$jscomp$2_x$jscomp$110$$.foreign_id, $foreign_id_name$jscomp$101$$ = this.follow_fs($parent_inode$jscomp$2_x$jscomp$110$$).CreateDirectory($foreign_id_name$jscomp$101$$, $foreign_parentid_parentid$jscomp$6$$), this.create_forwarder($parent_inode$jscomp$2_x$jscomp$110$$.mount_id, $foreign_id_name$jscomp$101$$);
   }
   $parent_inode$jscomp$2_x$jscomp$110$$ = this.CreateInode();
   $parent_inode$jscomp$2_x$jscomp$110$$.mode = 511 | $S_IFDIR$$;
   0 <= $foreign_parentid_parentid$jscomp$6$$ && ($parent_inode$jscomp$2_x$jscomp$110$$.uid = this.inodes[$foreign_parentid_parentid$jscomp$6$$].uid, $parent_inode$jscomp$2_x$jscomp$110$$.gid = this.inodes[$foreign_parentid_parentid$jscomp$6$$].gid, $parent_inode$jscomp$2_x$jscomp$110$$.mode = this.inodes[$foreign_parentid_parentid$jscomp$6$$].mode & 511 | $S_IFDIR$$);
   $parent_inode$jscomp$2_x$jscomp$110$$.qid.type = $S_IFDIR$$ >> 8;
-  this.PushInode($parent_inode$jscomp$2_x$jscomp$110$$, $foreign_parentid_parentid$jscomp$6$$, $foreign_id_name$jscomp$100$$);
+  this.PushInode($parent_inode$jscomp$2_x$jscomp$110$$, $foreign_parentid_parentid$jscomp$6$$, $foreign_id_name$jscomp$101$$);
   this.NotifyListeners(this.inodes.length - 1, "newdir");
   return this.inodes.length - 1;
 };
@@ -10300,32 +10528,32 @@ $FS$$.prototype.CreateSymlink = function($filename$jscomp$11_foreign_id$jscomp$3
   this.PushInode($parent_inode$jscomp$5_x$jscomp$113$$, $foreign_parentid$jscomp$3_parentid$jscomp$9$$, $filename$jscomp$11_foreign_id$jscomp$3$$);
   return this.inodes.length - 1;
 };
-$FS$$.prototype.CreateTextFile = async function($data$jscomp$209_filename$jscomp$12$$, $foreign_parentid$jscomp$4_j$jscomp$14_parentid$jscomp$10_x$jscomp$114$$, $foreign_id$jscomp$4_str$jscomp$11$$) {
+$FS$$.prototype.CreateTextFile = async function($data$jscomp$219_filename$jscomp$12$$, $foreign_parentid$jscomp$4_j$jscomp$14_parentid$jscomp$10_x$jscomp$114$$, $foreign_id$jscomp$4_str$jscomp$11$$) {
   var $id$jscomp$14_parent_inode$jscomp$6$$ = this.inodes[$foreign_parentid$jscomp$4_j$jscomp$14_parentid$jscomp$10_x$jscomp$114$$];
   if (this.is_forwarder($id$jscomp$14_parent_inode$jscomp$6$$)) {
-    return $foreign_parentid$jscomp$4_j$jscomp$14_parentid$jscomp$10_x$jscomp$114$$ = $id$jscomp$14_parent_inode$jscomp$6$$.foreign_id, $foreign_id$jscomp$4_str$jscomp$11$$ = await this.follow_fs($id$jscomp$14_parent_inode$jscomp$6$$).CreateTextFile($data$jscomp$209_filename$jscomp$12$$, $foreign_parentid$jscomp$4_j$jscomp$14_parentid$jscomp$10_x$jscomp$114$$, $foreign_id$jscomp$4_str$jscomp$11$$), this.create_forwarder($id$jscomp$14_parent_inode$jscomp$6$$.mount_id, $foreign_id$jscomp$4_str$jscomp$11$$);
+    return $foreign_parentid$jscomp$4_j$jscomp$14_parentid$jscomp$10_x$jscomp$114$$ = $id$jscomp$14_parent_inode$jscomp$6$$.foreign_id, $foreign_id$jscomp$4_str$jscomp$11$$ = await this.follow_fs($id$jscomp$14_parent_inode$jscomp$6$$).CreateTextFile($data$jscomp$219_filename$jscomp$12$$, $foreign_parentid$jscomp$4_j$jscomp$14_parentid$jscomp$10_x$jscomp$114$$, $foreign_id$jscomp$4_str$jscomp$11$$), this.create_forwarder($id$jscomp$14_parent_inode$jscomp$6$$.mount_id, $foreign_id$jscomp$4_str$jscomp$11$$);
   }
-  $id$jscomp$14_parent_inode$jscomp$6$$ = this.CreateFile($data$jscomp$209_filename$jscomp$12$$, $foreign_parentid$jscomp$4_j$jscomp$14_parentid$jscomp$10_x$jscomp$114$$);
+  $id$jscomp$14_parent_inode$jscomp$6$$ = this.CreateFile($data$jscomp$219_filename$jscomp$12$$, $foreign_parentid$jscomp$4_j$jscomp$14_parentid$jscomp$10_x$jscomp$114$$);
   $foreign_parentid$jscomp$4_j$jscomp$14_parentid$jscomp$10_x$jscomp$114$$ = this.inodes[$id$jscomp$14_parent_inode$jscomp$6$$];
-  $data$jscomp$209_filename$jscomp$12$$ = new Uint8Array($foreign_id$jscomp$4_str$jscomp$11$$.length);
+  $data$jscomp$219_filename$jscomp$12$$ = new Uint8Array($foreign_id$jscomp$4_str$jscomp$11$$.length);
   $foreign_parentid$jscomp$4_j$jscomp$14_parentid$jscomp$10_x$jscomp$114$$.size = $foreign_id$jscomp$4_str$jscomp$11$$.length;
   for ($foreign_parentid$jscomp$4_j$jscomp$14_parentid$jscomp$10_x$jscomp$114$$ = 0; $foreign_parentid$jscomp$4_j$jscomp$14_parentid$jscomp$10_x$jscomp$114$$ < $foreign_id$jscomp$4_str$jscomp$11$$.length; $foreign_parentid$jscomp$4_j$jscomp$14_parentid$jscomp$10_x$jscomp$114$$++) {
-    $data$jscomp$209_filename$jscomp$12$$[$foreign_parentid$jscomp$4_j$jscomp$14_parentid$jscomp$10_x$jscomp$114$$] = $foreign_id$jscomp$4_str$jscomp$11$$.charCodeAt($foreign_parentid$jscomp$4_j$jscomp$14_parentid$jscomp$10_x$jscomp$114$$);
+    $data$jscomp$219_filename$jscomp$12$$[$foreign_parentid$jscomp$4_j$jscomp$14_parentid$jscomp$10_x$jscomp$114$$] = $foreign_id$jscomp$4_str$jscomp$11$$.charCodeAt($foreign_parentid$jscomp$4_j$jscomp$14_parentid$jscomp$10_x$jscomp$114$$);
   }
-  await this.set_data($id$jscomp$14_parent_inode$jscomp$6$$, $data$jscomp$209_filename$jscomp$12$$);
+  await this.set_data($id$jscomp$14_parent_inode$jscomp$6$$, $data$jscomp$219_filename$jscomp$12$$);
   return $id$jscomp$14_parent_inode$jscomp$6$$;
 };
-$FS$$.prototype.CreateBinaryFile = async function($filename$jscomp$13_x$jscomp$115$$, $data$jscomp$210_foreign_parentid$jscomp$5_parentid$jscomp$11$$, $buffer$jscomp$48_foreign_id$jscomp$5$$) {
-  var $id$jscomp$15_parent_inode$jscomp$7$$ = this.inodes[$data$jscomp$210_foreign_parentid$jscomp$5_parentid$jscomp$11$$];
+$FS$$.prototype.CreateBinaryFile = async function($filename$jscomp$13_x$jscomp$115$$, $data$jscomp$220_foreign_parentid$jscomp$5_parentid$jscomp$11$$, $buffer$jscomp$51_foreign_id$jscomp$5$$) {
+  var $id$jscomp$15_parent_inode$jscomp$7$$ = this.inodes[$data$jscomp$220_foreign_parentid$jscomp$5_parentid$jscomp$11$$];
   if (this.is_forwarder($id$jscomp$15_parent_inode$jscomp$7$$)) {
-    return $data$jscomp$210_foreign_parentid$jscomp$5_parentid$jscomp$11$$ = $id$jscomp$15_parent_inode$jscomp$7$$.foreign_id, $buffer$jscomp$48_foreign_id$jscomp$5$$ = await this.follow_fs($id$jscomp$15_parent_inode$jscomp$7$$).CreateBinaryFile($filename$jscomp$13_x$jscomp$115$$, $data$jscomp$210_foreign_parentid$jscomp$5_parentid$jscomp$11$$, $buffer$jscomp$48_foreign_id$jscomp$5$$), this.create_forwarder($id$jscomp$15_parent_inode$jscomp$7$$.mount_id, $buffer$jscomp$48_foreign_id$jscomp$5$$);
+    return $data$jscomp$220_foreign_parentid$jscomp$5_parentid$jscomp$11$$ = $id$jscomp$15_parent_inode$jscomp$7$$.foreign_id, $buffer$jscomp$51_foreign_id$jscomp$5$$ = await this.follow_fs($id$jscomp$15_parent_inode$jscomp$7$$).CreateBinaryFile($filename$jscomp$13_x$jscomp$115$$, $data$jscomp$220_foreign_parentid$jscomp$5_parentid$jscomp$11$$, $buffer$jscomp$51_foreign_id$jscomp$5$$), this.create_forwarder($id$jscomp$15_parent_inode$jscomp$7$$.mount_id, $buffer$jscomp$51_foreign_id$jscomp$5$$);
   }
-  $id$jscomp$15_parent_inode$jscomp$7$$ = this.CreateFile($filename$jscomp$13_x$jscomp$115$$, $data$jscomp$210_foreign_parentid$jscomp$5_parentid$jscomp$11$$);
+  $id$jscomp$15_parent_inode$jscomp$7$$ = this.CreateFile($filename$jscomp$13_x$jscomp$115$$, $data$jscomp$220_foreign_parentid$jscomp$5_parentid$jscomp$11$$);
   $filename$jscomp$13_x$jscomp$115$$ = this.inodes[$id$jscomp$15_parent_inode$jscomp$7$$];
-  $data$jscomp$210_foreign_parentid$jscomp$5_parentid$jscomp$11$$ = new Uint8Array($buffer$jscomp$48_foreign_id$jscomp$5$$.length);
-  $data$jscomp$210_foreign_parentid$jscomp$5_parentid$jscomp$11$$.set($buffer$jscomp$48_foreign_id$jscomp$5$$);
-  await this.set_data($id$jscomp$15_parent_inode$jscomp$7$$, $data$jscomp$210_foreign_parentid$jscomp$5_parentid$jscomp$11$$);
-  $filename$jscomp$13_x$jscomp$115$$.size = $buffer$jscomp$48_foreign_id$jscomp$5$$.length;
+  $data$jscomp$220_foreign_parentid$jscomp$5_parentid$jscomp$11$$ = new Uint8Array($buffer$jscomp$51_foreign_id$jscomp$5$$.length);
+  $data$jscomp$220_foreign_parentid$jscomp$5_parentid$jscomp$11$$.set($buffer$jscomp$51_foreign_id$jscomp$5$$);
+  await this.set_data($id$jscomp$15_parent_inode$jscomp$7$$, $data$jscomp$220_foreign_parentid$jscomp$5_parentid$jscomp$11$$);
+  $filename$jscomp$13_x$jscomp$115$$.size = $buffer$jscomp$51_foreign_id$jscomp$5$$.length;
   return $id$jscomp$15_parent_inode$jscomp$7$$;
 };
 $FS$$.prototype.OpenInode = function($id$jscomp$16$$, $mode$jscomp$25$$) {
@@ -10370,11 +10598,11 @@ $FS$$.prototype.Rename = async function($olddirid_ret$jscomp$6_ret$jscomp$7$$, $
         return $dbg_log$$("XXX: Attempted to move hardlinked file (" + $oldname$jscomp$1$$ + ") across filesystems - skipped", 4194304), -1;
       }
       $diverted_old_idx_olddir$$ = this.divert($olddirid_ret$jscomp$6_ret$jscomp$7$$, $oldname$jscomp$1$$);
-      const $old_real_inode$$ = this.GetInode($oldid$$), $data$jscomp$211$$ = await this.Read($diverted_old_idx_olddir$$, 0, $old_real_inode$$.size);
+      const $old_real_inode$$ = this.GetInode($oldid$$), $data$jscomp$221$$ = await this.Read($diverted_old_idx_olddir$$, 0, $old_real_inode$$.size);
       this.is_forwarder($newdir_ret$jscomp$5_ret$jscomp$8$$) ? ($foreign_fs_new_real_inode_newdirid$$ = this.follow_fs($newdir_ret$jscomp$5_ret$jscomp$8$$), $foreign_id$jscomp$6_newname$jscomp$2$$ = this.IsDirectory($diverted_old_idx_olddir$$) ? $foreign_fs_new_real_inode_newdirid$$.CreateDirectory($foreign_id$jscomp$6_newname$jscomp$2$$, $newdir_ret$jscomp$5_ret$jscomp$8$$.foreign_id) : $foreign_fs_new_real_inode_newdirid$$.CreateFile($foreign_id$jscomp$6_newname$jscomp$2$$, $newdir_ret$jscomp$5_ret$jscomp$8$$.foreign_id), 
       $foreign_fs_new_real_inode_newdirid$$ = $foreign_fs_new_real_inode_newdirid$$.GetInode($foreign_id$jscomp$6_newname$jscomp$2$$), this.copy_inode($old_real_inode$$, $foreign_fs_new_real_inode_newdirid$$), this.set_forwarder($oldid$$, $newdir_ret$jscomp$5_ret$jscomp$8$$.mount_id, $foreign_id$jscomp$6_newname$jscomp$2$$)) : (this.delete_forwarder($inode$jscomp$12$$), this.copy_inode($old_real_inode$$, $inode$jscomp$12$$), this.link_under_dir($foreign_fs_new_real_inode_newdirid$$, $oldid$$, $foreign_id$jscomp$6_newname$jscomp$2$$));
       await this.ChangeSize($oldid$$, $old_real_inode$$.size);
-      $data$jscomp$211$$ && $data$jscomp$211$$.length && await this.Write($oldid$$, 0, $data$jscomp$211$$.length, $data$jscomp$211$$);
+      $data$jscomp$221$$ && $data$jscomp$221$$.length && await this.Write($oldid$$, 0, $data$jscomp$221$$.length, $data$jscomp$221$$);
       if (this.IsDirectory($oldid$$)) {
         for (const $child_filename$$ of this.GetChildren($diverted_old_idx_olddir$$)) {
           if ($newdir_ret$jscomp$5_ret$jscomp$8$$ = await this.Rename($diverted_old_idx_olddir$$, $child_filename$$, $oldid$$, $child_filename$$), 0 > $newdir_ret$jscomp$5_ret$jscomp$8$$) {
@@ -10394,31 +10622,31 @@ $FS$$.prototype.Rename = async function($olddirid_ret$jscomp$6_ret$jscomp$7$$, $
   this.NotifyListeners($oldid$$, "rename", {oldpath:$oldpath$$});
   return 0;
 };
-$FS$$.prototype.Write = async function($foreign_id$jscomp$7_id$jscomp$18$$, $offset$jscomp$71$$, $count$jscomp$67$$, $buffer$jscomp$49$$) {
+$FS$$.prototype.Write = async function($foreign_id$jscomp$7_id$jscomp$18$$, $offset$jscomp$71$$, $count$jscomp$67$$, $buffer$jscomp$52$$) {
   this.NotifyListeners($foreign_id$jscomp$7_id$jscomp$18$$, "write");
   var $inode$jscomp$13$$ = this.inodes[$foreign_id$jscomp$7_id$jscomp$18$$];
   if (this.is_forwarder($inode$jscomp$13$$)) {
-    $foreign_id$jscomp$7_id$jscomp$18$$ = $inode$jscomp$13$$.foreign_id, await this.follow_fs($inode$jscomp$13$$).Write($foreign_id$jscomp$7_id$jscomp$18$$, $offset$jscomp$71$$, $count$jscomp$67$$, $buffer$jscomp$49$$);
+    $foreign_id$jscomp$7_id$jscomp$18$$ = $inode$jscomp$13$$.foreign_id, await this.follow_fs($inode$jscomp$13$$).Write($foreign_id$jscomp$7_id$jscomp$18$$, $offset$jscomp$71$$, $count$jscomp$67$$, $buffer$jscomp$52$$);
   } else {
-    var $data$jscomp$212$$ = await this.get_buffer($foreign_id$jscomp$7_id$jscomp$18$$);
-    !$data$jscomp$212$$ || $data$jscomp$212$$.length < $offset$jscomp$71$$ + $count$jscomp$67$$ ? (await this.ChangeSize($foreign_id$jscomp$7_id$jscomp$18$$, Math.floor(3 * ($offset$jscomp$71$$ + $count$jscomp$67$$) / 2)), $inode$jscomp$13$$.size = $offset$jscomp$71$$ + $count$jscomp$67$$, $data$jscomp$212$$ = await this.get_buffer($foreign_id$jscomp$7_id$jscomp$18$$)) : $inode$jscomp$13$$.size < $offset$jscomp$71$$ + $count$jscomp$67$$ && ($inode$jscomp$13$$.size = $offset$jscomp$71$$ + $count$jscomp$67$$);
-    $buffer$jscomp$49$$ && $data$jscomp$212$$.set($buffer$jscomp$49$$.subarray(0, $count$jscomp$67$$), $offset$jscomp$71$$);
-    await this.set_data($foreign_id$jscomp$7_id$jscomp$18$$, $data$jscomp$212$$);
+    var $data$jscomp$222$$ = await this.get_buffer($foreign_id$jscomp$7_id$jscomp$18$$);
+    !$data$jscomp$222$$ || $data$jscomp$222$$.length < $offset$jscomp$71$$ + $count$jscomp$67$$ ? (await this.ChangeSize($foreign_id$jscomp$7_id$jscomp$18$$, Math.floor(3 * ($offset$jscomp$71$$ + $count$jscomp$67$$) / 2)), $inode$jscomp$13$$.size = $offset$jscomp$71$$ + $count$jscomp$67$$, $data$jscomp$222$$ = await this.get_buffer($foreign_id$jscomp$7_id$jscomp$18$$)) : $inode$jscomp$13$$.size < $offset$jscomp$71$$ + $count$jscomp$67$$ && ($inode$jscomp$13$$.size = $offset$jscomp$71$$ + $count$jscomp$67$$);
+    $buffer$jscomp$52$$ && $data$jscomp$222$$.set($buffer$jscomp$52$$.subarray(0, $count$jscomp$67$$), $offset$jscomp$71$$);
+    await this.set_data($foreign_id$jscomp$7_id$jscomp$18$$, $data$jscomp$222$$);
   }
 };
 $FS$$.prototype.Read = async function($foreign_id$jscomp$8_inodeid$jscomp$2$$, $offset$jscomp$72$$, $count$jscomp$68$$) {
   const $inode$jscomp$14$$ = this.inodes[$foreign_id$jscomp$8_inodeid$jscomp$2$$];
   return this.is_forwarder($inode$jscomp$14$$) ? ($foreign_id$jscomp$8_inodeid$jscomp$2$$ = $inode$jscomp$14$$.foreign_id, await this.follow_fs($inode$jscomp$14$$).Read($foreign_id$jscomp$8_inodeid$jscomp$2$$, $offset$jscomp$72$$, $count$jscomp$68$$)) : await this.get_data($foreign_id$jscomp$8_inodeid$jscomp$2$$, $offset$jscomp$72$$, $count$jscomp$68$$);
 };
-$FS$$.prototype.Search = function($parent_inode$jscomp$8_parentid$jscomp$12$$, $childid_foreign_id$jscomp$9_name$jscomp$101$$) {
+$FS$$.prototype.Search = function($parent_inode$jscomp$8_parentid$jscomp$12$$, $childid_foreign_id$jscomp$9_name$jscomp$102$$) {
   $parent_inode$jscomp$8_parentid$jscomp$12$$ = this.inodes[$parent_inode$jscomp$8_parentid$jscomp$12$$];
   if (this.is_forwarder($parent_inode$jscomp$8_parentid$jscomp$12$$)) {
     const $foreign_parentid$jscomp$6$$ = $parent_inode$jscomp$8_parentid$jscomp$12$$.foreign_id;
-    $childid_foreign_id$jscomp$9_name$jscomp$101$$ = this.follow_fs($parent_inode$jscomp$8_parentid$jscomp$12$$).Search($foreign_parentid$jscomp$6$$, $childid_foreign_id$jscomp$9_name$jscomp$101$$);
-    return -1 === $childid_foreign_id$jscomp$9_name$jscomp$101$$ ? -1 : this.get_forwarder($parent_inode$jscomp$8_parentid$jscomp$12$$.mount_id, $childid_foreign_id$jscomp$9_name$jscomp$101$$);
+    $childid_foreign_id$jscomp$9_name$jscomp$102$$ = this.follow_fs($parent_inode$jscomp$8_parentid$jscomp$12$$).Search($foreign_parentid$jscomp$6$$, $childid_foreign_id$jscomp$9_name$jscomp$102$$);
+    return -1 === $childid_foreign_id$jscomp$9_name$jscomp$102$$ ? -1 : this.get_forwarder($parent_inode$jscomp$8_parentid$jscomp$12$$.mount_id, $childid_foreign_id$jscomp$9_name$jscomp$102$$);
   }
-  $childid_foreign_id$jscomp$9_name$jscomp$101$$ = $parent_inode$jscomp$8_parentid$jscomp$12$$.direntries.get($childid_foreign_id$jscomp$9_name$jscomp$101$$);
-  return void 0 === $childid_foreign_id$jscomp$9_name$jscomp$101$$ ? -1 : $childid_foreign_id$jscomp$9_name$jscomp$101$$;
+  $childid_foreign_id$jscomp$9_name$jscomp$102$$ = $parent_inode$jscomp$8_parentid$jscomp$12$$.direntries.get($childid_foreign_id$jscomp$9_name$jscomp$102$$);
+  return void 0 === $childid_foreign_id$jscomp$9_name$jscomp$102$$ ? -1 : $childid_foreign_id$jscomp$9_name$jscomp$102$$;
 };
 $FS$$.prototype.CountUsedInodes = function() {
   let $count$jscomp$69$$ = this.inodes.length;
@@ -10435,16 +10663,16 @@ $FS$$.prototype.CountFreeInodes = function() {
   return $count$jscomp$70$$;
 };
 $FS$$.prototype.GetTotalSize = function() {
-  let $size$jscomp$42$$ = this.used_size;
+  let $size$jscomp$43$$ = this.used_size;
   for (const {fs:$fs$jscomp$6$$} of this.mounts) {
-    $size$jscomp$42$$ += $fs$jscomp$6$$.GetTotalSize();
+    $size$jscomp$43$$ += $fs$jscomp$6$$.GetTotalSize();
   }
-  return $size$jscomp$42$$;
+  return $size$jscomp$43$$;
 };
 $FS$$.prototype.GetSpace = function() {
-  let $size$jscomp$43$$ = this.total_size;
+  let $size$jscomp$44$$ = this.total_size;
   for (const {fs:$fs$jscomp$7$$} of this.mounts) {
-    $size$jscomp$43$$ += $fs$jscomp$7$$.GetSpace();
+    $size$jscomp$44$$ += $fs$jscomp$7$$.GetSpace();
   }
   return this.total_size;
 };
@@ -10456,9 +10684,9 @@ $FS$$.prototype.GetDirectoryName = function($idx$jscomp$7$$) {
   if (!$parent_inode$jscomp$9$$) {
     return "";
   }
-  for (const [$name$jscomp$102$$, $childid$jscomp$1$$] of $parent_inode$jscomp$9$$.direntries) {
+  for (const [$name$jscomp$103$$, $childid$jscomp$1$$] of $parent_inode$jscomp$9$$.direntries) {
     if ($childid$jscomp$1$$ === $idx$jscomp$7$$) {
-      return $name$jscomp$102$$;
+      return $name$jscomp$103$$;
     }
   }
   $dbg_assert$$(!1, "Filesystem: Found directory inode whose parent doesn't link to it");
@@ -10471,32 +10699,32 @@ $FS$$.prototype.GetFullPath = function($idx$jscomp$8$$) {
   }
   return $path$jscomp$7$$.substring(1);
 };
-$FS$$.prototype.Link = function($parentid$jscomp$13$$, $targetid$$, $name$jscomp$103$$) {
+$FS$$.prototype.Link = function($parentid$jscomp$13$$, $targetid$$, $name$jscomp$104$$) {
   if (this.IsDirectory($targetid$$)) {
     return -1;
   }
   const $parent_inode$jscomp$10$$ = this.inodes[$parentid$jscomp$13$$], $inode$jscomp$15$$ = this.inodes[$targetid$$];
   if (this.is_forwarder($parent_inode$jscomp$10$$)) {
-    return this.is_forwarder($inode$jscomp$15$$) && $inode$jscomp$15$$.mount_id === $parent_inode$jscomp$10$$.mount_id ? this.follow_fs($parent_inode$jscomp$10$$).Link($parent_inode$jscomp$10$$.foreign_id, $inode$jscomp$15$$.foreign_id, $name$jscomp$103$$) : ($dbg_log$$("XXX: Attempted to hardlink a file into a child filesystem - skipped", 4194304), -1);
+    return this.is_forwarder($inode$jscomp$15$$) && $inode$jscomp$15$$.mount_id === $parent_inode$jscomp$10$$.mount_id ? this.follow_fs($parent_inode$jscomp$10$$).Link($parent_inode$jscomp$10$$.foreign_id, $inode$jscomp$15$$.foreign_id, $name$jscomp$104$$) : ($dbg_log$$("XXX: Attempted to hardlink a file into a child filesystem - skipped", 4194304), -1);
   }
   if (this.is_forwarder($inode$jscomp$15$$)) {
     return $dbg_log$$("XXX: Attempted to hardlink file across filesystems - skipped", 4194304), -1;
   }
-  this.link_under_dir($parentid$jscomp$13$$, $targetid$$, $name$jscomp$103$$);
+  this.link_under_dir($parentid$jscomp$13$$, $targetid$$, $name$jscomp$104$$);
   return 0;
 };
-$FS$$.prototype.Unlink = function($foreign_parentid$jscomp$7_parentid$jscomp$14$$, $name$jscomp$104$$) {
-  if ("." === $name$jscomp$104$$ || ".." === $name$jscomp$104$$) {
+$FS$$.prototype.Unlink = function($foreign_parentid$jscomp$7_parentid$jscomp$14$$, $name$jscomp$105$$) {
+  if ("." === $name$jscomp$105$$ || ".." === $name$jscomp$105$$) {
     return -1;
   }
-  const $idx$jscomp$9$$ = this.Search($foreign_parentid$jscomp$7_parentid$jscomp$14$$, $name$jscomp$104$$), $inode$jscomp$16$$ = this.inodes[$idx$jscomp$9$$], $parent_inode$jscomp$11$$ = this.inodes[$foreign_parentid$jscomp$7_parentid$jscomp$14$$];
+  const $idx$jscomp$9$$ = this.Search($foreign_parentid$jscomp$7_parentid$jscomp$14$$, $name$jscomp$105$$), $inode$jscomp$16$$ = this.inodes[$idx$jscomp$9$$], $parent_inode$jscomp$11$$ = this.inodes[$foreign_parentid$jscomp$7_parentid$jscomp$14$$];
   if (this.is_forwarder($parent_inode$jscomp$11$$)) {
-    return $dbg_assert$$(this.is_forwarder($inode$jscomp$16$$), "Children of forwarders should be forwarders"), $foreign_parentid$jscomp$7_parentid$jscomp$14$$ = $parent_inode$jscomp$11$$.foreign_id, this.follow_fs($parent_inode$jscomp$11$$).Unlink($foreign_parentid$jscomp$7_parentid$jscomp$14$$, $name$jscomp$104$$);
+    return $dbg_assert$$(this.is_forwarder($inode$jscomp$16$$), "Children of forwarders should be forwarders"), $foreign_parentid$jscomp$7_parentid$jscomp$14$$ = $parent_inode$jscomp$11$$.foreign_id, this.follow_fs($parent_inode$jscomp$11$$).Unlink($foreign_parentid$jscomp$7_parentid$jscomp$14$$, $name$jscomp$105$$);
   }
   if (this.IsDirectory($idx$jscomp$9$$) && !this.IsEmpty($idx$jscomp$9$$)) {
     return -39;
   }
-  this.unlink_from_dir($foreign_parentid$jscomp$7_parentid$jscomp$14$$, $name$jscomp$104$$);
+  this.unlink_from_dir($foreign_parentid$jscomp$7_parentid$jscomp$14$$, $name$jscomp$105$$);
   0 === $inode$jscomp$16$$.nlinks && ($inode$jscomp$16$$.status = $STATUS_UNLINKED$$, this.NotifyListeners($idx$jscomp$9$$, "delete"));
   return 0;
 };
@@ -10514,8 +10742,8 @@ $FS$$.prototype.get_data = async function($idx$jscomp$12$$, $offset$jscomp$73$$,
   $dbg_assert$$($inode$jscomp$19$$, `Filesystem get_data: idx ${$idx$jscomp$12$$} does not point to an inode`);
   return this.inodedata[$idx$jscomp$12$$] ? this.inodedata[$idx$jscomp$12$$].subarray($offset$jscomp$73$$, $offset$jscomp$73$$ + $count$jscomp$71$$) : 2 === $inode$jscomp$19$$.status ? ($dbg_assert$$($inode$jscomp$19$$.sha256sum, "Filesystem get_data: found inode on server without sha256sum"), await this.storage.read($inode$jscomp$19$$.sha256sum, $offset$jscomp$73$$, $count$jscomp$71$$)) : null;
 };
-$FS$$.prototype.set_data = async function($idx$jscomp$13$$, $buffer$jscomp$50$$) {
-  this.inodedata[$idx$jscomp$13$$] = $buffer$jscomp$50$$;
+$FS$$.prototype.set_data = async function($idx$jscomp$13$$, $buffer$jscomp$53$$) {
+  this.inodedata[$idx$jscomp$13$$] = $buffer$jscomp$53$$;
   2 === this.inodes[$idx$jscomp$13$$].status && (this.inodes[$idx$jscomp$13$$].status = 0, this.storage.uncache(this.inodes[$idx$jscomp$13$$].sha256sum));
 };
 $FS$$.prototype.GetInode = function($idx$jscomp$14_inode$jscomp$20$$) {
@@ -10527,10 +10755,10 @@ $FS$$.prototype.GetInode = function($idx$jscomp$14_inode$jscomp$20$$) {
 $FS$$.prototype.ChangeSize = async function($idx$jscomp$15$$, $newsize$$) {
   var $inode$jscomp$21$$ = this.GetInode($idx$jscomp$15$$), $temp$$ = await this.get_data($idx$jscomp$15$$, 0, $inode$jscomp$21$$.size);
   if ($newsize$$ != $inode$jscomp$21$$.size) {
-    var $data$jscomp$213$$ = new Uint8Array($newsize$$);
+    var $data$jscomp$223$$ = new Uint8Array($newsize$$);
     $inode$jscomp$21$$.size = $newsize$$;
-    $temp$$ && $data$jscomp$213$$.set($temp$$.subarray(0, Math.min($temp$$.length, $inode$jscomp$21$$.size)), 0);
-    await this.set_data($idx$jscomp$15$$, $data$jscomp$213$$);
+    $temp$$ && $data$jscomp$223$$.set($temp$$.subarray(0, Math.min($temp$$.length, $inode$jscomp$21$$.size)), 0);
+    await this.set_data($idx$jscomp$15$$, $data$jscomp$223$$);
   }
 };
 $FS$$.prototype.SearchPath = function($path$jscomp$8_walk$jscomp$1$$) {
@@ -10541,33 +10769,33 @@ $FS$$.prototype.SearchPath = function($path$jscomp$8_walk$jscomp$1$$) {
   const $n$jscomp$14$$ = $path$jscomp$8_walk$jscomp$1$$.length;
   var $parentid$jscomp$15$$ = -1, $id$jscomp$19$$ = 0;
   let $forward_path$$ = null;
-  for (var $i$jscomp$106$$ = 0; $i$jscomp$106$$ < $n$jscomp$14$$; $i$jscomp$106$$++) {
-    if ($parentid$jscomp$15$$ = $id$jscomp$19$$, $id$jscomp$19$$ = this.Search($parentid$jscomp$15$$, $path$jscomp$8_walk$jscomp$1$$[$i$jscomp$106$$]), !$forward_path$$ && this.is_forwarder(this.inodes[$parentid$jscomp$15$$]) && ($forward_path$$ = "/" + $path$jscomp$8_walk$jscomp$1$$.slice($i$jscomp$106$$).join("/")), -1 == $id$jscomp$19$$) {
-      return $i$jscomp$106$$ < $n$jscomp$14$$ - 1 ? {id:-1, parentid:-1, name:$path$jscomp$8_walk$jscomp$1$$[$i$jscomp$106$$], forward_path:$forward_path$$} : {id:-1, parentid:$parentid$jscomp$15$$, name:$path$jscomp$8_walk$jscomp$1$$[$i$jscomp$106$$], forward_path:$forward_path$$};
+  for (var $i$jscomp$111$$ = 0; $i$jscomp$111$$ < $n$jscomp$14$$; $i$jscomp$111$$++) {
+    if ($parentid$jscomp$15$$ = $id$jscomp$19$$, $id$jscomp$19$$ = this.Search($parentid$jscomp$15$$, $path$jscomp$8_walk$jscomp$1$$[$i$jscomp$111$$]), !$forward_path$$ && this.is_forwarder(this.inodes[$parentid$jscomp$15$$]) && ($forward_path$$ = "/" + $path$jscomp$8_walk$jscomp$1$$.slice($i$jscomp$111$$).join("/")), -1 == $id$jscomp$19$$) {
+      return $i$jscomp$111$$ < $n$jscomp$14$$ - 1 ? {id:-1, parentid:-1, name:$path$jscomp$8_walk$jscomp$1$$[$i$jscomp$111$$], forward_path:$forward_path$$} : {id:-1, parentid:$parentid$jscomp$15$$, name:$path$jscomp$8_walk$jscomp$1$$[$i$jscomp$111$$], forward_path:$forward_path$$};
     }
   }
-  return {id:$id$jscomp$19$$, parentid:$parentid$jscomp$15$$, name:$path$jscomp$8_walk$jscomp$1$$[$i$jscomp$106$$], forward_path:$forward_path$$};
+  return {id:$id$jscomp$19$$, parentid:$parentid$jscomp$15$$, name:$path$jscomp$8_walk$jscomp$1$$[$i$jscomp$111$$], forward_path:$forward_path$$};
 };
-$FS$$.prototype.GetRecursiveList = function($dirid_i$jscomp$107$$, $list$$) {
-  if (this.is_forwarder(this.inodes[$dirid_i$jscomp$107$$])) {
-    const $foreign_fs$jscomp$1$$ = this.follow_fs(this.inodes[$dirid_i$jscomp$107$$]), $mount_id$$ = this.inodes[$dirid_i$jscomp$107$$].mount_id, $foreign_start$$ = $list$$.length;
-    $foreign_fs$jscomp$1$$.GetRecursiveList(this.inodes[$dirid_i$jscomp$107$$].foreign_id, $list$$);
-    for ($dirid_i$jscomp$107$$ = $foreign_start$$; $dirid_i$jscomp$107$$ < $list$$.length; $dirid_i$jscomp$107$$++) {
-      $list$$[$dirid_i$jscomp$107$$].parentid = this.get_forwarder($mount_id$$, $list$$[$dirid_i$jscomp$107$$].parentid);
+$FS$$.prototype.GetRecursiveList = function($dirid_i$jscomp$112$$, $list$$) {
+  if (this.is_forwarder(this.inodes[$dirid_i$jscomp$112$$])) {
+    const $foreign_fs$jscomp$1$$ = this.follow_fs(this.inodes[$dirid_i$jscomp$112$$]), $mount_id$$ = this.inodes[$dirid_i$jscomp$112$$].mount_id, $foreign_start$$ = $list$$.length;
+    $foreign_fs$jscomp$1$$.GetRecursiveList(this.inodes[$dirid_i$jscomp$112$$].foreign_id, $list$$);
+    for ($dirid_i$jscomp$112$$ = $foreign_start$$; $dirid_i$jscomp$112$$ < $list$$.length; $dirid_i$jscomp$112$$++) {
+      $list$$[$dirid_i$jscomp$112$$].parentid = this.get_forwarder($mount_id$$, $list$$[$dirid_i$jscomp$112$$].parentid);
     }
   } else {
-    for (const [$name$jscomp$105$$, $id$jscomp$20$$] of this.inodes[$dirid_i$jscomp$107$$].direntries) {
-      "." !== $name$jscomp$105$$ && ".." !== $name$jscomp$105$$ && ($list$$.push({parentid:$dirid_i$jscomp$107$$, name:$name$jscomp$105$$}), this.IsDirectory($id$jscomp$20$$) && this.GetRecursiveList($id$jscomp$20$$, $list$$));
+    for (const [$name$jscomp$106$$, $id$jscomp$20$$] of this.inodes[$dirid_i$jscomp$112$$].direntries) {
+      "." !== $name$jscomp$106$$ && ".." !== $name$jscomp$106$$ && ($list$$.push({parentid:$dirid_i$jscomp$112$$, name:$name$jscomp$106$$}), this.IsDirectory($id$jscomp$20$$) && this.GetRecursiveList($id$jscomp$20$$, $list$$));
     }
   }
 };
-$FS$$.prototype.RecursiveDelete = function($i$jscomp$108_ids_path$jscomp$9$$) {
+$FS$$.prototype.RecursiveDelete = function($i$jscomp$113_ids_path$jscomp$9$$) {
   var $toDelete$$ = [];
-  $i$jscomp$108_ids_path$jscomp$9$$ = this.SearchPath($i$jscomp$108_ids_path$jscomp$9$$);
-  if (-1 !== $i$jscomp$108_ids_path$jscomp$9$$.id) {
-    for (this.GetRecursiveList($i$jscomp$108_ids_path$jscomp$9$$.id, $toDelete$$), $i$jscomp$108_ids_path$jscomp$9$$ = $toDelete$$.length - 1; 0 <= $i$jscomp$108_ids_path$jscomp$9$$; $i$jscomp$108_ids_path$jscomp$9$$--) {
-      const $ret$jscomp$9$$ = this.Unlink($toDelete$$[$i$jscomp$108_ids_path$jscomp$9$$].parentid, $toDelete$$[$i$jscomp$108_ids_path$jscomp$9$$].name);
-      $dbg_assert$$(0 === $ret$jscomp$9$$, "Filesystem RecursiveDelete failed at parent=" + $toDelete$$[$i$jscomp$108_ids_path$jscomp$9$$].parentid + ", name='" + $toDelete$$[$i$jscomp$108_ids_path$jscomp$9$$].name + "' with error code: " + -$ret$jscomp$9$$);
+  $i$jscomp$113_ids_path$jscomp$9$$ = this.SearchPath($i$jscomp$113_ids_path$jscomp$9$$);
+  if (-1 !== $i$jscomp$113_ids_path$jscomp$9$$.id) {
+    for (this.GetRecursiveList($i$jscomp$113_ids_path$jscomp$9$$.id, $toDelete$$), $i$jscomp$113_ids_path$jscomp$9$$ = $toDelete$$.length - 1; 0 <= $i$jscomp$113_ids_path$jscomp$9$$; $i$jscomp$113_ids_path$jscomp$9$$--) {
+      const $ret$jscomp$9$$ = this.Unlink($toDelete$$[$i$jscomp$113_ids_path$jscomp$9$$].parentid, $toDelete$$[$i$jscomp$113_ids_path$jscomp$9$$].name);
+      $dbg_assert$$(0 === $ret$jscomp$9$$, "Filesystem RecursiveDelete failed at parent=" + $toDelete$$[$i$jscomp$113_ids_path$jscomp$9$$].parentid + ", name='" + $toDelete$$[$i$jscomp$113_ids_path$jscomp$9$$].name + "' with error code: " + -$ret$jscomp$9$$);
     }
   }
 };
@@ -10579,16 +10807,16 @@ $FS$$.prototype.DeleteNode = function($path$jscomp$10_ret$jscomp$10_ret$jscomp$1
 $FS$$.prototype.NotifyListeners = function() {
 };
 $FS$$.prototype.Check = function() {
-  for (var $i$jscomp$109$$ = 1; $i$jscomp$109$$ < this.inodes.length; $i$jscomp$109$$++) {
-    if (-1 != this.inodes[$i$jscomp$109$$].status) {
-      var $inode$jscomp$22_inode$jscomp$23$$ = this.GetInode($i$jscomp$109$$);
-      0 > $inode$jscomp$22_inode$jscomp$23$$.nlinks && $message$$.Debug("Error in filesystem: negative nlinks=" + $inode$jscomp$22_inode$jscomp$23$$.nlinks + " at id =" + $i$jscomp$109$$);
-      if (this.IsDirectory($i$jscomp$109$$)) {
-        $inode$jscomp$22_inode$jscomp$23$$ = this.GetInode($i$jscomp$109$$);
-        this.IsDirectory($i$jscomp$109$$) && 0 > this.GetParent($i$jscomp$109$$) && $message$$.Debug("Error in filesystem: negative parent id " + $i$jscomp$109$$);
-        for (const [$name$jscomp$106$$, $id$jscomp$22$$] of $inode$jscomp$22_inode$jscomp$23$$.direntries) {
-          0 === $name$jscomp$106$$.length && $message$$.Debug("Error in filesystem: inode with no name and id " + $id$jscomp$22$$);
-          for (const $c$jscomp$3$$ of $name$jscomp$106$$) {
+  for (var $i$jscomp$114$$ = 1; $i$jscomp$114$$ < this.inodes.length; $i$jscomp$114$$++) {
+    if (-1 != this.inodes[$i$jscomp$114$$].status) {
+      var $inode$jscomp$22_inode$jscomp$23$$ = this.GetInode($i$jscomp$114$$);
+      0 > $inode$jscomp$22_inode$jscomp$23$$.nlinks && $message$$.Debug("Error in filesystem: negative nlinks=" + $inode$jscomp$22_inode$jscomp$23$$.nlinks + " at id =" + $i$jscomp$114$$);
+      if (this.IsDirectory($i$jscomp$114$$)) {
+        $inode$jscomp$22_inode$jscomp$23$$ = this.GetInode($i$jscomp$114$$);
+        this.IsDirectory($i$jscomp$114$$) && 0 > this.GetParent($i$jscomp$114$$) && $message$$.Debug("Error in filesystem: negative parent id " + $i$jscomp$114$$);
+        for (const [$name$jscomp$107$$, $id$jscomp$22$$] of $inode$jscomp$22_inode$jscomp$23$$.direntries) {
+          0 === $name$jscomp$107$$.length && $message$$.Debug("Error in filesystem: inode with no name and id " + $id$jscomp$22$$);
+          for (const $c$jscomp$3$$ of $name$jscomp$107$$) {
             32 > $c$jscomp$3$$ && $message$$.Debug("Error in filesystem: Unallowed char in filename");
           }
         }
@@ -10596,32 +10824,32 @@ $FS$$.prototype.Check = function() {
     }
   }
 };
-$FS$$.prototype.FillDirectory = function($data$jscomp$214_dirid$jscomp$1$$) {
-  var $child$jscomp$1_inode$jscomp$24$$ = this.inodes[$data$jscomp$214_dirid$jscomp$1$$];
+$FS$$.prototype.FillDirectory = function($data$jscomp$224_dirid$jscomp$1$$) {
+  var $child$jscomp$1_inode$jscomp$24$$ = this.inodes[$data$jscomp$224_dirid$jscomp$1$$];
   if (this.is_forwarder($child$jscomp$1_inode$jscomp$24$$)) {
     this.follow_fs($child$jscomp$1_inode$jscomp$24$$).FillDirectory($child$jscomp$1_inode$jscomp$24$$.foreign_id);
   } else {
-    var $offset$jscomp$74_size$jscomp$45$$ = 0;
-    for (const $name$jscomp$107$$ of $child$jscomp$1_inode$jscomp$24$$.direntries.keys()) {
-      $offset$jscomp$74_size$jscomp$45$$ += 24 + $UTF8$$.UTF8Length($name$jscomp$107$$);
+    var $offset$jscomp$74_size$jscomp$46$$ = 0;
+    for (const $name$jscomp$108$$ of $child$jscomp$1_inode$jscomp$24$$.direntries.keys()) {
+      $offset$jscomp$74_size$jscomp$46$$ += 24 + $UTF8$$.UTF8Length($name$jscomp$108$$);
     }
-    $data$jscomp$214_dirid$jscomp$1$$ = this.inodedata[$data$jscomp$214_dirid$jscomp$1$$] = new Uint8Array($offset$jscomp$74_size$jscomp$45$$);
-    $child$jscomp$1_inode$jscomp$24$$.size = $offset$jscomp$74_size$jscomp$45$$;
-    $offset$jscomp$74_size$jscomp$45$$ = 0;
-    for (const [$name$jscomp$108$$, $id$jscomp$23$$] of $child$jscomp$1_inode$jscomp$24$$.direntries) {
-      $child$jscomp$1_inode$jscomp$24$$ = this.GetInode($id$jscomp$23$$), $offset$jscomp$74_size$jscomp$45$$ += $marshall$$.Marshall(["Q", "d", "b", "s"], [$child$jscomp$1_inode$jscomp$24$$.qid, $offset$jscomp$74_size$jscomp$45$$ + 13 + 8 + 1 + 2 + $UTF8$$.UTF8Length($name$jscomp$108$$), $child$jscomp$1_inode$jscomp$24$$.mode >> 12, $name$jscomp$108$$], $data$jscomp$214_dirid$jscomp$1$$, $offset$jscomp$74_size$jscomp$45$$);
+    $data$jscomp$224_dirid$jscomp$1$$ = this.inodedata[$data$jscomp$224_dirid$jscomp$1$$] = new Uint8Array($offset$jscomp$74_size$jscomp$46$$);
+    $child$jscomp$1_inode$jscomp$24$$.size = $offset$jscomp$74_size$jscomp$46$$;
+    $offset$jscomp$74_size$jscomp$46$$ = 0;
+    for (const [$name$jscomp$109$$, $id$jscomp$23$$] of $child$jscomp$1_inode$jscomp$24$$.direntries) {
+      $child$jscomp$1_inode$jscomp$24$$ = this.GetInode($id$jscomp$23$$), $offset$jscomp$74_size$jscomp$46$$ += $marshall$$.Marshall(["Q", "d", "b", "s"], [$child$jscomp$1_inode$jscomp$24$$.qid, $offset$jscomp$74_size$jscomp$46$$ + 13 + 8 + 1 + 2 + $UTF8$$.UTF8Length($name$jscomp$109$$), $child$jscomp$1_inode$jscomp$24$$.mode >> 12, $name$jscomp$109$$], $data$jscomp$224_dirid$jscomp$1$$, $offset$jscomp$74_size$jscomp$46$$);
     }
   }
 };
 $FS$$.prototype.RoundToDirentry = function($dirid$jscomp$2_offset$jscomp$75$$, $offset_target$$) {
-  const $data$jscomp$215$$ = this.inodedata[$dirid$jscomp$2_offset$jscomp$75$$];
-  $dbg_assert$$($data$jscomp$215$$, `FS directory data for dirid=${$dirid$jscomp$2_offset$jscomp$75$$} should be generated`);
-  $dbg_assert$$($data$jscomp$215$$.length, "FS directory should have at least an entry");
-  if ($offset_target$$ >= $data$jscomp$215$$.length) {
-    return $data$jscomp$215$$.length;
+  const $data$jscomp$225$$ = this.inodedata[$dirid$jscomp$2_offset$jscomp$75$$];
+  $dbg_assert$$($data$jscomp$225$$, `FS directory data for dirid=${$dirid$jscomp$2_offset$jscomp$75$$} should be generated`);
+  $dbg_assert$$($data$jscomp$225$$.length, "FS directory should have at least an entry");
+  if ($offset_target$$ >= $data$jscomp$225$$.length) {
+    return $data$jscomp$225$$.length;
   }
   for ($dirid$jscomp$2_offset$jscomp$75$$ = 0;;) {
-    const $next_offset$$ = $marshall$$.Unmarshall(["Q", "d"], $data$jscomp$215$$, {offset:$dirid$jscomp$2_offset$jscomp$75$$})[1];
+    const $next_offset$$ = $marshall$$.Unmarshall(["Q", "d"], $data$jscomp$225$$, {offset:$dirid$jscomp$2_offset$jscomp$75$$})[1];
     if ($next_offset$$ > $offset_target$$) {
       break;
     }
@@ -10638,8 +10866,8 @@ $FS$$.prototype.IsEmpty = function($idx$jscomp$17_inode$jscomp$26$$) {
   if (this.is_forwarder($idx$jscomp$17_inode$jscomp$26$$)) {
     return this.follow_fs($idx$jscomp$17_inode$jscomp$26$$).IsDirectory($idx$jscomp$17_inode$jscomp$26$$.foreign_id);
   }
-  for (const $name$jscomp$109$$ of $idx$jscomp$17_inode$jscomp$26$$.direntries.keys()) {
-    if ("." !== $name$jscomp$109$$ && ".." !== $name$jscomp$109$$) {
+  for (const $name$jscomp$110$$ of $idx$jscomp$17_inode$jscomp$26$$.direntries.keys()) {
+    if ("." !== $name$jscomp$110$$ && ".." !== $name$jscomp$110$$) {
       return !1;
     }
   }
@@ -10652,8 +10880,8 @@ $FS$$.prototype.GetChildren = function($idx$jscomp$18_inode$jscomp$27$$) {
     return this.follow_fs($idx$jscomp$18_inode$jscomp$27$$).GetChildren($idx$jscomp$18_inode$jscomp$27$$.foreign_id);
   }
   const $children$jscomp$3$$ = [];
-  for (const $name$jscomp$110$$ of $idx$jscomp$18_inode$jscomp$27$$.direntries.keys()) {
-    "." !== $name$jscomp$110$$ && ".." !== $name$jscomp$110$$ && $children$jscomp$3$$.push($name$jscomp$110$$);
+  for (const $name$jscomp$111$$ of $idx$jscomp$18_inode$jscomp$27$$.direntries.keys()) {
+    "." !== $name$jscomp$111$$ && ".." !== $name$jscomp$111$$ && $children$jscomp$3$$.push($name$jscomp$111$$);
   }
   return $children$jscomp$3$$;
 };
@@ -10700,14 +10928,14 @@ function $FSMountInfo$$($filesystem$jscomp$2$$) {
   this.backtrack = new Map;
 }
 $FSMountInfo$$.prototype.get_state = function() {
-  const $state$jscomp$56$$ = [];
-  $state$jscomp$56$$[0] = this.fs;
-  $state$jscomp$56$$[1] = [...this.backtrack];
-  return $state$jscomp$56$$;
+  const $state$jscomp$58$$ = [];
+  $state$jscomp$58$$[0] = this.fs;
+  $state$jscomp$58$$[1] = [...this.backtrack];
+  return $state$jscomp$58$$;
 };
-$FSMountInfo$$.prototype.set_state = function($state$jscomp$57$$) {
-  this.fs = $state$jscomp$57$$[0];
-  this.backtrack = new Map($state$jscomp$57$$[1]);
+$FSMountInfo$$.prototype.set_state = function($state$jscomp$59$$) {
+  this.fs = $state$jscomp$59$$[0];
+  this.backtrack = new Map($state$jscomp$59$$[1]);
 };
 $FS$$.prototype.set_forwarder = function($idx$jscomp$20$$, $mount_id$jscomp$1$$, $foreign_id$jscomp$10$$) {
   const $inode$jscomp$30$$ = this.inodes[$idx$jscomp$20$$];
@@ -10775,20 +11003,20 @@ function $FSLockRegion$$() {
   this.client_id = "";
 }
 $FSLockRegion$$.prototype.get_state = function() {
-  const $state$jscomp$58$$ = [];
-  $state$jscomp$58$$[0] = this.type;
-  $state$jscomp$58$$[1] = this.start;
-  $state$jscomp$58$$[2] = Infinity === this.length ? 0 : this.length;
-  $state$jscomp$58$$[3] = this.proc_id;
-  $state$jscomp$58$$[4] = this.client_id;
-  return $state$jscomp$58$$;
+  const $state$jscomp$60$$ = [];
+  $state$jscomp$60$$[0] = this.type;
+  $state$jscomp$60$$[1] = this.start;
+  $state$jscomp$60$$[2] = Infinity === this.length ? 0 : this.length;
+  $state$jscomp$60$$[3] = this.proc_id;
+  $state$jscomp$60$$[4] = this.client_id;
+  return $state$jscomp$60$$;
 };
-$FSLockRegion$$.prototype.set_state = function($state$jscomp$59$$) {
-  this.type = $state$jscomp$59$$[0];
-  this.start = $state$jscomp$59$$[1];
-  this.length = 0 === $state$jscomp$59$$[2] ? Infinity : $state$jscomp$59$$[2];
-  this.proc_id = $state$jscomp$59$$[3];
-  this.client_id = $state$jscomp$59$$[4];
+$FSLockRegion$$.prototype.set_state = function($state$jscomp$61$$) {
+  this.type = $state$jscomp$61$$[0];
+  this.start = $state$jscomp$61$$[1];
+  this.length = 0 === $state$jscomp$61$$[2] ? Infinity : $state$jscomp$61$$[2];
+  this.proc_id = $state$jscomp$61$$[3];
+  this.client_id = $state$jscomp$61$$[4];
 };
 $FSLockRegion$$.prototype.clone = function() {
   const $new_region$$ = new $FSLockRegion$$;
@@ -10804,13 +11032,13 @@ $FSLockRegion$$.prototype.is_alike = function($region$jscomp$1$$) {
 $FSLockRegion$$.prototype.may_merge_after = function($region$jscomp$2$$) {
   return this.is_alike($region$jscomp$2$$) && $region$jscomp$2$$.start + $region$jscomp$2$$.length === this.start;
 };
-$FS$$.prototype.DescribeLock = function($type$jscomp$157$$, $start$jscomp$47$$, $length$jscomp$29$$, $proc_id$$, $client_id$$) {
+$FS$$.prototype.DescribeLock = function($type$jscomp$157$$, $start$jscomp$48$$, $length$jscomp$29$$, $proc_id$$, $client_id$$) {
   $dbg_assert$$(0 === $type$jscomp$157$$ || 1 === $type$jscomp$157$$ || 2 === $type$jscomp$157$$, "Filesystem: Invalid lock type: " + $type$jscomp$157$$);
-  $dbg_assert$$(0 <= $start$jscomp$47$$, "Filesystem: Invalid negative lock starting offset: " + $start$jscomp$47$$);
+  $dbg_assert$$(0 <= $start$jscomp$48$$, "Filesystem: Invalid negative lock starting offset: " + $start$jscomp$48$$);
   $dbg_assert$$(0 < $length$jscomp$29$$, "Filesystem: Invalid non-positive lock length: " + $length$jscomp$29$$);
   const $lock$jscomp$1$$ = new $FSLockRegion$$;
   $lock$jscomp$1$$.type = $type$jscomp$157$$;
-  $lock$jscomp$1$$.start = $start$jscomp$47$$;
+  $lock$jscomp$1$$.start = $start$jscomp$48$$;
   $lock$jscomp$1$$.length = $length$jscomp$29$$;
   $lock$jscomp$1$$.proc_id = $proc_id$$;
   $lock$jscomp$1$$.client_id = $client_id$$;
@@ -10829,20 +11057,20 @@ $FS$$.prototype.GetLock = function($id$jscomp$25_inode$jscomp$35$$, $request$jsc
   }
   return null;
 };
-$FS$$.prototype.Lock = function($foreign_id$jscomp$14_has_merged_id$jscomp$26_region$jscomp$4$$, $request$jscomp$6$$, $flags$jscomp$13_i$jscomp$110_new_region$jscomp$1$$) {
+$FS$$.prototype.Lock = function($foreign_id$jscomp$14_has_merged_id$jscomp$26_region$jscomp$4$$, $request$jscomp$6$$, $flags$jscomp$13_i$jscomp$115_new_region$jscomp$1$$) {
   const $inode$jscomp$36$$ = this.inodes[$foreign_id$jscomp$14_has_merged_id$jscomp$26_region$jscomp$4$$];
   if (this.is_forwarder($inode$jscomp$36$$)) {
-    return $foreign_id$jscomp$14_has_merged_id$jscomp$26_region$jscomp$4$$ = $inode$jscomp$36$$.foreign_id, this.follow_fs($inode$jscomp$36$$).Lock($foreign_id$jscomp$14_has_merged_id$jscomp$26_region$jscomp$4$$, $request$jscomp$6$$, $flags$jscomp$13_i$jscomp$110_new_region$jscomp$1$$);
+    return $foreign_id$jscomp$14_has_merged_id$jscomp$26_region$jscomp$4$$ = $inode$jscomp$36$$.foreign_id, this.follow_fs($inode$jscomp$36$$).Lock($foreign_id$jscomp$14_has_merged_id$jscomp$26_region$jscomp$4$$, $request$jscomp$6$$, $flags$jscomp$13_i$jscomp$115_new_region$jscomp$1$$);
   }
   $request$jscomp$6$$ = $request$jscomp$6$$.clone();
   if (2 !== $request$jscomp$6$$.type && this.GetLock($foreign_id$jscomp$14_has_merged_id$jscomp$26_region$jscomp$4$$, $request$jscomp$6$$)) {
     return 1;
   }
-  for ($flags$jscomp$13_i$jscomp$110_new_region$jscomp$1$$ = 0; $flags$jscomp$13_i$jscomp$110_new_region$jscomp$1$$ < $inode$jscomp$36$$.locks.length; $flags$jscomp$13_i$jscomp$110_new_region$jscomp$1$$++) {
-    $foreign_id$jscomp$14_has_merged_id$jscomp$26_region$jscomp$4$$ = $inode$jscomp$36$$.locks[$flags$jscomp$13_i$jscomp$110_new_region$jscomp$1$$];
+  for ($flags$jscomp$13_i$jscomp$115_new_region$jscomp$1$$ = 0; $flags$jscomp$13_i$jscomp$115_new_region$jscomp$1$$ < $inode$jscomp$36$$.locks.length; $flags$jscomp$13_i$jscomp$115_new_region$jscomp$1$$++) {
+    $foreign_id$jscomp$14_has_merged_id$jscomp$26_region$jscomp$4$$ = $inode$jscomp$36$$.locks[$flags$jscomp$13_i$jscomp$115_new_region$jscomp$1$$];
     $dbg_assert$$(0 < $foreign_id$jscomp$14_has_merged_id$jscomp$26_region$jscomp$4$$.length, "Filesystem: Found non-positive lock region length: " + $foreign_id$jscomp$14_has_merged_id$jscomp$26_region$jscomp$4$$.length);
     $dbg_assert$$(0 === $foreign_id$jscomp$14_has_merged_id$jscomp$26_region$jscomp$4$$.type || 1 === $foreign_id$jscomp$14_has_merged_id$jscomp$26_region$jscomp$4$$.type, "Filesystem: Found invalid lock type: " + $foreign_id$jscomp$14_has_merged_id$jscomp$26_region$jscomp$4$$.type);
-    $dbg_assert$$(!$inode$jscomp$36$$.locks[$flags$jscomp$13_i$jscomp$110_new_region$jscomp$1$$ - 1] || $inode$jscomp$36$$.locks[$flags$jscomp$13_i$jscomp$110_new_region$jscomp$1$$ - 1].start <= $foreign_id$jscomp$14_has_merged_id$jscomp$26_region$jscomp$4$$.start, "Filesystem: Locks should be sorted by starting offset");
+    $dbg_assert$$(!$inode$jscomp$36$$.locks[$flags$jscomp$13_i$jscomp$115_new_region$jscomp$1$$ - 1] || $inode$jscomp$36$$.locks[$flags$jscomp$13_i$jscomp$115_new_region$jscomp$1$$ - 1].start <= $foreign_id$jscomp$14_has_merged_id$jscomp$26_region$jscomp$4$$.start, "Filesystem: Locks should be sorted by starting offset");
     if ($foreign_id$jscomp$14_has_merged_id$jscomp$26_region$jscomp$4$$.start + $foreign_id$jscomp$14_has_merged_id$jscomp$26_region$jscomp$4$$.length <= $request$jscomp$6$$.start) {
       continue;
     }
@@ -10853,35 +11081,35 @@ $FS$$.prototype.Lock = function($foreign_id$jscomp$14_has_merged_id$jscomp$26_re
       $dbg_assert$$(!$foreign_id$jscomp$14_has_merged_id$jscomp$26_region$jscomp$4$$.conflicts_with($request$jscomp$6$$), "Filesytem: Found conflicting lock region, despite already checked for conflicts");
       continue;
     }
-    var $i$jscomp$111_start2$$ = $request$jscomp$6$$.start + $request$jscomp$6$$.length;
-    const $length1$$ = $request$jscomp$6$$.start - $foreign_id$jscomp$14_has_merged_id$jscomp$26_region$jscomp$4$$.start, $length2$$ = $foreign_id$jscomp$14_has_merged_id$jscomp$26_region$jscomp$4$$.start + $foreign_id$jscomp$14_has_merged_id$jscomp$26_region$jscomp$4$$.length - $i$jscomp$111_start2$$;
+    var $i$jscomp$116_start2$$ = $request$jscomp$6$$.start + $request$jscomp$6$$.length;
+    const $length1$$ = $request$jscomp$6$$.start - $foreign_id$jscomp$14_has_merged_id$jscomp$26_region$jscomp$4$$.start, $length2$$ = $foreign_id$jscomp$14_has_merged_id$jscomp$26_region$jscomp$4$$.start + $foreign_id$jscomp$14_has_merged_id$jscomp$26_region$jscomp$4$$.length - $i$jscomp$116_start2$$;
     if (0 < $length1$$ && 0 < $length2$$ && $foreign_id$jscomp$14_has_merged_id$jscomp$26_region$jscomp$4$$.type === $request$jscomp$6$$.type) {
       return 0;
     }
     0 < $length1$$ && ($foreign_id$jscomp$14_has_merged_id$jscomp$26_region$jscomp$4$$.length = $length1$$);
     if (0 >= $length1$$ && 0 < $length2$$) {
-      $foreign_id$jscomp$14_has_merged_id$jscomp$26_region$jscomp$4$$.start = $i$jscomp$111_start2$$, $foreign_id$jscomp$14_has_merged_id$jscomp$26_region$jscomp$4$$.length = $length2$$;
+      $foreign_id$jscomp$14_has_merged_id$jscomp$26_region$jscomp$4$$.start = $i$jscomp$116_start2$$, $foreign_id$jscomp$14_has_merged_id$jscomp$26_region$jscomp$4$$.length = $length2$$;
     } else {
       if (0 < $length2$$) {
-        for (; $flags$jscomp$13_i$jscomp$110_new_region$jscomp$1$$ < $inode$jscomp$36$$.locks.length && $inode$jscomp$36$$.locks[$flags$jscomp$13_i$jscomp$110_new_region$jscomp$1$$].start < $i$jscomp$111_start2$$;) {
-          $flags$jscomp$13_i$jscomp$110_new_region$jscomp$1$$++;
+        for (; $flags$jscomp$13_i$jscomp$115_new_region$jscomp$1$$ < $inode$jscomp$36$$.locks.length && $inode$jscomp$36$$.locks[$flags$jscomp$13_i$jscomp$115_new_region$jscomp$1$$].start < $i$jscomp$116_start2$$;) {
+          $flags$jscomp$13_i$jscomp$115_new_region$jscomp$1$$++;
         }
-        $inode$jscomp$36$$.locks.splice($flags$jscomp$13_i$jscomp$110_new_region$jscomp$1$$, 0, this.DescribeLock($foreign_id$jscomp$14_has_merged_id$jscomp$26_region$jscomp$4$$.type, $i$jscomp$111_start2$$, $length2$$, $foreign_id$jscomp$14_has_merged_id$jscomp$26_region$jscomp$4$$.proc_id, $foreign_id$jscomp$14_has_merged_id$jscomp$26_region$jscomp$4$$.client_id));
+        $inode$jscomp$36$$.locks.splice($flags$jscomp$13_i$jscomp$115_new_region$jscomp$1$$, 0, this.DescribeLock($foreign_id$jscomp$14_has_merged_id$jscomp$26_region$jscomp$4$$.type, $i$jscomp$116_start2$$, $length2$$, $foreign_id$jscomp$14_has_merged_id$jscomp$26_region$jscomp$4$$.proc_id, $foreign_id$jscomp$14_has_merged_id$jscomp$26_region$jscomp$4$$.client_id));
       } else {
-        0 >= $length1$$ && ($inode$jscomp$36$$.locks.splice($flags$jscomp$13_i$jscomp$110_new_region$jscomp$1$$, 1), $flags$jscomp$13_i$jscomp$110_new_region$jscomp$1$$--);
+        0 >= $length1$$ && ($inode$jscomp$36$$.locks.splice($flags$jscomp$13_i$jscomp$115_new_region$jscomp$1$$, 1), $flags$jscomp$13_i$jscomp$115_new_region$jscomp$1$$--);
       }
     }
   }
   if (2 !== $request$jscomp$6$$.type) {
-    $flags$jscomp$13_i$jscomp$110_new_region$jscomp$1$$ = $request$jscomp$6$$;
+    $flags$jscomp$13_i$jscomp$115_new_region$jscomp$1$$ = $request$jscomp$6$$;
     $foreign_id$jscomp$14_has_merged_id$jscomp$26_region$jscomp$4$$ = !1;
-    for ($i$jscomp$111_start2$$ = 0; $i$jscomp$111_start2$$ < $inode$jscomp$36$$.locks.length && !($flags$jscomp$13_i$jscomp$110_new_region$jscomp$1$$.may_merge_after($inode$jscomp$36$$.locks[$i$jscomp$111_start2$$]) && ($inode$jscomp$36$$.locks[$i$jscomp$111_start2$$].length += $request$jscomp$6$$.length, $flags$jscomp$13_i$jscomp$110_new_region$jscomp$1$$ = $inode$jscomp$36$$.locks[$i$jscomp$111_start2$$], $foreign_id$jscomp$14_has_merged_id$jscomp$26_region$jscomp$4$$ = !0), $request$jscomp$6$$.start <= 
-    $inode$jscomp$36$$.locks[$i$jscomp$111_start2$$].start); $i$jscomp$111_start2$$++) {
+    for ($i$jscomp$116_start2$$ = 0; $i$jscomp$116_start2$$ < $inode$jscomp$36$$.locks.length && !($flags$jscomp$13_i$jscomp$115_new_region$jscomp$1$$.may_merge_after($inode$jscomp$36$$.locks[$i$jscomp$116_start2$$]) && ($inode$jscomp$36$$.locks[$i$jscomp$116_start2$$].length += $request$jscomp$6$$.length, $flags$jscomp$13_i$jscomp$115_new_region$jscomp$1$$ = $inode$jscomp$36$$.locks[$i$jscomp$116_start2$$], $foreign_id$jscomp$14_has_merged_id$jscomp$26_region$jscomp$4$$ = !0), $request$jscomp$6$$.start <= 
+    $inode$jscomp$36$$.locks[$i$jscomp$116_start2$$].start); $i$jscomp$116_start2$$++) {
     }
-    $foreign_id$jscomp$14_has_merged_id$jscomp$26_region$jscomp$4$$ || ($inode$jscomp$36$$.locks.splice($i$jscomp$111_start2$$, 0, $flags$jscomp$13_i$jscomp$110_new_region$jscomp$1$$), $i$jscomp$111_start2$$++);
-    for (; $i$jscomp$111_start2$$ < $inode$jscomp$36$$.locks.length; $i$jscomp$111_start2$$++) {
-      if ($inode$jscomp$36$$.locks[$i$jscomp$111_start2$$].is_alike($flags$jscomp$13_i$jscomp$110_new_region$jscomp$1$$)) {
-        $inode$jscomp$36$$.locks[$i$jscomp$111_start2$$].may_merge_after($flags$jscomp$13_i$jscomp$110_new_region$jscomp$1$$) && ($flags$jscomp$13_i$jscomp$110_new_region$jscomp$1$$.length += $inode$jscomp$36$$.locks[$i$jscomp$111_start2$$].length, $inode$jscomp$36$$.locks.splice($i$jscomp$111_start2$$, 1));
+    $foreign_id$jscomp$14_has_merged_id$jscomp$26_region$jscomp$4$$ || ($inode$jscomp$36$$.locks.splice($i$jscomp$116_start2$$, 0, $flags$jscomp$13_i$jscomp$115_new_region$jscomp$1$$), $i$jscomp$116_start2$$++);
+    for (; $i$jscomp$116_start2$$ < $inode$jscomp$36$$.locks.length; $i$jscomp$116_start2$$++) {
+      if ($inode$jscomp$36$$.locks[$i$jscomp$116_start2$$].is_alike($flags$jscomp$13_i$jscomp$115_new_region$jscomp$1$$)) {
+        $inode$jscomp$36$$.locks[$i$jscomp$116_start2$$].may_merge_after($flags$jscomp$13_i$jscomp$115_new_region$jscomp$1$$) && ($flags$jscomp$13_i$jscomp$115_new_region$jscomp$1$$.length += $inode$jscomp$36$$.locks[$i$jscomp$116_start2$$].length, $inode$jscomp$36$$.locks.splice($i$jscomp$116_start2$$, 1));
         break;
       }
     }
@@ -10908,14 +11136,14 @@ var $message$$ = {Debug:function($log$jscomp$1$$) {
   throw Error("message.Abort()");
 }};
 var $marshall$$ = {Marshall:function($typelist$$, $input$jscomp$10$$, $struct$jscomp$1$$, $offset$jscomp$76$$) {
-  for (var $item$jscomp$8$$, $size$jscomp$46$$ = 0, $i$jscomp$112$$ = 0; $i$jscomp$112$$ < $typelist$$.length; $i$jscomp$112$$++) {
-    switch($item$jscomp$8$$ = $input$jscomp$10$$[$i$jscomp$112$$], $typelist$$[$i$jscomp$112$$]) {
+  for (var $item$jscomp$8$$, $size$jscomp$47$$ = 0, $i$jscomp$117$$ = 0; $i$jscomp$117$$ < $typelist$$.length; $i$jscomp$117$$++) {
+    switch($item$jscomp$8$$ = $input$jscomp$10$$[$i$jscomp$117$$], $typelist$$[$i$jscomp$117$$]) {
       case "w":
         $struct$jscomp$1$$[$offset$jscomp$76$$++] = $item$jscomp$8$$ & 255;
         $struct$jscomp$1$$[$offset$jscomp$76$$++] = $item$jscomp$8$$ >> 8 & 255;
         $struct$jscomp$1$$[$offset$jscomp$76$$++] = $item$jscomp$8$$ >> 16 & 255;
         $struct$jscomp$1$$[$offset$jscomp$76$$++] = $item$jscomp$8$$ >> 24 & 255;
-        $size$jscomp$46$$ += 4;
+        $size$jscomp$47$$ += 4;
         break;
       case "d":
         $struct$jscomp$1$$[$offset$jscomp$76$$++] = $item$jscomp$8$$ & 255;
@@ -10926,26 +11154,26 @@ var $marshall$$ = {Marshall:function($typelist$$, $input$jscomp$10$$, $struct$js
         $struct$jscomp$1$$[$offset$jscomp$76$$++] = 0;
         $struct$jscomp$1$$[$offset$jscomp$76$$++] = 0;
         $struct$jscomp$1$$[$offset$jscomp$76$$++] = 0;
-        $size$jscomp$46$$ += 8;
+        $size$jscomp$47$$ += 8;
         break;
       case "h":
         $struct$jscomp$1$$[$offset$jscomp$76$$++] = $item$jscomp$8$$ & 255;
         $struct$jscomp$1$$[$offset$jscomp$76$$++] = $item$jscomp$8$$ >> 8;
-        $size$jscomp$46$$ += 2;
+        $size$jscomp$47$$ += 2;
         break;
       case "b":
         $struct$jscomp$1$$[$offset$jscomp$76$$++] = $item$jscomp$8$$;
-        $size$jscomp$46$$ += 1;
+        $size$jscomp$47$$ += 1;
         break;
       case "s":
         var $lengthoffset$$ = $offset$jscomp$76$$, $length$jscomp$30$$ = 0;
         $struct$jscomp$1$$[$offset$jscomp$76$$++] = 0;
         $struct$jscomp$1$$[$offset$jscomp$76$$++] = 0;
-        $size$jscomp$46$$ += 2;
+        $size$jscomp$47$$ += 2;
         for (var $j$jscomp$15$$ of $item$jscomp$8$$) {
           $UnicodeToUTF8Stream$$($j$jscomp$15$$.charCodeAt(0)).forEach(function($c$jscomp$4$$) {
             $struct$jscomp$1$$[$offset$jscomp$76$$++] = $c$jscomp$4$$;
-            $size$jscomp$46$$ += 1;
+            $size$jscomp$47$$ += 1;
             $length$jscomp$30$$++;
           });
         }
@@ -10955,17 +11183,17 @@ var $marshall$$ = {Marshall:function($typelist$$, $input$jscomp$10$$, $struct$js
       case "Q":
         $marshall$$.Marshall(["b", "w", "d"], [$item$jscomp$8$$.type, $item$jscomp$8$$.version, $item$jscomp$8$$.path], $struct$jscomp$1$$, $offset$jscomp$76$$);
         $offset$jscomp$76$$ += 13;
-        $size$jscomp$46$$ += 13;
+        $size$jscomp$47$$ += 13;
         break;
       default:
-        $message$$.Debug("Marshall: Unknown type=" + $typelist$$[$i$jscomp$112$$]);
+        $message$$.Debug("Marshall: Unknown type=" + $typelist$$[$i$jscomp$117$$]);
     }
   }
-  return $size$jscomp$46$$;
-}, Unmarshall:function($typelist$jscomp$1$$, $struct$jscomp$2$$, $state$jscomp$60$$) {
-  let $offset$jscomp$77$$ = $state$jscomp$60$$.offset;
-  for (var $output$jscomp$2$$ = [], $i$jscomp$113$$ = 0; $i$jscomp$113$$ < $typelist$jscomp$1$$.length; $i$jscomp$113$$++) {
-    switch($typelist$jscomp$1$$[$i$jscomp$113$$]) {
+  return $size$jscomp$47$$;
+}, Unmarshall:function($typelist$jscomp$1$$, $struct$jscomp$2$$, $state$jscomp$62$$) {
+  let $offset$jscomp$77$$ = $state$jscomp$62$$.offset;
+  for (var $output$jscomp$2$$ = [], $i$jscomp$118$$ = 0; $i$jscomp$118$$ < $typelist$jscomp$1$$.length; $i$jscomp$118$$++) {
+    switch($typelist$jscomp$1$$[$i$jscomp$118$$]) {
       case "w":
         var $len$jscomp$23_qid_val$jscomp$1$$ = $struct$jscomp$2$$[$offset$jscomp$77$$++];
         $len$jscomp$23_qid_val$jscomp$1$$ += $struct$jscomp$2$$[$offset$jscomp$77$$++] << 8;
@@ -10998,16 +11226,16 @@ var $marshall$$ = {Marshall:function($typelist$$, $input$jscomp$10$$, $struct$js
         $output$jscomp$2$$.push($str$jscomp$12$$);
         break;
       case "Q":
-        $state$jscomp$60$$.offset = $offset$jscomp$77$$;
-        $len$jscomp$23_qid_val$jscomp$1$$ = $marshall$$.Unmarshall(["b", "w", "d"], $struct$jscomp$2$$, $state$jscomp$60$$);
-        $offset$jscomp$77$$ = $state$jscomp$60$$.offset;
+        $state$jscomp$62$$.offset = $offset$jscomp$77$$;
+        $len$jscomp$23_qid_val$jscomp$1$$ = $marshall$$.Unmarshall(["b", "w", "d"], $struct$jscomp$2$$, $state$jscomp$62$$);
+        $offset$jscomp$77$$ = $state$jscomp$62$$.offset;
         $output$jscomp$2$$.push({type:$len$jscomp$23_qid_val$jscomp$1$$[0], version:$len$jscomp$23_qid_val$jscomp$1$$[1], path:$len$jscomp$23_qid_val$jscomp$1$$[2], });
         break;
       default:
-        $message$$.Debug("Error in Unmarshall: Unknown type=" + $typelist$jscomp$1$$[$i$jscomp$113$$]);
+        $message$$.Debug("Error in Unmarshall: Unknown type=" + $typelist$jscomp$1$$[$i$jscomp$118$$]);
     }
   }
-  $state$jscomp$60$$.offset = $offset$jscomp$77$$;
+  $state$jscomp$62$$.offset = $offset$jscomp$77$$;
   return $output$jscomp$2$$;
 }};
 var $UTF8$$ = {};
@@ -11040,8 +11268,8 @@ function $UnicodeToUTF8Stream$$($key$jscomp$41$$) {
   }
 }
 $UTF8$$.UTF8Length = function($s$jscomp$8$$) {
-  for (var $length$jscomp$31$$ = 0, $i$jscomp$114$$ = 0; $i$jscomp$114$$ < $s$jscomp$8$$.length; $i$jscomp$114$$++) {
-    var $c$jscomp$6$$ = $s$jscomp$8$$.charCodeAt($i$jscomp$114$$);
+  for (var $length$jscomp$31$$ = 0, $i$jscomp$119$$ = 0; $i$jscomp$119$$ < $s$jscomp$8$$.length; $i$jscomp$119$$++) {
+    var $c$jscomp$6$$ = $s$jscomp$8$$.charCodeAt($i$jscomp$119$$);
     $length$jscomp$31$$ += 128 > $c$jscomp$6$$ ? 1 : 2;
   }
   return $length$jscomp$31$$;
