@@ -72,7 +72,7 @@ class BbsDoorRunner {
 			throw new Error('Emulator is not running');
 		}
 
-		if (_.isNaN(port) || port < 0 || port > 3) {
+		if (isNaN(port) || port < 0 || port > 3) {
 			throw new Error('Invalid port number, must be between 0 and 3');
 		}
 
@@ -100,7 +100,7 @@ class BbsDoorRunner {
 			throw new Error('port is required');
 		}
 
-		if (_.isNaN(port) || port < 0 || port > 3) {
+		if (isNaN(port) || port < 0 || port > 3) {
 			throw new Error('Invalid port number, must be between 0 and 3');
 		}
 
