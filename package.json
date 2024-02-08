@@ -26,7 +26,7 @@
     "husky": "^9.0.10",
     "jest": "^29.7.0",
     "jsdoc": "^4.0.2",
-    "lint-staged": "^15.2.1"
+    "lint-staged": "^15.2.2"
   },
   "dependencies": {
     "fatfs": "^0.10.8",
