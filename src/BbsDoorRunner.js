@@ -36,7 +36,8 @@ class BbsDoorRunner {
 		biosPath = '../v86/bios/seabios.bin',
 		vgaBiosPath = '../v86/bios/vgabios.bin',
 		bootDiskPath = '../v86/image/freedos722.img',
-		hdaDiskPath} = {}) {
+		hdaDiskPath,
+	} = {}) {
 		this.biosPath = biosPath;
 		this.vgaBiosPath = vgaBiosPath;
 		this.bootDiskPath = bootDiskPath;
@@ -62,6 +63,14 @@ class BbsDoorRunner {
 	 * @param {string} options.dropFileSrcPath - Path to the drop file
 	 * @param {string} options.dropFileDestPath - Path to the drop file on the emulator
 	 * @throws {Error} if port is not provided or invalid, inputStream, or outputStream are not provided, or if the emulator is not running
+	 * @example
+	 * doorRunner.connect({
+	 *   port: 0,
+	 *   inputStream: process.stdin,
+	 *   outputStream: process.stdout,
+	 *   dropFileSrcPath: './dropfiles/door.sys',
+	 *   dropFileDestPath: 'C:\DOOR.SYS'
+	 * });
 	 */
 	connect({port, inputStream, outputStream, dropFileSrcPath, dropFileDestPath} = {}) {
 		if (_.isNil(port) || _.isNil(inputStream) || _.isNil(outputStream)) {

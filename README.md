@@ -20,12 +20,30 @@ Here's a simple example to get you started:
 const BbsDoorRunner = require('bbs-door-runner');
 
 const options = {
-  // Additional options here
+  biosPath: '../v86/bios/seabios.bin', // usually just leave default
+  vgaBiosPath: '../v86/bios/vgabios.bin', // usually just leave default
+  bootDiskPath: '../v86/image/freedos722.img', // usually just leave default
+  hdaDiskPath: '../v86/image/hdd.img' // path to hard disk image with door
 };
 
 const bbsDoorRunner = new BbsDoorRunner(options);
 
 bbsDoorRunner.run();
+
+
+// Then to connect:
+
+doorRunner.connect({
+  port: 0, // 0-3
+  inputStream: process.stdin, // any Readable Stream
+  outputStream: process.stdout, // any Writeable Stream
+  dropFileSrcPath: './dropfiles/door.sys', // Where the dropfile was placed
+  dropFileDestPath: 'C:\DOOR.SYS' // Where to put it on the image
+});
+
+// To stop the door:
+bbsDoorRunner.stop();
+
 ```
 
 ## Contributing
