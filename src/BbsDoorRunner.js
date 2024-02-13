@@ -97,7 +97,14 @@ class BbsDoorRunner {
 			this._emulator.serial_send(sendPort, c);
 		};
 
+		this.inputStreamStopListener[port] = () => {
+			const sendPort = port;
+			this.disconnect(sendPort);
+		};
+
 		inputStream.on('data', this.inputStreamListener[port]);
+		inputStream.on('end', this.inputStreamStopListener[port]);
+		inputStream.on('close', this.inputStreamStopListener[port]);
 	}
 
 	/**
@@ -113,10 +120,21 @@ class BbsDoorRunner {
 			throw new Error('Invalid port number, must be between 0 and 3');
 		}
 
+		// Set the carrier detect and others to false,
+		// so that door games think they are disconnected
+		this.setModemOptions(port, false);
+
 		if (!_.isNil(this.inputStreamList[port])) {
 			this.inputStreamList[port].removeListener('data', this.inputStreamListener[port]);
+			this.inputStreamList[port].removeListener('end', this.inputStreamStopListener[port]);
+			this.inputStreamList[port].removeListener('close', this.inputStreamStopListener[port]);
 		}
 
+		// Clear listeners
+		this.inputStreamListener[port] = null;
+		this.inputStreamStopListener[port] = null;
+
+		// Clear streams
 		this.inputStreamList[port] = null;
 		this.outputStreamList[port] = null;
 	}
@@ -189,6 +207,17 @@ class BbsDoorRunner {
 				this.outputStreamList[streamIndex].write(chr);
 			});
 		}
+
+		// Add a listener for emulator-stopped event
+		this._emulator.add_listener('emulator-stopped', () => {
+			// Stop all ports
+			for (let i = 0; i < 4; i++) {
+				this.disconnect(i);
+			}
+
+			// Clear emulator
+			this.stop();
+		});
 	}
 
 	/**
@@ -203,12 +232,16 @@ class BbsDoorRunner {
 			for (let i = 0; i < 4; i++) {
 				if (!_.isNil(this.inputStreamList[i])) {
 					this.inputStreamList[i].removeListener('data', this.inputStreamListener[i]);
+					this.inputStreamList[i].removeListener('end', this.inputStreamStopListener[i]);
+					this.inputStreamList[i].removeListener('close', this.inputStreamStopListener[i]);
 				}
 			}
 
 			// Clear streams
 			this.inputStreamList = new Array(4);
 			this.outputStreamList = new Array(4);
+			this.inputStreamListener = new Array(4);
+			this.inputStreamStopListener = new Array(4);
 		}
 	}
 
