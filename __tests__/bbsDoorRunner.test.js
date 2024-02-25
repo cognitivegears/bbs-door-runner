@@ -53,19 +53,16 @@ describe('BbsDoorRunner', () => {
 	test('connect should throw an error if parameter is not provided', () => {
 		const bbsDoorRunner = new BbsDoorRunner({});
 		bbsDoorRunner.start();
-		expect(() => bbsDoorRunner.connect({})).toThrow('port, inputStream, and outputStream are required');
-		expect(() => bbsDoorRunner.connect({inputStream: {}, outputStream: {}})).toThrow('port, inputStream, and outputStream are required');
-		expect(() => bbsDoorRunner.connect({port: 0, outputStream: {}})).toThrow('port, inputStream, and outputStream are required');
-		expect(() => bbsDoorRunner.connect({port: 0, inputStream: {}})).toThrow('port, inputStream, and outputStream are required');
+		expect(() => bbsDoorRunner.connect({})).toThrow('port is required');
 		bbsDoorRunner.stop();
 	});
 
 	test('connect should throw an error if port is not valid', () => {
 		const bbsDoorRunner = new BbsDoorRunner({});
 		bbsDoorRunner.start();
-		expect(() => bbsDoorRunner.connect({port: -1, inputStream: {}, outputStream: {}})).toThrow('Invalid port number, must be between 0 and 3');
-		expect(() => bbsDoorRunner.connect({port: 4, inputStream: {}, outputStream: {}})).toThrow('Invalid port number, must be between 0 and 3');
-		expect(() => bbsDoorRunner.connect({port: 'a', inputStream: {}, outputStream: {}})).toThrow('Invalid port number, must be between 0 and 3');
+		expect(() => bbsDoorRunner.connect({port: -1})).toThrow('Invalid port number, must be between 0 and 3');
+		expect(() => bbsDoorRunner.connect({port: 4})).toThrow('Invalid port number, must be between 0 and 3');
+		expect(() => bbsDoorRunner.connect({port: 'a'})).toThrow('Invalid port number, must be between 0 and 3');
 		bbsDoorRunner.stop();
 	});
 

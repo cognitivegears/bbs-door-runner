@@ -42,7 +42,6 @@ class BbsDoorRunner {
 		this.vgaBiosPath = vgaBiosPath;
 		this.bootDiskPath = bootDiskPath;
 		this.hdaDiskPath = hdaDiskPath;
-		this.inputStreamList = new Array(4);
 		this.outputStreamList = new Array(4);
 	}
 
@@ -58,23 +57,20 @@ class BbsDoorRunner {
 	 * Connect to the running emulator
 	 * @param {object} options - Options
 	 * @param {number} options.port - Port number (0-3)
-	 * @param {object} options.inputStream - Input stream
-	 * @param {object} options.outputStream - Output stream
 	 * @param {string} options.dropFileSrcPath - Path to the drop file
 	 * @param {string} options.dropFileDestPath - Path to the drop file on the emulator
-	 * @throws {Error} if port is not provided or invalid, inputStream, or outputStream are not provided, or if the emulator is not running
+	 * @returns {object} pty - Pseudo terminal
+	 * @throws {Error} if port is not provided or invalid or if the emulator is not running
 	 * @example
-	 * doorRunner.connect({
+	 * pty = doorRunner.connect({
 	 *   port: 0,
-	 *   inputStream: process.stdin,
-	 *   outputStream: process.stdout,
 	 *   dropFileSrcPath: './dropfiles/door.sys',
 	 *   dropFileDestPath: 'C:\DOOR.SYS'
 	 * });
 	 */
-	connect({port, inputStream, outputStream, dropFileSrcPath, dropFileDestPath} = {}) {
-		if (_.isNil(port) || _.isNil(inputStream) || _.isNil(outputStream)) {
-			throw new Error('port, inputStream, and outputStream are required');
+	connect({port, dropFileSrcPath, dropFileDestPath} = {}) {
+		if (_.isNil(port)) {
+			throw new Error('port is required');
 		}
 
 		if (!this.isRunning()) {
@@ -89,22 +85,26 @@ class BbsDoorRunner {
 
 		this.setModemOptions(port);
 
-		this.inputStreamList[port] = inputStream;
-		this.outputStreamList[port] = outputStream;
+		// Return a pty object that can be used to read and write to the emulator
+		return {
+			write: c => {
+				const sendPort = port;
+				this._emulator.serial_send(sendPort, c);
+			},
+			onData: cb => {
+				const sendPort = port;
+				this.outputStreamList[sendPort] = cb;
+			},
+			resize() {},
+			clear() {},
+			kill() {
+				const sendPort = port;
+				this.disconnect(sendPort);
+			},
+			pause() {},
+			resume() {},
 
-		this.inputStreamListener[port] = c => {
-			const sendPort = port;
-			this._emulator.serial_send(sendPort, c);
 		};
-
-		this.inputStreamStopListener[port] = () => {
-			const sendPort = port;
-			this.disconnect(sendPort);
-		};
-
-		inputStream.on('data', this.inputStreamListener[port]);
-		inputStream.on('end', this.inputStreamStopListener[port]);
-		inputStream.on('close', this.inputStreamStopListener[port]);
 	}
 
 	/**
@@ -130,12 +130,7 @@ class BbsDoorRunner {
 			this.inputStreamList[port].removeListener('close', this.inputStreamStopListener[port]);
 		}
 
-		// Clear listeners
-		this.inputStreamListener[port] = null;
-		this.inputStreamStopListener[port] = null;
-
 		// Clear streams
-		this.inputStreamList[port] = null;
 		this.outputStreamList[port] = null;
 	}
 
@@ -204,7 +199,7 @@ class BbsDoorRunner {
 				}
 
 				const chr = String.fromCharCode(byte);
-				this.outputStreamList[streamIndex].write(chr);
+				this.outputStreamList[streamIndex](chr);
 			});
 		}
 
@@ -228,20 +223,8 @@ class BbsDoorRunner {
 			this._emulator.stop();
 			this._emulator = null;
 
-			// Remove listeners
-			for (let i = 0; i < 4; i++) {
-				if (!_.isNil(this.inputStreamList[i])) {
-					this.inputStreamList[i].removeListener('data', this.inputStreamListener[i]);
-					this.inputStreamList[i].removeListener('end', this.inputStreamStopListener[i]);
-					this.inputStreamList[i].removeListener('close', this.inputStreamStopListener[i]);
-				}
-			}
-
 			// Clear streams
-			this.inputStreamList = new Array(4);
 			this.outputStreamList = new Array(4);
-			this.inputStreamListener = new Array(4);
-			this.inputStreamStopListener = new Array(4);
 		}
 	}
 
