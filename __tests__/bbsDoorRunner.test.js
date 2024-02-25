@@ -60,9 +60,9 @@ describe('BbsDoorRunner', () => {
 	test('connect should throw an error if port is not valid', () => {
 		const bbsDoorRunner = new BbsDoorRunner({});
 		bbsDoorRunner.start();
-		expect(() => bbsDoorRunner.connect({port: -1})).toThrow('Invalid port number, must be between 0 and 3');
-		expect(() => bbsDoorRunner.connect({port: 4})).toThrow('Invalid port number, must be between 0 and 3');
-		expect(() => bbsDoorRunner.connect({port: 'a'})).toThrow('Invalid port number, must be between 0 and 3');
+		expect(() => bbsDoorRunner.connect({port: -1})).toThrow('Invalid port number, must be between 0 and 2');
+		expect(() => bbsDoorRunner.connect({port: 3})).toThrow('Invalid port number, must be between 0 and 2');
+		expect(() => bbsDoorRunner.connect({port: 'a'})).toThrow('Invalid port number, must be between 0 and 2');
 		bbsDoorRunner.stop();
 	});
 
@@ -73,8 +73,18 @@ describe('BbsDoorRunner', () => {
 
 	test('disconnect should throw an error if port is not valid', () => {
 		const bbsDoorRunner = new BbsDoorRunner({});
-		expect(() => bbsDoorRunner.disconnect(-1)).toThrow('Invalid port number, must be between 0 and 3');
-		expect(() => bbsDoorRunner.disconnect(4)).toThrow('Invalid port number, must be between 0 and 3');
-		expect(() => bbsDoorRunner.disconnect('a')).toThrow('Invalid port number, must be between 0 and 3');
+		expect(() => bbsDoorRunner.disconnect(-1)).toThrow('Invalid port number, must be between 0 and 2');
+		expect(() => bbsDoorRunner.disconnect(4)).toThrow('Invalid port number, must be between 0 and 2');
+		expect(() => bbsDoorRunner.disconnect('a')).toThrow('Invalid port number, must be between 0 and 2');
+	});
+
+	test('maximum number of user ports should be 2', () => {
+		const bbsDoorRunner = new BbsDoorRunner({});
+		expect(bbsDoorRunner.getMaxUserPort()).toBe(2);
+	});
+
+	test('out of band port should be 3', () => {
+		const bbsDoorRunner = new BbsDoorRunner({});
+		expect(bbsDoorRunner.getOutOfBandPort()).toBe(3);
 	});
 });

@@ -6,6 +6,10 @@ const {createBufferDriverSync} = require('fatfs-volume-driver');
 const {V86} = require('../v86/libv86');
 const _ = require('lodash');
 
+// Constant
+const OUT_OF_BAND_PORT = 3;
+const MAX_USER_PORT = 2;
+
 /**
  * BBS Door Runner
  * @class
@@ -25,8 +29,6 @@ const _ = require('lodash');
  * doorRunner.start();
  * doorRunner.connect({
  *   port: 0,
- *   inputStream: process.stdin,
- *   outputStream: process.stdout,
  *   dropFileSrcPath: './dropfiles/door.sys',
  *   dropFileDestPath: 'C:\DOOR.SYS'
  * });
@@ -43,6 +45,7 @@ class BbsDoorRunner {
 		this.bootDiskPath = bootDiskPath;
 		this.hdaDiskPath = hdaDiskPath;
 		this.outputStreamList = new Array(4);
+		this.exitStreamList = new Array(4);
 	}
 
 	/**
@@ -56,7 +59,7 @@ class BbsDoorRunner {
 	/**
 	 * Connect to the running emulator
 	 * @param {object} options - Options
-	 * @param {number} options.port - Port number (0-3)
+	 * @param {number} options.port - Port number (0-MAX_USER_PORT)
 	 * @param {string} options.dropFileSrcPath - Path to the drop file
 	 * @param {string} options.dropFileDestPath - Path to the drop file on the emulator
 	 * @returns {object} pty - Pseudo terminal
@@ -77,8 +80,8 @@ class BbsDoorRunner {
 			throw new Error('Emulator is not running');
 		}
 
-		if (isNaN(port) || port < 0 || port > 3) {
-			throw new Error('Invalid port number, must be between 0 and 3');
+		if (isNaN(port) || port < 0 || port > MAX_USER_PORT) {
+			throw new Error('Invalid port number, must be between 0 and ' + MAX_USER_PORT);
 		}
 
 		this.writeDropFile(dropFileSrcPath, dropFileDestPath);
@@ -95,6 +98,10 @@ class BbsDoorRunner {
 				const sendPort = port;
 				this.outputStreamList[sendPort] = cb;
 			},
+			onExit: cb => {
+				const sendPort = port;
+				this.exitStreamList[sendPort] = cb;
+			},
 			resize() {},
 			clear() {},
 			kill() {
@@ -109,15 +116,15 @@ class BbsDoorRunner {
 
 	/**
 	 * Disconnect a port from the emulator
-	 * @param {number} port Port number (0-3)
+	 * @param {number} port Port number (0-MAX_USER_PORT)
 	 */
 	disconnect(port) {
 		if (_.isNil(port)) {
 			throw new Error('port is required');
 		}
 
-		if (isNaN(port) || port < 0 || port > 3) {
-			throw new Error('Invalid port number, must be between 0 and 3');
+		if (isNaN(port) || port < 0 || port > MAX_USER_PORT) {
+			throw new Error('Invalid port number, must be between 0 and ' + MAX_USER_PORT);
 		}
 
 		// Set the carrier detect and others to false,
@@ -132,12 +139,30 @@ class BbsDoorRunner {
 
 		// Clear streams
 		this.outputStreamList[port] = null;
+		this.exitStreamList[port] = null;
+	}
+
+	/**
+	 * Get the maximum user port - available ports are 0 to MAX_USER_PORT
+	 * @returns {number} Maximum user port
+	 */
+	getMaxUserPort() {
+		return MAX_USER_PORT;
+	}
+
+	/**
+	 * Get the out of band port, used internally for communications
+	 * between the emulator and the runner
+	 * @returns {number} Out of band port
+	 */
+	getOutOfBandPort() {
+		return OUT_OF_BAND_PORT;
 	}
 
 	/**
 	 * Set the modem options on the emulator so that door games
 	 * think they are connected to a modem
-	 * @param {number} port Port number (0-3)
+	 * @param {number} port Port number (0-MAX_USER_PORT)
 	 * @param {boolean} isOnline Whether the modem is online
 	 */
 	setModemOptions(port, isOnline = true) {
@@ -191,7 +216,7 @@ class BbsDoorRunner {
 		});
 		this._emulator.run();
 		// Just add the listeners once and use the port number to determine which stream to write to
-		for (let i = 0; i < 4; i++) {
+		for (let i = 0; i <= MAX_USER_PORT; i++) {
 			this._emulator.add_listener('serial' + i + '-output-byte', byte => {
 				const streamIndex = i;
 				if (_.isNil(this.outputStreamList[streamIndex])) {
@@ -202,6 +227,11 @@ class BbsDoorRunner {
 				this.outputStreamList[streamIndex](chr);
 			});
 		}
+
+		this._emulator.add_listener('serial' + OUT_OF_BAND_PORT + '-output-byte', () => {
+			// For now, sending anything to the out-of-band port will cause the emulator to stop
+			this.stop();
+		});
 
 		// Add a listener for emulator-stopped event
 		this._emulator.add_listener('emulator-stopped', () => {
@@ -223,8 +253,15 @@ class BbsDoorRunner {
 			this._emulator.stop();
 			this._emulator = null;
 
+			for (let i = 0; i <= MAX_USER_PORT; i++) {
+				if (!_.isNil(this.exitStreamList[i])) {
+					this.exitStreamList[i]({exitCode: 0});
+				}
+			}
+
 			// Clear streams
 			this.outputStreamList = new Array(4);
+			this.exitStreamList = new Array(4);
 		}
 	}
 
