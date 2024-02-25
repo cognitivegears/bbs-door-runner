@@ -1,6 +1,6 @@
 {
   "name": "bbs-door-runner",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "description": "Run BBS door games from Node.js using v86",
   "main": "index.js",
   "scripts": {
