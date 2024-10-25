@@ -6,7 +6,7 @@
 	"scripts": {
 		"test": "jest",
 		"prepare": "husky install",
-		"lint": "npx biome . --fix"
+		"lint": "npx @biomejs/biome check --write ."
 	},
 	"keywords": ["bbs", "emulator", "door", "dropfile", "ansi", "modem", "retro"],
 	"author": "Nathan Byrd",
@@ -26,6 +26,6 @@
 		"unzipper": "^0.12.3"
 	},
 	"lint-staged": {
-		"*.js": ["eslint --fix", "git add"]
+		"*.js": ["npx @biomejs/biome check --write .", "git add"]
 	}
 }

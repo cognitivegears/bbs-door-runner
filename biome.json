@@ -7,7 +7,7 @@
 	},
 	"files": {
 		"ignoreUnknown": true,
-		"ignore": ["node_modules/", "v86/"]
+		"ignore": ["node_modules/", "v86/", "package-lock.json"]
 	},
 	"formatter": {
 		"enabled": true,

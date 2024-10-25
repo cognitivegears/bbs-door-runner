@@ -15,7 +15,8 @@
 				"yzhang.markdown-all-in-one",
 				"DavidAnson.vscode-markdownlint",
 				"christian-kohler.npm-intellisense",
-				"dbaeumer.vscode-eslint"
+				"github.vscode-github-actions",
+				"biomejs.biome"
 			]
 		}
 	}
