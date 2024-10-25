@@ -80,7 +80,7 @@ class BbsDoorRunner {
 			throw new Error("Emulator is not running");
 		}
 
-		if (!(_.isNumber(port)) || port < 0 || port > MAX_USER_PORT) {
+		if (!_.isNumber(port) || port < 0 || port > MAX_USER_PORT) {
 			throw new Error(
 				`Invalid port number, must be between 0 and ${MAX_USER_PORT}`,
 			);
@@ -124,7 +124,7 @@ class BbsDoorRunner {
 			throw new Error("port is required");
 		}
 
-		if ((!_.isNumber(port)) || port < 0 || port > MAX_USER_PORT) {
+		if (!_.isNumber(port) || port < 0 || port > MAX_USER_PORT) {
 			throw new Error(
 				`Invalid port number, must be between 0 and ${MAX_USER_PORT}`,
 			);
