@@ -16,7 +16,9 @@
 				"DavidAnson.vscode-markdownlint",
 				"christian-kohler.npm-intellisense",
 				"github.vscode-github-actions",
-				"biomejs.biome"
+				"biomejs.biome",
+				"Orta.vscode-jest",
+				"firsttris.vscode-jest-runner"
 			]
 		}
 	}
