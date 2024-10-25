@@ -1,14 +1,1 @@
-{
-    "eslint.enable": true,
-    "eslint.lintTask.enable": true,
-    "eslint.lintTask.options": "-c .eslintrc.json --ignore-path .eslintignore .",
-    "eslint.run": "onType",
-    "eslint.format.enable": true,
-    "[javascript]": {
-        "editor.defaultFormatter": "dbaeumer.vscode-eslint",
-        "editor.codeActionsOnSave": {
-            "source.fixAll.eslint": "explicit"
-        },
-    }
-
-}
+{}

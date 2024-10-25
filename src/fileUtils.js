@@ -1,5 +1,5 @@
-const fs = require('fs');
-const unzipper = require('unzipper');
+const fs = require("node:fs");
+const unzipper = require("unzipper");
 
 /**
  * Extracts the contents of a zip file to a FAT file system.
@@ -15,13 +15,13 @@ async function extractZipToFatfs(zipFilePath, fsf) {
 		readStream
 			// eslint-disable-next-line new-cap
 			.pipe(unzipper.Parse())
-			.on('entry', async entry => {
+			.on("entry", async (entry) => {
 				const fileName = entry.path;
 
-				if (entry.type === 'File') {
+				if (entry.type === "File") {
 					const content = await entry.buffer();
 					await new Promise((resolve, reject) => {
-						fsf.writeFile(fileName, content, err => {
+						fsf.writeFile(fileName, content, (err) => {
 							if (err) {
 								reject(err);
 							} else {
@@ -29,14 +29,14 @@ async function extractZipToFatfs(zipFilePath, fsf) {
 							}
 						});
 					});
-				} else if (entry.type === 'Directory') {
+				} else if (entry.type === "Directory") {
 					fsf.mkdir(fileName);
 				}
 			})
-			.on('finish', () => {
+			.on("finish", () => {
 				resolve();
 			})
-			.on('error', err => {
+			.on("error", (err) => {
 				reject(err);
 			});
 	});
