@@ -1,43 +1,43 @@
-const BbsDoorRunner = require('../src/BbsDoorRunner');
+const BbsDoorRunner = require("../src/BbsDoorRunner");
 
 /* Add const {Readable} = require('stream'); */
 
-describe('BbsDoorRunner', () => {
-	test('should be a class', () => {
-		expect(typeof BbsDoorRunner).toBe('function');
+describe("BbsDoorRunner", () => {
+	test("should be a class", () => {
+		expect(typeof BbsDoorRunner).toBe("function");
 	});
 
-	test('should have a constructor method', () => {
+	test("should have a constructor method", () => {
 		const bbsDoorRunner = new BbsDoorRunner({});
-		expect(typeof bbsDoorRunner.constructor).toBe('function');
+		expect(typeof bbsDoorRunner.constructor).toBe("function");
 	});
 
-	test('should have a start method', () => {
+	test("should have a start method", () => {
 		const bbsDoorRunner = new BbsDoorRunner({});
-		expect(typeof bbsDoorRunner.start).toBe('function');
+		expect(typeof bbsDoorRunner.start).toBe("function");
 	});
 
-	test('should have a connect method', () => {
+	test("should have a connect method", () => {
 		const bbsDoorRunner = new BbsDoorRunner({});
-		expect(typeof bbsDoorRunner.connect).toBe('function');
+		expect(typeof bbsDoorRunner.connect).toBe("function");
 	});
 
-	test('should have a disconnect method', () => {
+	test("should have a disconnect method", () => {
 		const bbsDoorRunner = new BbsDoorRunner({});
-		expect(typeof bbsDoorRunner.disconnect).toBe('function');
+		expect(typeof bbsDoorRunner.disconnect).toBe("function");
 	});
 
-	test('should have a isRunning method', () => {
+	test("should have a isRunning method", () => {
 		const bbsDoorRunner = new BbsDoorRunner({});
-		expect(typeof bbsDoorRunner.isRunning).toBe('function');
+		expect(typeof bbsDoorRunner.isRunning).toBe("function");
 	});
 
-	test('should have a stop method', () => {
+	test("should have a stop method", () => {
 		const bbsDoorRunner = new BbsDoorRunner({});
-		expect(typeof bbsDoorRunner.stop).toBe('function');
+		expect(typeof bbsDoorRunner.stop).toBe("function");
 	});
 
-	test('isRunning should return the emulator status', () => {
+	test("isRunning should return the emulator status", () => {
 		const bbsDoorRunner = new BbsDoorRunner({});
 		bbsDoorRunner.start();
 		expect(bbsDoorRunner.isRunning()).toBe(true);
@@ -45,45 +45,59 @@ describe('BbsDoorRunner', () => {
 		expect(bbsDoorRunner.isRunning()).toBe(false);
 	});
 
-	test('connect should throw an error if the emulator is not running', () => {
+	test("connect should throw an error if the emulator is not running", () => {
 		const bbsDoorRunner = new BbsDoorRunner({});
-		expect(() => bbsDoorRunner.connect({port: 0, inputStream: {}, outputStream: {}})).toThrow('Emulator is not running');
+		expect(() =>
+			bbsDoorRunner.connect({ port: 0, inputStream: {}, outputStream: {} }),
+		).toThrow("Emulator is not running");
 	});
 
-	test('connect should throw an error if parameter is not provided', () => {
+	test("connect should throw an error if parameter is not provided", () => {
 		const bbsDoorRunner = new BbsDoorRunner({});
 		bbsDoorRunner.start();
-		expect(() => bbsDoorRunner.connect({})).toThrow('port is required');
+		expect(() => bbsDoorRunner.connect({})).toThrow("port is required");
 		bbsDoorRunner.stop();
 	});
 
-	test('connect should throw an error if port is not valid', () => {
+	test("connect should throw an error if port is not valid", () => {
 		const bbsDoorRunner = new BbsDoorRunner({});
 		bbsDoorRunner.start();
-		expect(() => bbsDoorRunner.connect({port: -1})).toThrow('Invalid port number, must be between 0 and 2');
-		expect(() => bbsDoorRunner.connect({port: 3})).toThrow('Invalid port number, must be between 0 and 2');
-		expect(() => bbsDoorRunner.connect({port: 'a'})).toThrow('Invalid port number, must be between 0 and 2');
+		expect(() => bbsDoorRunner.connect({ port: -1 })).toThrow(
+			"Invalid port number, must be between 0 and 2",
+		);
+		expect(() => bbsDoorRunner.connect({ port: 3 })).toThrow(
+			"Invalid port number, must be between 0 and 2",
+		);
+		expect(() => bbsDoorRunner.connect({ port: "a" })).toThrow(
+			"Invalid port number, must be between 0 and 2",
+		);
 		bbsDoorRunner.stop();
 	});
 
-	test('disconnect should throw an error if port is invalid', () => {
+	test("disconnect should throw an error if port is invalid", () => {
 		const bbsDoorRunner = new BbsDoorRunner({});
-		expect(() => bbsDoorRunner.disconnect(null)).toThrow('port is required');
+		expect(() => bbsDoorRunner.disconnect(null)).toThrow("port is required");
 	});
 
-	test('disconnect should throw an error if port is not valid', () => {
+	test("disconnect should throw an error if port is not valid", () => {
 		const bbsDoorRunner = new BbsDoorRunner({});
-		expect(() => bbsDoorRunner.disconnect(-1)).toThrow('Invalid port number, must be between 0 and 2');
-		expect(() => bbsDoorRunner.disconnect(4)).toThrow('Invalid port number, must be between 0 and 2');
-		expect(() => bbsDoorRunner.disconnect('a')).toThrow('Invalid port number, must be between 0 and 2');
+		expect(() => bbsDoorRunner.disconnect(-1)).toThrow(
+			"Invalid port number, must be between 0 and 2",
+		);
+		expect(() => bbsDoorRunner.disconnect(4)).toThrow(
+			"Invalid port number, must be between 0 and 2",
+		);
+		expect(() => bbsDoorRunner.disconnect("a")).toThrow(
+			"Invalid port number, must be between 0 and 2",
+		);
 	});
 
-	test('maximum number of user ports should be 2', () => {
+	test("maximum number of user ports should be 2", () => {
 		const bbsDoorRunner = new BbsDoorRunner({});
 		expect(bbsDoorRunner.getMaxUserPort()).toBe(2);
 	});
 
-	test('out of band port should be 3', () => {
+	test("out of band port should be 3", () => {
 		const bbsDoorRunner = new BbsDoorRunner({});
 		expect(bbsDoorRunner.getOutOfBandPort()).toBe(3);
 	});

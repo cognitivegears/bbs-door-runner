@@ -1,10 +1,10 @@
 // Import required modules
-const fs = require('fs');
-const path = require('path');
-const fatfs = require('fatfs');
-const {createBufferDriverSync} = require('fatfs-volume-driver');
-const {V86} = require('../v86/libv86');
-const _ = require('lodash');
+const fs = require("node:fs");
+const path = require("node:path");
+const fatfs = require("fatfs");
+const { createBufferDriverSync } = require("fatfs-volume-driver");
+const { V86 } = require("../v86/libv86");
+const _ = require("lodash");
 
 // Constant
 const OUT_OF_BAND_PORT = 3;
@@ -35,9 +35,9 @@ const MAX_USER_PORT = 2;
  */
 class BbsDoorRunner {
 	constructor({
-		biosPath = '../v86/bios/seabios.bin',
-		vgaBiosPath = '../v86/bios/vgabios.bin',
-		bootDiskPath = '../v86/image/freedos722.img',
+		biosPath = "../v86/bios/seabios.bin",
+		vgaBiosPath = "../v86/bios/vgabios.bin",
+		bootDiskPath = "../v86/image/freedos722.img",
 		hdaDiskPath,
 	} = {}) {
 		this.biosPath = biosPath;
@@ -71,17 +71,19 @@ class BbsDoorRunner {
 	 *   dropFileDestPath: 'C:\DOOR.SYS'
 	 * });
 	 */
-	connect({port, dropFileSrcPath, dropFileDestPath} = {}) {
+	connect({ port, dropFileSrcPath, dropFileDestPath } = {}) {
 		if (_.isNil(port)) {
-			throw new Error('port is required');
+			throw new Error("port is required");
 		}
 
 		if (!this.isRunning()) {
-			throw new Error('Emulator is not running');
+			throw new Error("Emulator is not running");
 		}
 
-		if (isNaN(port) || port < 0 || port > MAX_USER_PORT) {
-			throw new Error('Invalid port number, must be between 0 and ' + MAX_USER_PORT);
+		if (Number.isNaN(port) || port < 0 || port > MAX_USER_PORT) {
+			throw new Error(
+				`Invalid port number, must be between 0 and ${MAX_USER_PORT}`,
+			);
 		}
 
 		this.writeDropFile(dropFileSrcPath, dropFileDestPath);
@@ -90,15 +92,15 @@ class BbsDoorRunner {
 
 		// Return a pty object that can be used to read and write to the emulator
 		return {
-			write: c => {
+			write: (c) => {
 				const sendPort = port;
 				this._emulator.serial_send(sendPort, c);
 			},
-			onData: cb => {
+			onData: (cb) => {
 				const sendPort = port;
 				this.outputStreamList[sendPort] = cb;
 			},
-			onExit: cb => {
+			onExit: (cb) => {
 				const sendPort = port;
 				this.exitStreamList[sendPort] = cb;
 			},
@@ -110,7 +112,6 @@ class BbsDoorRunner {
 			},
 			pause() {},
 			resume() {},
-
 		};
 	}
 
@@ -120,11 +121,13 @@ class BbsDoorRunner {
 	 */
 	disconnect(port) {
 		if (_.isNil(port)) {
-			throw new Error('port is required');
+			throw new Error("port is required");
 		}
 
-		if (isNaN(port) || port < 0 || port > MAX_USER_PORT) {
-			throw new Error('Invalid port number, must be between 0 and ' + MAX_USER_PORT);
+		if (Number.isNaN(port) || port < 0 || port > MAX_USER_PORT) {
+			throw new Error(
+				`Invalid port number, must be between 0 and ${MAX_USER_PORT}`,
+			);
 		}
 
 		// Set the carrier detect and others to false,
@@ -132,9 +135,18 @@ class BbsDoorRunner {
 		this.setModemOptions(port, false);
 
 		if (!_.isNil(this.inputStreamList[port])) {
-			this.inputStreamList[port].removeListener('data', this.inputStreamListener[port]);
-			this.inputStreamList[port].removeListener('end', this.inputStreamStopListener[port]);
-			this.inputStreamList[port].removeListener('close', this.inputStreamStopListener[port]);
+			this.inputStreamList[port].removeListener(
+				"data",
+				this.inputStreamListener[port],
+			);
+			this.inputStreamList[port].removeListener(
+				"end",
+				this.inputStreamStopListener[port],
+			);
+			this.inputStreamList[port].removeListener(
+				"close",
+				this.inputStreamStopListener[port],
+			);
 		}
 
 		// Clear streams
@@ -181,17 +193,17 @@ class BbsDoorRunner {
 	writeDropFile(dropFileSrcPath, dropFileDestPath) {
 		if (!_.isNil(dropFileSrcPath)) {
 			if (_.isNil(this.hdaDiskPath)) {
-				throw new Error('hdaDiskPath is required to add door files');
+				throw new Error("hdaDiskPath is required to add door files");
 			}
-
+			let destPath = dropFileDestPath;
 			// Write dropfile to hda
-			if (_.isNil(dropFileDestPath)) {
-				dropFileDestPath = path.basename(dropFileSrcPath);
+			if (_.isNil(destPath)) {
+				destPath = path.basename(dropFileSrcPath);
 			}
 
 			const dropFile = this._readFile(dropFileSrcPath);
 			const volume = fatfs.createVolume(createBufferDriverSync(this.hdaFile));
-			volume.writeFileSync(dropFileDestPath, dropFile);
+			volume.writeFileSync(destPath, dropFile);
 		}
 	}
 
@@ -210,14 +222,14 @@ class BbsDoorRunner {
 		}
 
 		this._emulator = new V86({
-			bios: {buffer: biosFile},
-			fda: {buffer: fdaFile, async: true},
-			hda: hdaFile ? {buffer: hdaFile, async: true} : undefined,
+			bios: { buffer: biosFile },
+			fda: { buffer: fdaFile, async: true },
+			hda: hdaFile ? { buffer: hdaFile, async: true } : undefined,
 		});
 		this._emulator.run();
 		// Just add the listeners once and use the port number to determine which stream to write to
 		for (let i = 0; i <= MAX_USER_PORT; i++) {
-			this._emulator.add_listener('serial' + i + '-output-byte', byte => {
+			this._emulator.add_listener(`serial${i}-output-byte`, (byte) => {
 				const streamIndex = i;
 				if (_.isNil(this.outputStreamList[streamIndex])) {
 					return;
@@ -228,13 +240,13 @@ class BbsDoorRunner {
 			});
 		}
 
-		this._emulator.add_listener('serial' + OUT_OF_BAND_PORT + '-output-byte', () => {
+		this._emulator.add_listener(`serial${OUT_OF_BAND_PORT}-output-byte`, () => {
 			// For now, sending anything to the out-of-band port will cause the emulator to stop
 			this.stop();
 		});
 
 		// Add a listener for emulator-stopped event
-		this._emulator.add_listener('emulator-stopped', () => {
+		this._emulator.add_listener("emulator-stopped", () => {
 			// Stop all ports
 			for (let i = 0; i < 4; i++) {
 				this.disconnect(i);
@@ -249,13 +261,13 @@ class BbsDoorRunner {
 	 * Stop the emulator
 	 */
 	stop() {
-		if (!(_.isNil(this._emulator))) {
+		if (!_.isNil(this._emulator)) {
 			this._emulator.stop();
 			this._emulator = null;
 
 			for (let i = 0; i <= MAX_USER_PORT; i++) {
 				if (!_.isNil(this.exitStreamList[i])) {
-					this.exitStreamList[i]({exitCode: 0});
+					this.exitStreamList[i]({ exitCode: 0 });
 				}
 			}
 
@@ -266,7 +278,7 @@ class BbsDoorRunner {
 	}
 
 	_readFile(path) {
-		return new Uint8Array(fs.readFileSync(__dirname + '/' + path)).buffer;
+		return new Uint8Array(fs.readFileSync(`${__dirname}/${path}`)).buffer;
 	}
 }
 
